@@ -7,16 +7,16 @@
   <style>
     :root {
       --primary: #0f294a;
-      --accent: #1d63b8;
+      --accent: #155eef;
       --bg: #f4f6f9;
       --card: #ffffff;
-      --text: #1e293b;
-      --muted: #64748b;
-      --border: #e2e8f0;
+      --text: #172033;
+      --muted: #566176;
+      --border: #dce2eb;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.5;
@@ -38,10 +38,10 @@
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 0.48rem 0.85rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -49,65 +49,77 @@
       text-decoration: none;
     }
     .btn:hover { opacity: 0.92; }
-    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .btn-outline {
       background: transparent;
       border: 1px solid rgba(255,255,255,0.45);
       color: #fff;
     }
     .btn-secondary {
-      background: #e2e8f0;
-      color: #1e293b;
-      padding: 0.35rem 0.65rem;
-      font-size: 0.78rem;
+      background: #e9eef7;
+      color: #172033;
+      padding: 0.38rem 0.7rem;
+      font-size: 0.8rem;
     }
+    .btn-mini {
+      padding: 5px 9px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      background: #e9eef7;
+      color: #172033;
+      border: 0;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-mini:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-mini.danger { background: #fde8e8; color: #a11; }
     .btn-danger { background: #dc2626; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
     .btn-share { background: #16a34a; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
 
-    main { max-width: 1020px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
+    main { max-width: 1160px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
     .panel {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 14px;
       padding: 1.15rem;
       margin-bottom: 1.25rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
+    .panel.dragover { outline: 3px dashed var(--accent); outline-offset: -6px; }
     .hidden { display: none !important; }
     .form-row-2 {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
-    @media (max-width: 600px) { .form-row-2 { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .form-row-2 { grid-template-columns: 1fr; } }
     .form-group { margin-bottom: 0.9rem; }
-    label { display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 0.3rem; }
-    input[type="text"], input[type="email"], input[type="date"], input[type="url"], select, textarea {
+    label { display: block; font-size: 0.86rem; font-weight: 700; margin-bottom: 0.35rem; }
+    label.chk { font-weight: 400; display: flex; gap: 8px; align-items: center; margin: 6px 0 0; cursor: pointer; font-size: 0.84rem; }
+    input[type="text"], input[type="email"], input[type="date"], input[type="number"], input[type="url"], select, textarea {
       width: 100%;
       padding: 0.52rem 0.7rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.92rem;
+      border: 1px solid #bbc5d4;
+      border-radius: 8px;
+      font-size: 0.9rem;
       font-family: inherit;
       background: #fff;
     }
+    input[type="color"] { width: 52px; height: 36px; border: 1px solid #bbc5d4; border-radius: 6px; background: transparent; cursor: pointer; }
+    input[type="range"] { width: 100%; accent-color: var(--accent); }
     textarea { min-height: 82px; resize: vertical; }
     .row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
+    .note { font-size: 0.82rem; color: #5c6678; line-height: 1.4; margin-top: 4px; }
 
     /* Editor Management Box */
     .editors-box {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 0.85rem;
       margin-bottom: 1.1rem;
     }
-    .editor-chip-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-top: 0.6rem;
-    }
+    .editor-chip-list { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.6rem; }
     .editor-chip {
       background: #e0f2fe;
       color: #0369a1;
@@ -115,79 +127,80 @@
       padding: 0.22rem 0.6rem;
       border-radius: 999px;
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
     }
-    .editor-chip.super {
-      background: #eef2ff;
-      color: #3730a3;
-      border-color: #c7d2fe;
-    }
-    .editor-chip button {
-      background: none;
-      border: none;
-      color: #dc2626;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 0.9rem;
-      line-height: 1;
-    }
+    .editor-chip.super { background: #eef2ff; color: #3730a3; border-color: #c7d2fe; }
+    .editor-chip button { background: none; border: none; color: #dc2626; font-weight: 700; cursor: pointer; font-size: 0.95rem; line-height: 1; }
 
-    /* Photo Layout Studio */
-    .collage-box {
+    /* Full Collage Studio Controls */
+    .collage-studio {
       background: #f8fafc;
-      border: 1px dashed #94a3b8;
-      border-radius: 8px;
-      padding: 0.85rem;
-      margin-top: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 0.6rem;
     }
-    .collage-controls {
+    .studio-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
-      gap: 0.6rem;
-      margin-bottom: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
     }
-    .thumb-strip {
+    .mode-pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+    .mode-pills label {
+      font-weight: 400;
       display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.75rem;
-    }
-    .thumb-item {
-      position: relative;
-      width: 72px;
-      height: 54px;
-      border-radius: 5px;
-      overflow: hidden;
-      border: 1px solid var(--border);
+      gap: 6px;
+      align-items: center;
+      margin: 0;
+      padding: 7px 13px;
+      border: 1px solid #bbc5d4;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.84rem;
       background: #fff;
     }
-    .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
-    .thumb-remove {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      background: rgba(220,38,38,0.92);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      font-size: 11px;
-      line-height: 1;
-      cursor: pointer;
-    }
-    #collagePreview {
-      width: 100%;
-      max-height: 430px;
-      object-fit: contain;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: #e2e8f0;
+    .mode-pills label:has(input:checked) { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
+    .mode-pills input { margin: 0; }
+    .preview-wrap { overflow-x: auto; background: #e9edf3; padding: 10px; border-radius: 10px; }
+    #collageCanvas {
       display: block;
+      width: 100%;
+      height: auto;
+      max-width: 1100px;
+      margin: auto;
+      background: #ddd;
+      touch-action: none;
+      cursor: grab;
+      border-radius: 6px;
     }
+    .photo-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .thumb-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 8px;
+      font-size: 0.82rem;
+    }
+    .thumb-card img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: contain;
+      background: #eef1f5;
+      border-radius: 5px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .thumb-card .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; font-weight: 700; }
+    .thumb-card .zl { font-size: 0.75rem; color: #5c6678; }
 
     /* Filter Bar */
     .filter-bar {
@@ -209,7 +222,7 @@
     /* Updates Feed */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
       gap: 1.05rem;
     }
     .card {
@@ -221,17 +234,8 @@
       flex-direction: column;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
-    .card-img-wrap {
-      position: relative;
-      cursor: pointer;
-      background: #e2e8f0;
-    }
-    .card-img-wrap img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      display: block;
-    }
+    .card-img-wrap { position: relative; cursor: pointer; background: #e2e8f0; }
+    .card-img-wrap img { width: 100%; height: 215px; object-fit: cover; display: block; }
     .photo-count-badge {
       position: absolute;
       bottom: 8px;
@@ -239,7 +243,7 @@
       background: rgba(15, 41, 74, 0.88);
       color: #fff;
       font-size: 0.74rem;
-      font-weight: 600;
+      font-weight: 700;
       padding: 0.22rem 0.55rem;
       border-radius: 999px;
     }
@@ -280,7 +284,7 @@
       padding: 0.65rem 1.1rem;
       border-radius: 8px;
       font-size: 0.86rem;
-      font-weight: 600;
+      font-weight: 700;
       box-shadow: 0 6px 20px rgba(0,0,0,0.28);
       z-index: 2000;
       max-width: 92vw;
@@ -301,7 +305,7 @@
     .modal-inner {
       background: #fff;
       border-radius: 10px;
-      max-width: 900px;
+      max-width: 920px;
       width: 100%;
       max-height: 94vh;
       overflow-y: auto;
@@ -333,17 +337,12 @@
     }
     .modal-thumb-card.viewing {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(29, 99, 184, 0.22);
+      box-shadow: 0 0 0 2px rgba(21, 94, 239, 0.22);
     }
-    .modal-thumb-card img {
-      width: 100%;
-      height: 60px;
-      object-fit: cover;
-      display: block;
-    }
+    .modal-thumb-card img { width: 100%; height: 60px; object-fit: cover; display: block; }
     .modal-thumb-label {
       font-size: 0.68rem;
-      font-weight: 600;
+      font-weight: 700;
       text-align: center;
       padding: 2px 4px;
       color: var(--text);
@@ -402,65 +401,107 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="imageFiles">Upload Photos (Select 1 to 6 photos — creates layout &amp; keeps individual photos selectable)</label>
-          <input type="file" id="imageFiles" accept="image/*" multiple />
-          <div id="collageStudio" class="collage-box hidden">
-            <div class="thumb-strip" id="thumbStrip"></div>
-            <div class="collage-controls">
+        <div class="form-group" id="dropZone">
+          <label for="files">Upload Photos (1–6 photos — drag files here, resize dividers, slant/curve/chevron shapes, pan &amp; zoom)</label>
+          <input id="files" type="file" accept="image/*" multiple />
+          <div class="note">White/black photo borders are trimmed automatically. You can also add more photos in batches up to 6.</div>
+
+          <div id="collageStudio" class="collage-studio hidden">
+            <div class="studio-grid">
               <div>
-                <label for="layoutSelect" style="font-size:0.78rem;">Photo Layout</label>
-                <select id="layoutSelect">
-                  <option value="auto">Auto Grid (Smart Mosaic)</option>
-                  <option value="featured">1 Large Left + Stack Right</option>
-                  <option value="topHero">1 Large Top + Row Below</option>
-                  <option value="horizontal">Horizontal Strip</option>
-                  <option value="vertical">Vertical Stack</option>
-                  <option value="polaroid">Polaroid Scrapbook</option>
+                <label for="canvasPreset">Canvas Proportions</label>
+                <select id="canvasPreset">
+                  <option value="1600x800">Event Card (1600 × 800)</option>
+                  <option value="1920x500">Website Slider Banner (1920 × 500)</option>
+                  <option value="1200x1200">Square Post (1200 × 1200)</option>
                 </select>
               </div>
               <div>
-                <label for="aspectSelect" style="font-size:0.78rem;">Canvas Ratio</label>
-                <select id="aspectSelect">
-                  <option value="landscape">Landscape (16:10 Web/WA)</option>
-                  <option value="square">Square (1:1 Post)</option>
-                  <option value="portrait">Portrait (4:5 Flyer)</option>
+                <label for="layout">Layout</label>
+                <select id="layout">
+                  <option value="row">Single row (side by side)</option>
+                  <option value="hero-left">Large first photo left + others stacked</option>
+                  <option value="hero-right">Large first photo right + others stacked</option>
+                  <option value="grid">Two-row grid</option>
                 </select>
+                <div class="row" style="margin-top:6px;">
+                  <button type="button" class="btn-mini" id="smartW">Smart Widths</button>
+                  <button type="button" class="btn-mini" id="equalW">Equal Widths</button>
+                </div>
               </div>
               <div>
-                <label for="bannerSelect" style="font-size:0.78rem;">Institutional Banner</label>
-                <select id="bannerSelect">
-                  <option value="top">Top NSTI Header (Title + Date)</option>
-                  <option value="bottom">Bottom NSTI Footer Strip</option>
-                  <option value="both">Top Header + Bottom Footer</option>
-                  <option value="none">Clean Photos Only (No Banner)</option>
+                <label for="shape">Section / Divider Shape</label>
+                <select id="shape">
+                  <option value="slant">Slanted dividers  / / /</option>
+                  <option value="zigzag">Alternating slants  \ / \</option>
+                  <option value="wave">Curved S-wave dividers</option>
+                  <option value="arc">Curved bulge (alternating)</option>
+                  <option value="chevron">Arrow / chevron  &gt; &gt; &gt;</option>
+                  <option value="rounded">Rounded cards</option>
+                  <option value="oval">Oval frames</option>
+                  <option value="straight">Straight dividers</option>
                 </select>
+                <label for="strength" style="margin-top:6px; font-size:0.78rem;">Curve / Slant Strength</label>
+                <input id="strength" type="range" min="0" max="100" value="50" />
               </div>
               <div>
-                <label for="themeSelect" style="font-size:0.78rem;">Frame &amp; Banner Theme</label>
-                <select id="themeSelect">
-                  <option value="navy">NSTI Navy &amp; White</option>
-                  <option value="gold">Royal Navy &amp; Gold</option>
-                  <option value="dark">Dark Slate</option>
-                  <option value="cream">Warm Cream</option>
+                <label for="fit">Photo Fit &amp; Free Space</label>
+                <select id="fit">
+                  <option value="cover">Fill section — no empty space</option>
+                  <option value="blur">Whole photo + blurred free-space fill</option>
+                  <option value="contain">Whole photo + plain colour bars</option>
                 </select>
+                <label class="chk"><input id="trim" type="checkbox" checked /> Trim white/black borders</label>
               </div>
               <div>
-                <label for="gapSelect" style="font-size:0.78rem;">Photo Spacing</label>
-                <select id="gapSelect">
-                  <option value="10">Medium Border (10px)</option>
-                  <option value="4">Thin Border (4px)</option>
-                  <option value="18">Wide Border (18px)</option>
-                  <option value="0">Seamless (0px)</option>
+                <label for="gap">Divider / Gap Width (px)</label>
+                <input id="gap" type="number" min="0" max="40" value="6" />
+                <label for="margin" style="margin-top:6px; font-size:0.78rem;">Outer Margin (px)</label>
+                <input id="margin" type="number" min="0" max="60" value="0" />
+              </div>
+              <div>
+                <label for="position">Institutional Band Position</label>
+                <select id="position">
+                  <option value="bottom">Bottom band</option>
+                  <option value="top">Top band</option>
+                  <option value="none">No band</option>
                 </select>
+                <label class="chk"><input id="reserve" type="checkbox" checked /> Keep photos clear of band</label>
+              </div>
+              <div>
+                <label for="band">Band Style</label>
+                <select id="band">
+                  <option value="blue">NSTI Navy / Custom colour</option>
+                  <option value="dark">Dark band</option>
+                  <option value="light">Light band</option>
+                  <option value="none">Text only / no band</option>
+                </select>
+                <div class="row" style="margin-top:6px;">
+                  <div><span style="font-size:0.72rem; color:var(--muted);">Gap/Bg</span><br><input id="gapColor" type="color" value="#ffffff" /></div>
+                  <div><span style="font-size:0.72rem; color:var(--muted);">Band</span><br><input id="bandColor" type="color" value="#0f294a" /></div>
+                  <div><span style="font-size:0.72rem; color:var(--muted);">Text</span><br><input id="labelColor" type="color" value="#ffffff" /></div>
+                </div>
+              </div>
+              <div>
+                <label for="fontSize">Banner Font Size (px)</label>
+                <input id="fontSize" type="number" min="18" max="72" value="28" />
+                <div class="row" style="margin-top:8px;">
+                  <button type="button" class="btn-mini" id="resetStudioBtn">Reset Settings</button>
+                  <button type="button" class="btn-mini danger" id="clearPhotosBtn">Remove All</button>
+                </div>
               </div>
             </div>
-            <canvas id="collageCanvas" class="hidden"></canvas>
-            <img id="collagePreview" alt="Preview" />
-            <div class="row" style="margin-top:0.6rem; justify-content:space-between;">
-              <span id="sizeBadge" style="font-size:0.78rem; color:var(--muted);"></span>
-              <button type="button" id="clearPhotosBtn" class="btn btn-secondary">Clear Photos</button>
+
+            <div class="mode-pills" role="radiogroup">
+              <label><input type="radio" name="dragMode" value="move" checked /> ✋ Drag = Reposition photo inside section</label>
+              <label><input type="radio" name="dragMode" value="swap" /> ⇄ Drag = Swap photo to another section</label>
             </div>
+
+            <div class="preview-wrap">
+              <canvas id="collageCanvas" width="1600" height="800"></canvas>
+            </div>
+            <p class="note"><b>Resize sections:</b> drag the white handles on the dividers. <b>Zoom:</b> scroll wheel over any photo or drag its Zoom slider below. Handles appear only in preview, never in the published photo.</p>
+            <div id="photoList" class="photo-list"></div>
           </div>
         </div>
 
@@ -548,38 +589,28 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userLabel = document.getElementById("userLabel");
-    const adminPanel = document.getElementById("adminPanel");
-    const editorsManagerBox = document.getElementById("editorsManagerBox");
-    const newEditorEmailInput = document.getElementById("newEditorEmail");
-    const addEditorBtn = document.getElementById("addEditorBtn");
-    const editorChipList = document.getElementById("editorChipList");
+    const $ = (id) => document.getElementById(id);
+    const canvas = $("collageCanvas");
+    const ctx = canvas.getContext("2d");
 
-    const postForm = document.getElementById("postForm");
-    const formStatus = document.getElementById("formStatus");
-    const statusBar = document.getElementById("statusBar");
-    const updatesGrid = document.getElementById("updatesGrid");
-    const aiCaptionBtn = document.getElementById("aiCaptionBtn");
-    const monthFilter = document.getElementById("monthFilter");
-    const resetFilterBtn = document.getElementById("resetFilterBtn");
-    const toastBanner = document.getElementById("toastBanner");
-
-    const titleInput = document.getElementById("titleInput");
-    const eventDateInput = document.getElementById("eventDateInput");
-    const imageFilesInput = document.getElementById("imageFiles");
-    const collageStudio = document.getElementById("collageStudio");
-    const thumbStrip = document.getElementById("thumbStrip");
-    const layoutSelect = document.getElementById("layoutSelect");
-    const aspectSelect = document.getElementById("aspectSelect");
-    const bannerSelect = document.getElementById("bannerSelect");
-    const themeSelect = document.getElementById("themeSelect");
-    const gapSelect = document.getElementById("gapSelect");
-    const collageCanvas = document.getElementById("collageCanvas");
-    const collagePreview = document.getElementById("collagePreview");
-    const sizeBadge = document.getElementById("sizeBadge");
-    const clearPhotosBtn = document.getElementById("clearPhotosBtn");
+    const loginBtn = $("loginBtn");
+    const logoutBtn = $("logoutBtn");
+    const userLabel = $("userLabel");
+    const adminPanel = $("adminPanel");
+    const editorsManagerBox = $("editorsManagerBox");
+    const newEditorEmailInput = $("newEditorEmail");
+    const addEditorBtn = $("addEditorBtn");
+    const editorChipList = $("editorChipList");
+    const postForm = $("postForm");
+    const formStatus = $("formStatus");
+    const statusBar = $("statusBar");
+    const updatesGrid = $("updatesGrid");
+    const aiCaptionBtn = $("aiCaptionBtn");
+    const monthFilter = $("monthFilter");
+    const resetFilterBtn = $("resetFilterBtn");
+    const toastBanner = $("toastBanner");
+    const titleInput = $("titleInput");
+    const eventDateInput = $("eventDateInput");
 
     const todayLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
     eventDateInput.value = todayLocal;
@@ -588,9 +619,7 @@
     let isSuperAdmin = false;
     let isEditor = false;
     let colleagueEditors = [];
-    let loadedImages = [];
-    let generatedCollageUrl = "";
-    let individualPhotoUrls = [];
+
     let allUpdatesCache = [];
     let activeModalItem = null;
     let viewingPhotoIndex = 0;
@@ -612,15 +641,13 @@
       });
     }
 
-    // Load dynamic colleague editor emails from Firestore
+    /* ================= Colleague Editor Management ================= */
     async function loadEditorsList() {
       try {
         const snap = await getDoc(doc(db, "settings", "editors"));
-        if (snap.exists() && Array.isArray(snap.data().emails)) {
-          colleagueEditors = snap.data().emails.map((e) => e.toLowerCase().trim()).filter(Boolean);
-        } else {
-          colleagueEditors = [];
-        }
+        colleagueEditors = (snap.exists() && Array.isArray(snap.data().emails))
+          ? snap.data().emails.map((e) => e.toLowerCase().trim()).filter(Boolean)
+          : [];
       } catch (err) {
         colleagueEditors = [];
       }
@@ -708,20 +735,563 @@
     }
 
     loginBtn.addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, new GoogleAuthProvider());
-      } catch (err) {
-        alert("Sign-in error: " + err.message);
-      }
+      try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+      catch (err) { alert("Sign-in error: " + err.message); }
     });
-
     logoutBtn.addEventListener("click", () => signOut(auth));
+    onAuthStateChanged(auth, (user) => { currentUser = user; evaluateAccess(); });
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      evaluateAccess();
+    /* ================= Full Slider Collage Engine (From Your Attachment) ================= */
+    const MAX = 6;
+    const DEF = {
+      canvasPreset: "1600x800", layout: "row", shape: "slant", strength: 50,
+      fit: "cover", gap: 6, margin: 0, gapColor: "#ffffff", position: "bottom",
+      band: "blue", fontSize: 28, labelColor: "#ffffff", bandColor: "#0f294a"
+    };
+    let W = 1600, H = 800;
+    let photos = [], scene = null, heroFrac = 0.58, widthMode = "smart";
+    let drag = null, hover = null;
+
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const dragMode = () => document.querySelector("input[name=dragMode]:checked").value;
+
+    function updateCanvasDims() {
+      const [pw, ph] = ($("canvasPreset").value || "1600x800").split("x").map(Number);
+      W = pw || 1600;
+      H = ph || 800;
+      canvas.width = W;
+      canvas.height = H;
+    }
+
+    function loadImg(url) {
+      return new Promise((res, rej) => {
+        const im = new Image();
+        im.onload = () => res(im);
+        im.onerror = rej;
+        im.src = url;
+      });
+    }
+
+    function trimBox(img) {
+      const iw = img.naturalWidth, ih = img.naturalHeight, full = { sx: 0, sy: 0, sw: iw, sh: ih };
+      try {
+        const s = Math.min(1, 300 / Math.max(iw, ih)), w = Math.max(1, Math.round(iw * s)), h = Math.max(1, Math.round(ih * s));
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        const g = c.getContext("2d", { willReadFrequently: true }); g.drawImage(img, 0, 0, w, h);
+        const d = g.getImageData(0, 0, w, h).data;
+        const bg = (i) => d[i + 3] < 20 || (d[i] > 232 && d[i + 1] > 232 && d[i + 2] > 232) || (d[i] < 20 && d[i + 1] < 20 && d[i + 2] < 20);
+        const rowBg = (y, x0, x1) => { let n = 0; for (let x = x0; x <= x1; x++) if (!bg((y * w + x) * 4)) n++; return n <= (x1 - x0 + 1) * 0.03; };
+        const colBg = (x, y0, y1) => { let n = 0; for (let y = y0; y <= y1; y++) if (!bg((y * w + x) * 4)) n++; return n <= (y1 - y0 + 1) * 0.03; };
+        let t = 0, b = h - 1, l = 0, r = w - 1;
+        while (t < b && rowBg(t, 0, w - 1)) t++;
+        while (b > t && rowBg(b, 0, w - 1)) b--;
+        while (l < r && colBg(l, t, b)) l++;
+        while (r > l && colBg(r, t, b)) r--;
+        if ((r - l + 1) < w * 0.3 || (b - t + 1) < h * 0.3) return full;
+        if (t === 0 && l === 0 && b === h - 1 && r === w - 1) return full;
+        const pad = 1, sx = clamp((l + pad) / s, 0, iw), sy = clamp((t + pad) / s, 0, ih);
+        return { sx, sy, sw: clamp((r - l + 1 - 2 * pad) / s, 1, iw - sx), sh: clamp((b - t + 1 - 2 * pad) / s, 1, ih - sy) };
+      } catch (e) { return full; }
+    }
+
+    function makeBlur(p) {
+      const b = p.box, k = 24 / Math.max(b.sw, b.sh);
+      const t = document.createElement("canvas"); t.width = Math.max(1, Math.round(b.sw * k)); t.height = Math.max(1, Math.round(b.sh * k));
+      const tg = t.getContext("2d"); tg.imageSmoothingQuality = "high"; tg.drawImage(p.img, b.sx, b.sy, b.sw, b.sh, 0, 0, t.width, t.height);
+      const m = document.createElement("canvas"); m.width = t.width * 8; m.height = t.height * 8;
+      const mg = m.getContext("2d"); mg.imageSmoothingEnabled = true; mg.imageSmoothingQuality = "high"; mg.drawImage(t, 0, 0, m.width, m.height);
+      return m;
+    }
+
+    const photoAspect = (p) => p.box.sw / p.box.sh;
+    function applyBox(p) {
+      p.box = $("trim").checked ? p.tbox : p.full;
+      p.blur = makeBlur(p);
+      if (widthMode === "smart") p.w = photoAspect(p);
+    }
+
+    async function addFiles(files) {
+      const list = [...files].filter((f) => /^image\//.test(f.type));
+      if (!list.length) return;
+      const room = MAX - photos.length;
+      if (room <= 0) {
+        showToast("Maximum 6 photos allowed. Remove one before adding more.");
+        return;
+      }
+      for (const f of list.slice(0, room)) {
+        const url = URL.createObjectURL(f);
+        try {
+          const img = await loadImg(url);
+          const p = { img, url, name: f.name, full: { sx: 0, sy: 0, sw: img.naturalWidth, sh: img.naturalHeight }, fx: 0.5, fy: 0.5, zoom: 1, w: 1 };
+          p.tbox = trimBox(img);
+          applyBox(p);
+          if (widthMode !== "smart") p.w = widthMode === "equal" ? 1 : photoAspect(p);
+          photos.push(p);
+        } catch (e) { URL.revokeObjectURL(url); }
+      }
+      $("files").value = "";
+      $("collageStudio").classList.toggle("hidden", photos.length === 0);
+      draw();
+      renderThumbs();
+    }
+
+    function labelInfo() {
+      const pos = $("position").value;
+      if (pos === "none") return null;
+      const evTitle = titleInput.value.trim();
+      const evDate = formatDisplayDate(eventDateInput.value);
+      const text = evTitle
+        ? `${evTitle}  |  ${INSTITUTE_BANNER} (${evDate})`
+        : `${INSTITUTE_BANNER}  •  ${evDate}`;
+      const fs = clamp(Number($("fontSize").value) || 28, 18, 72);
+      const bandH = Math.round(clamp(fs * 2.1, 64, 108));
+      return { pos, text, fs, bandH, y: pos === "top" ? 0 : H - bandH };
+    }
+
+    const shapeV = () => $("shape").value;
+    const isCard = () => ["rounded", "oval"].includes(shapeV());
+
+    function offset(t, k, a) {
+      const alt = k % 2 ? -1 : 1;
+      switch (shapeV()) {
+        case "slant": return a * (0.5 - t);
+        case "zigzag": return alt * a * (0.5 - t);
+        case "wave": return a * 0.5 * Math.sin(2 * Math.PI * t);
+        case "arc": return alt * a * 0.6 * ((1 - 4 * (t - 0.5) * (t - 0.5)) - 0.5);
+        case "chevron": return a * 0.6 * (0.5 - 2 * Math.abs(t - 0.5));
+        default: return 0;
+      }
+    }
+
+    function boundary(X, k, y0, y1, a) {
+      if (isCard() || a <= 0) return () => X;
+      return (y) => X + offset((y - y0) / (y1 - y0), k, a);
+    }
+
+    const straight = (X) => () => X;
+
+    function rowOf(idx, x0, x1, y0, y1, S) {
+      const sum = idx.reduce((s, i) => s + photos[i].w, 0), X = [x0];
+      idx.forEach((i) => X.push(X[X.length - 1] + (x1 - x0) * photos[i].w / sum));
+      X[X.length - 1] = x1;
+      let minW = Infinity;
+      for (let j = 0; j < idx.length; j++) minW = Math.min(minW, X[j + 1] - X[j]);
+      const a = Math.min($("strength").value * 1.6, minW * 0.45);
+      const F = X.map((x, j) => (j === 0 || j === X.length - 1 ? straight(x) : boundary(x, j + S.k, y0, y1, a)));
+      S.k += idx.length;
+      idx.forEach((i, j) => S.cells.push({ i, y0, y1, L: F[j], R: F[j + 1] }));
+      for (let j = 1; j < idx.length; j++) {
+        S.strokes.push({ fn: F[j], y0, y1 });
+        S.dividers.push({ type: "w", a: idx[j - 1], b: idx[j], fn: F[j], y0, y1, xPrev: X[j - 1], xNext: X[j + 1], min: (x1 - x0) * 0.06 });
+      }
+    }
+
+    function buildScene() {
+      const n = photos.length, L = labelInfo(), band = $("band").value, m = clamp(Number($("margin").value) || 0, 0, 60);
+      let A = { x: 0, y: 0, w: W, h: H };
+      if (L && $("reserve").checked && band !== "none") {
+        A = L.pos === "top" ? { x: 0, y: L.bandH, w: W, h: H - L.bandH } : { x: 0, y: 0, w: W, h: H - L.bandH };
+      }
+      A = { x: A.x + m, y: A.y + m, w: A.w - 2 * m, h: A.h - 2 * m };
+      const S = { cells: [], strokes: [], lines: [], dividers: [], k: 0, L, A };
+      const all = photos.map((_, i) => i), layout = $("layout").value, x0 = A.x, x1 = A.x + A.w, y0 = A.y, y1 = A.y + A.h;
+      if (n === 0) return S;
+      if (n === 1 || layout === "row") {
+        rowOf(all, x0, x1, y0, y1, S);
+      } else if (layout === "grid") {
+        if (n <= 3) rowOf(all, x0, x1, y0, y1, S);
+        else {
+          const c = Math.ceil(n / 2), ym = y0 + A.h / 2;
+          rowOf(all.slice(0, c), x0, x1, y0, ym, S);
+          rowOf(all.slice(c), x0, x1, ym, y1, S);
+          S.lines.push({ x0, x1, y: ym });
+        }
+      } else {
+        const left = layout === "hero-left", hw = A.w * heroFrac, Xb = left ? x0 + hw : x1 - hw;
+        const a = Math.min($("strength").value * 1.6, Math.min(hw, A.w - hw) * 0.45);
+        const B = boundary(Xb, 0, y0, y1, a), k = n - 1;
+        S.cells.push(left ? { i: 0, y0, y1, L: straight(x0), R: B } : { i: 0, y0, y1, L: B, R: straight(x1) });
+        for (let j = 0; j < k; j++) {
+          const ya = y0 + j * A.h / k, yb = y0 + (j + 1) * A.h / k;
+          S.cells.push(left ? { i: j + 1, y0: ya, y1: yb, L: B, R: straight(x1) } : { i: j + 1, y0: ya, y1: yb, L: straight(x0), R: B });
+          if (j > 0) S.lines.push(left ? { fromFn: B, x1, y: ya } : { x0, toFn: B, y: ya });
+        }
+        S.strokes.push({ fn: B, y0, y1 });
+        S.dividers.push({ type: "hero", left, fn: B, y0, y1, x0, x1 });
+      }
+      S.cells.forEach((c) => {
+        let lo = Infinity, hi = -Infinity;
+        for (let s = 0; s <= 40; s++) {
+          const y = c.y0 + (c.y1 - c.y0) * s / 40;
+          lo = Math.min(lo, c.L(y));
+          hi = Math.max(hi, c.R(y));
+        }
+        c.box = { x: lo, y: c.y0, w: hi - lo, h: c.y1 - c.y0 };
+        c.path = cellPath(c);
+      });
+      return S;
+    }
+
+    function cellPath(c) {
+      const p = new Path2D(), g = clamp(Number($("gap").value) || 0, 0, 40);
+      if (isCard()) {
+        const ins = Math.max(g / 2, 3), x = c.L(0) + ins, y = c.y0 + ins, w = c.R(0) - c.L(0) - 2 * ins, h = c.y1 - c.y0 - 2 * ins;
+        if (shapeV() === "oval") {
+          p.ellipse(x + w / 2, y + h / 2, Math.max(1, w / 2), Math.max(1, h / 2), 0, 0, Math.PI * 2);
+          return p;
+        }
+        const r = Math.min($("strength").value * 0.6, w / 2, h / 2);
+        p.moveTo(x + r, y);
+        p.arcTo(x + w, y, x + w, y + h, r);
+        p.arcTo(x + w, y + h, x, y + h, r);
+        p.arcTo(x, y + h, x, y, r);
+        p.arcTo(x, y, x + w, y, r);
+        p.closePath();
+        return p;
+      }
+      const N = 48;
+      p.moveTo(c.L(c.y0), c.y0);
+      for (let s = 1; s <= N; s++) { const y = c.y0 + (c.y1 - c.y0) * s / N; p.lineTo(c.L(y), y); }
+      for (let s = N; s >= 0; s--) { const y = c.y0 + (c.y1 - c.y0) * s / N; p.lineTo(c.R(y), y); }
+      p.closePath();
+      return p;
+    }
+
+    function drawPhoto(p, c) {
+      const r = c.box, b = p.box, fit = $("fit").value;
+      ctx.save();
+      ctx.clip(c.path);
+      const coverS = Math.max(r.w / b.sw, r.h / b.sh), containS = Math.min(r.w / b.sw, r.h / b.sh);
+      if (fit === "blur") {
+        const bw = b.sw * coverS * 1.1, bh = b.sh * coverS * 1.1;
+        ctx.drawImage(p.blur, r.x + (r.w - bw) / 2, r.y + (r.h - bh) / 2, bw, bh);
+        ctx.fillStyle = "rgba(0,0,0,.22)";
+        ctx.fillRect(r.x, r.y, r.w, r.h);
+      } else if (fit === "contain") {
+        ctx.fillStyle = $("gapColor").value;
+        ctx.fillRect(r.x, r.y, r.w, r.h);
+      }
+      const sc = (fit === "cover" ? coverS : containS) * p.zoom, dw = b.sw * sc, dh = b.sh * sc;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(p.img, b.sx, b.sy, b.sw, b.sh, r.x + (r.w - dw) * p.fx, r.y + (r.h - dh) * p.fy, dw, dh);
+      ctx.restore();
+      c.dw = dw;
+      c.dh = dh;
+    }
+
+    function fnPath(fn, y0, y1) {
+      const p = new Path2D(), N = 48;
+      p.moveTo(fn(y0), y0);
+      for (let s = 1; s <= N; s++) { const y = y0 + (y1 - y0) * s / N; p.lineTo(fn(y), y); }
+      return p;
+    }
+
+    function draw(forExport) {
+      updateCanvasDims();
+      ctx.clearRect(0, 0, W, H);
+      if (!photos.length) {
+        scene = null;
+        return;
+      }
+      const bgc = $("gapColor").value;
+      ctx.fillStyle = bgc;
+      ctx.fillRect(0, 0, W, H);
+
+      // If blur mode is active on rounded/oval cards, fill outer free space with blurred backdrop too
+      if ($("fit").value === "blur" && isCard() && photos[0]?.blur) {
+        ctx.save();
+        ctx.drawImage(photos[0].blur, 0, 0, W, H);
+        ctx.fillStyle = "rgba(15, 23, 42, 0.25)";
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+      }
+
+      scene = buildScene();
+      scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+
+      const g = clamp(Number($("gap").value) || 0, 0, 40);
+      if (g > 0 && !isCard()) {
+        ctx.save();
+        ctx.strokeStyle = bgc;
+        ctx.lineWidth = g;
+        ctx.lineCap = "butt";
+        ctx.lineJoin = "round";
+        scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
+        scene.lines.forEach((l) => {
+          ctx.beginPath();
+          ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
+          ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+
+      const L = scene.L, band = $("band").value;
+      if (L) {
+        if (band !== "none") {
+          ctx.fillStyle = band === "dark"
+            ? ($("reserve").checked ? "#262b33" : "rgba(0,0,0,0.78)")
+            : band === "light" ? "rgba(255,255,255,0.92)" : $("bandColor").value;
+          ctx.fillRect(0, L.y, W, L.bandH);
+        }
+        ctx.save();
+        ctx.font = "bold " + L.fs + "px Arial, Helvetica, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = $("labelColor").value;
+        if (band === "light" && $("labelColor").value.toLowerCase() === "#ffffff") ctx.fillStyle = "#172033";
+        if (band === "none") { ctx.shadowColor = "rgba(0,0,0,.85)"; ctx.shadowBlur = 6; }
+        let t = L.text;
+        while (ctx.measureText(t).width > W - 60 && t.length > 4) t = t.slice(0, -2) + "…";
+        ctx.fillText(t, W / 2, L.y + L.bandH / 2);
+        ctx.restore();
+      }
+
+      if (!forExport) drawOverlays();
+    }
+
+    function drawOverlays() {
+      scene.dividers.forEach((d, di) => {
+        const ym = (d.y0 + d.y1) / 2, x = d.fn(ym), hot = (hover && hover.div === di) || (drag && drag.div === di);
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,.45)";
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = hot ? "#155eef" : "#ffffff";
+        const w = 18, h = Math.min(64, (d.y1 - d.y0) * 0.4), r = 9;
+        ctx.beginPath();
+        ctx.moveTo(x - w / 2 + r, ym - h / 2);
+        ctx.arcTo(x + w / 2, ym - h / 2, x + w / 2, ym + h / 2, r);
+        ctx.arcTo(x + w / 2, ym + h / 2, x - w / 2, ym + h / 2, r);
+        ctx.arcTo(x - w / 2, ym + h / 2, x - w / 2, ym - h / 2, r);
+        ctx.arcTo(x - w / 2, ym - h / 2, x + w / 2, ym - h / 2, r);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = hot ? "#fff" : "#155eef";
+        ctx.lineWidth = 2;
+        [-5, 0, 5].forEach((o) => {
+          ctx.beginPath();
+          ctx.moveTo(x - 4, ym + o);
+          ctx.lineTo(x + 4, ym + o);
+          ctx.stroke();
+        });
+        ctx.restore();
+      });
+
+      if (drag && drag.type === "swap") {
+        const src = scene.cells.find((c) => c.i === drag.i);
+        if (src) { ctx.save(); ctx.fillStyle = "rgba(255,255,255,.45)"; ctx.fill(src.path); ctx.restore(); }
+        if (drag.target != null && drag.target !== drag.i) {
+          const t = scene.cells.find((c) => c.i === drag.target);
+          if (t) { ctx.save(); ctx.strokeStyle = "#155eef"; ctx.lineWidth = 10; ctx.stroke(t.path); ctx.restore(); }
+        }
+        if (drag.q) {
+          ctx.save();
+          ctx.fillStyle = "rgba(21,94,239,.92)";
+          ctx.font = "bold 28px Arial";
+          ctx.textAlign = "center";
+          ctx.fillText("Photo " + (drag.i + 1) + " ⇄", drag.q.x, drag.q.y - 18);
+          ctx.restore();
+        }
+      }
+    }
+
+    function renderThumbs() {
+      const box = $("photoList");
+      box.innerHTML = "";
+      photos.forEach((p, i) => {
+        const d = document.createElement("div");
+        d.className = "thumb-card";
+        d.innerHTML =
+          '<img alt="Photo ' + (i + 1) + '"><div class="name"></div><div class="row">' +
+          '<button type="button" class="btn-mini" data-a="left" title="Move earlier"' + (i === 0 ? " disabled" : "") + ">◀</button>" +
+          '<button type="button" class="btn-mini" data-a="right" title="Move later"' + (i === photos.length - 1 ? " disabled" : "") + ">▶</button>" +
+          '<button type="button" class="btn-mini" data-a="centre" title="Reset position and zoom">Centre</button>' +
+          '<button type="button" class="btn-mini danger" data-a="remove" title="Remove">✕</button></div>' +
+          '<div class="zl">Zoom</div><input type="range" min="100" max="300" value="' + Math.round(p.zoom * 100) + '" data-zoom="' + i + '">';
+        d.querySelector("img").src = p.url;
+        const nm = d.querySelector(".name");
+        nm.textContent = (i + 1) + ". " + p.name;
+        nm.title = p.name;
+        d.querySelectorAll("button").forEach((btn) => btn.addEventListener("click", () => {
+          const a = btn.dataset.a;
+          if (a === "left" && i > 0) swap(i, i - 1);
+          else if (a === "right" && i < photos.length - 1) swap(i, i + 1);
+          else if (a === "centre") { p.fx = 0.5; p.fy = 0.5; p.zoom = 1; }
+          else if (a === "remove") {
+            URL.revokeObjectURL(p.url);
+            photos.splice(i, 1);
+            $("collageStudio").classList.toggle("hidden", photos.length === 0);
+          }
+          draw();
+          renderThumbs();
+        }));
+        d.querySelector("input").addEventListener("input", (e) => {
+          p.zoom = Number(e.target.value) / 100;
+          draw();
+        });
+        box.append(d);
+      });
+    }
+
+    function swap(i, j) {
+      const wi = photos[i].w, wj = photos[j].w;
+      [photos[i], photos[j]] = [photos[j], photos[i]];
+      if (widthMode !== "smart") { photos[i].w = wi; photos[j].w = wj; }
+    }
+
+    function pt(e) {
+      const b = canvas.getBoundingClientRect();
+      return { x: (e.clientX - b.left) * W / b.width, y: (e.clientY - b.top) * H / b.height };
+    }
+    function hitCell(q) {
+      if (!scene) return null;
+      return scene.cells.find((c) => ctx.isPointInPath(c.path, q.x, q.y)) || null;
+    }
+    function hitDivider(q) {
+      if (!scene) return -1;
+      const tol = 24 * W / canvas.getBoundingClientRect().width / 2.2;
+      return scene.dividers.findIndex((d) => q.y >= d.y0 && q.y <= d.y1 && Math.abs(q.x - d.fn(q.y)) < Math.max(14, tol));
+    }
+
+    canvas.addEventListener("pointerdown", (e) => {
+      const q = pt(e), di = hitDivider(q);
+      if (di >= 0) { drag = { type: "div", div: di, d: scene.dividers[di] }; canvas.setPointerCapture(e.pointerId); return; }
+      const c = hitCell(q);
+      if (!c) return;
+      drag = dragMode() === "swap" ? { type: "swap", i: c.i, target: c.i, q } : { type: "pan", i: c.i, x: q.x, y: q.y };
+      canvas.setPointerCapture(e.pointerId);
+      draw();
     });
 
+    canvas.addEventListener("pointermove", (e) => {
+      const q = pt(e);
+      if (!drag) {
+        const di = hitDivider(q), c = di < 0 ? hitCell(q) : null, nh = { div: di };
+        canvas.style.cursor = di >= 0 ? "col-resize" : c ? (dragMode() === "swap" ? "move" : "grab") : "default";
+        if ((hover && hover.div) !== di) { hover = nh; draw(); }
+        return;
+      }
+      if (drag.type === "div") {
+        const d = drag.d;
+        if (d.type === "w") {
+          const pa = photos[d.a], pb = photos[d.b], tot = pa.w + pb.w, x = clamp(q.x, d.xPrev + d.min, d.xNext - d.min);
+          pa.w = tot * (x - d.xPrev) / (d.xNext - d.xPrev);
+          pb.w = tot - pa.w;
+          widthMode = "custom";
+        } else {
+          const f = (q.x - d.x0) / (d.x1 - d.x0);
+          heroFrac = clamp(d.left ? f : 1 - f, 0.3, 0.8);
+        }
+        draw();
+        const nd = scene.dividers[drag.div];
+        if (nd) drag.d = Object.assign(nd, {});
+        return;
+      }
+      if (drag.type === "swap") {
+        const c = hitCell(q);
+        drag.target = c ? c.i : null;
+        drag.q = q;
+        draw();
+        return;
+      }
+      const c = scene.cells.find((c) => c.i === drag.i), p = photos[drag.i];
+      if (!c) return;
+      const ex = c.box.w - c.dw, ey = c.box.h - c.dh;
+      if (Math.abs(ex) > 1) p.fx = clamp(p.fx + (q.x - drag.x) / ex, 0, 1);
+      if (Math.abs(ey) > 1) p.fy = clamp(p.fy + (q.y - drag.y) / ey, 0, 1);
+      drag.x = q.x;
+      drag.y = q.y;
+      draw();
+    });
+
+    function endDrag() {
+      if (!drag) return;
+      if (drag.type === "swap" && drag.target != null && drag.target !== drag.i) {
+        swap(drag.i, drag.target);
+        drag = null;
+        draw();
+        renderThumbs();
+        return;
+      }
+      drag = null;
+      draw();
+    }
+    canvas.addEventListener("pointerup", endDrag);
+    canvas.addEventListener("pointercancel", endDrag);
+    canvas.addEventListener("pointerleave", () => { if (!drag && hover && hover.div >= 0) { hover = null; draw(); } });
+    canvas.addEventListener("wheel", (e) => {
+      const c = hitCell(pt(e));
+      if (!c) return;
+      e.preventDefault();
+      const p = photos[c.i];
+      p.zoom = clamp(p.zoom * (e.deltaY < 0 ? 1.06 : 1 / 1.06), 1, 3);
+      const s = document.querySelector('[data-zoom="' + c.i + '"]');
+      if (s) s.value = Math.round(p.zoom * 100);
+      draw();
+    }, { passive: false });
+
+    $("files").addEventListener("change", (e) => addFiles(e.target.files));
+    const dz = $("dropZone");
+    dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("dragover"); });
+    dz.addEventListener("dragleave", () => dz.classList.remove("dragover"));
+    dz.addEventListener("drop", (e) => { e.preventDefault(); dz.classList.remove("dragover"); addFiles(e.dataTransfer.files); });
+
+    ["canvasPreset", "layout", "shape", "strength", "fit", "gap", "margin", "gapColor", "position", "band", "fontSize", "labelColor", "bandColor", "reserve", "titleInput", "eventDateInput"].forEach((id) => {
+      $(id).addEventListener("input", () => { if (photos.length) draw(); });
+    });
+    $("trim").addEventListener("change", () => { photos.forEach(applyBox); draw(); renderThumbs(); });
+    $("smartW").addEventListener("click", () => { widthMode = "smart"; photos.forEach((p) => (p.w = photoAspect(p))); heroFrac = 0.58; draw(); });
+    $("equalW").addEventListener("click", () => { widthMode = "equal"; photos.forEach((p) => (p.w = 1)); heroFrac = 0.58; draw(); });
+
+    $("resetStudioBtn").addEventListener("click", () => {
+      Object.entries(DEF).forEach(([k, v]) => { $(k).value = v; });
+      $("trim").checked = true;
+      $("reserve").checked = true;
+      document.querySelector("input[name=dragMode][value=move]").checked = true;
+      widthMode = "smart";
+      heroFrac = 0.58;
+      photos.forEach((p) => { p.fx = 0.5; p.fy = 0.5; p.zoom = 1; applyBox(p); });
+      draw();
+      renderThumbs();
+    });
+
+    $("clearPhotosBtn").addEventListener("click", () => {
+      photos.forEach((p) => URL.revokeObjectURL(p.url));
+      photos = [];
+      $("collageStudio").classList.add("hidden");
+      draw();
+      renderThumbs();
+    });
+
+    /* ================= Export & Firestore Compression ================= */
+    function compressIndividualPhoto(p, maxDim = 900, quality = 0.72) {
+      const b = p.box;
+      const c = document.createElement("canvas");
+      let w = b.sw, h = b.sh;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+        else { w = Math.round((w * maxDim) / h); h = maxDim; }
+      }
+      c.width = w;
+      c.height = h;
+      c.getContext("2d").drawImage(p.img, b.sx, b.sy, b.sw, b.sh, 0, 0, w, h);
+      return c.toDataURL("image/jpeg", quality);
+    }
+
+    function exportCleanCollageDataUrl() {
+      if (!photos.length) return "";
+      draw(true);
+      let quality = 0.84;
+      let dataUrl = canvas.toDataURL("image/jpeg", quality);
+      while (dataUrl.length > 260000 && quality > 0.45) {
+        quality -= 0.1;
+        dataUrl = canvas.toDataURL("image/jpeg", quality);
+      }
+      draw(false);
+      return dataUrl;
+    }
+
+    /* ================= WhatsApp File Share Helper ================= */
     async function urlToJpegFile(src, filename) {
       if (src.startsWith("data:")) {
         const [meta, b64] = src.split(",");
@@ -763,11 +1333,7 @@
             photoSources.slice(0, 2).map((src, i) => urlToJpegFile(src, `NSTI_Calicut_${i + 1}.jpg`))
           );
           if (navigator.canShare({ files })) {
-            await navigator.share({
-              title: item.title,
-              text: caption,
-              files
-            });
+            await navigator.share({ title: item.title, text: caption, files });
             return;
           }
         }
@@ -788,239 +1354,10 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(caption)}`, "_blank", "noopener");
     }
 
-    function compressIndividualPhoto(img, maxDim = 900, quality = 0.72) {
-      const canvas = document.createElement("canvas");
-      let w = img.width;
-      let h = img.height;
-      if (w > maxDim || h > maxDim) {
-        if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-        else { w = Math.round((w * maxDim) / h); h = maxDim; }
-      }
-      canvas.width = w;
-      canvas.height = h;
-      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-      return canvas.toDataURL("image/jpeg", quality);
-    }
-
-    imageFilesInput.addEventListener("change", async (e) => {
-      const files = Array.from(e.target.files || []).slice(0, 6);
-      if (!files.length) return;
-      loadedImages = await Promise.all(files.map(loadFileAsImage));
-      renderThumbs();
-      renderCollage();
-    });
-
-    [layoutSelect, aspectSelect, bannerSelect, themeSelect, gapSelect, titleInput, eventDateInput].forEach((el) => {
-      el.addEventListener("input", () => {
-        if (loadedImages.length) renderCollage();
-      });
-    });
-
-    clearPhotosBtn.addEventListener("click", () => {
-      loadedImages = [];
-      generatedCollageUrl = "";
-      individualPhotoUrls = [];
-      imageFilesInput.value = "";
-      collageStudio.classList.add("hidden");
-    });
-
-    function loadFileAsImage(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const img = new Image();
-          img.onload = () => resolve(img);
-          img.onerror = reject;
-          img.src = reader.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function renderThumbs() {
-      thumbStrip.innerHTML = "";
-      if (!loadedImages.length) {
-        collageStudio.classList.add("hidden");
-        generatedCollageUrl = "";
-        individualPhotoUrls = [];
-        return;
-      }
-      collageStudio.classList.remove("hidden");
-      loadedImages.forEach((img, idx) => {
-        const div = document.createElement("div");
-        div.className = "thumb-item";
-        div.innerHTML = `<img src="${img.src}" alt="Photo ${idx + 1}" /><button type="button" class="thumb-remove" title="Remove">×</button>`;
-        div.querySelector("button").addEventListener("click", () => {
-          loadedImages.splice(idx, 1);
-          renderThumbs();
-          if (loadedImages.length) renderCollage();
-        });
-        thumbStrip.appendChild(div);
-      });
-    }
-
-    function drawCoverImage(ctx, img, x, y, w, h) {
-      const imgRatio = img.width / img.height;
-      const boxRatio = w / h;
-      let sx = 0, sy = 0, sw = img.width, sh = img.height;
-      if (imgRatio > boxRatio) {
-        sw = img.height * boxRatio;
-        sx = (img.width - sw) / 2;
-      } else {
-        sh = img.width / boxRatio;
-        sy = (img.height - sh) / 2;
-      }
-      ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
-    }
-
-    function renderCollage() {
-      const count = loadedImages.length;
-      if (!count) return;
-
-      const aspect = aspectSelect.value;
-      const W = aspect === "portrait" ? 960 : aspect === "square" ? 1080 : 1200;
-      const baseH = aspect === "portrait" ? 1120 : aspect === "square" ? 1000 : 750;
-
-      const bannerMode = bannerSelect.value;
-      const topH = (bannerMode === "top" || bannerMode === "both") ? 90 : 0;
-      const botH = (bannerMode === "bottom" || bannerMode === "both") ? 56 : 0;
-      const H = baseH + topH + botH;
-      const gap = parseInt(gapSelect.value, 10);
-      const layout = layoutSelect.value;
-
-      const themes = {
-        navy: { bg: "#ffffff", bar: "#0f294a", title: "#ffffff", sub: "#93c5fd" },
-        gold: { bg: "#fefce8", bar: "#0f294a", title: "#fde047", sub: "#ffffff" },
-        dark: { bg: "#0f172a", bar: "#1e293b", title: "#f8fafc", sub: "#38bdf8" },
-        cream: { bg: "#fdf8f6", bar: "#7c2d12", title: "#ffffff", sub: "#fed7aa" }
-      };
-      const theme = themes[themeSelect.value] || themes.navy;
-
-      collageCanvas.width = W;
-      collageCanvas.height = H;
-      const ctx = collageCanvas.getContext("2d");
-
-      ctx.fillStyle = theme.bg;
-      ctx.fillRect(0, 0, W, H);
-
-      const titleText = titleInput.value.trim() || "CAMPUS UPDATE";
-      const formattedDate = formatDisplayDate(eventDateInput.value);
-
-      if (topH > 0) {
-        ctx.fillStyle = theme.bar;
-        ctx.fillRect(0, 0, W, topH);
-        ctx.fillStyle = theme.title;
-        ctx.font = "bold 26px Segoe UI, sans-serif";
-        ctx.fillText(titleText.slice(0, 56), 24, 38);
-        ctx.fillStyle = theme.sub;
-        ctx.font = "600 15px Segoe UI, sans-serif";
-        ctx.fillText(`${INSTITUTE_BANNER}  •  ${formattedDate}`, 24, 68, W - 48);
-      }
-
-      if (botH > 0) {
-        ctx.fillStyle = theme.bar;
-        ctx.fillRect(0, H - botH, W, botH);
-        ctx.fillStyle = theme.title;
-        ctx.font = "600 15px Segoe UI, sans-serif";
-        const footerLabel = bannerMode === "bottom"
-          ? `${titleText.slice(0, 30)} | ${INSTITUTE_BANNER} (${formattedDate})`
-          : `${INSTITUTE_BANNER}  •  ${formattedDate}`;
-        ctx.fillText(footerLabel, 24, H - 22, W - 48);
-      }
-
-      const areaX = gap;
-      const areaY = topH + gap;
-      const areaW = W - gap * 2;
-      const areaH = H - topH - botH - gap * 2;
-
-      if (layout === "polaroid") {
-        const cols = count <= 2 ? count : 3;
-        const rows = Math.ceil(count / cols);
-        const cellW = areaW / cols;
-        const cellH = areaH / rows;
-        loadedImages.forEach((img, i) => {
-          const r = Math.floor(i / cols);
-          const c = i % cols;
-          const cx = areaX + c * cellW + cellW / 2;
-          const cy = areaY + r * cellH + cellH / 2;
-          const pw = cellW * 0.84;
-          const ph = cellH * 0.84;
-          const angle = ((i % 2 === 0 ? -1 : 1) * (3 + (i % 3))) * (Math.PI / 180);
-          ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate(angle);
-          ctx.fillStyle = "#ffffff";
-          ctx.shadowColor = "rgba(0,0,0,0.28)";
-          ctx.shadowBlur = 12;
-          ctx.fillRect(-pw / 2, -ph / 2, pw, ph);
-          ctx.shadowBlur = 0;
-          drawCoverImage(ctx, img, -pw / 2 + 10, -ph / 2 + 10, pw - 20, ph - 34);
-          ctx.restore();
-        });
-      } else {
-        const slots = [];
-        if (count === 1) {
-          slots.push([areaX, areaY, areaW, areaH]);
-        } else if (layout === "horizontal") {
-          const cellW = (areaW - gap * (count - 1)) / count;
-          for (let i = 0; i < count; i++) slots.push([areaX + i * (cellW + gap), areaY, cellW, areaH]);
-        } else if (layout === "vertical") {
-          const cellH = (areaH - gap * (count - 1)) / count;
-          for (let i = 0; i < count; i++) slots.push([areaX, areaY + i * (cellH + gap), areaW, cellH]);
-        } else if (layout === "featured" && count >= 2) {
-          const leftW = areaW * 0.58 - gap / 2;
-          const rightW = areaW - leftW - gap;
-          slots.push([areaX, areaY, leftW, areaH]);
-          const rightCount = count - 1;
-          const cellH = (areaH - gap * (rightCount - 1)) / rightCount;
-          for (let i = 0; i < rightCount; i++) slots.push([areaX + leftW + gap, areaY + i * (cellH + gap), rightW, cellH]);
-        } else if (layout === "topHero" && count >= 2) {
-          const topHeroH = areaH * 0.58 - gap / 2;
-          const botRowH = areaH - topHeroH - gap;
-          slots.push([areaX, areaY, areaW, topHeroH]);
-          const botCount = count - 1;
-          const cellW = (areaW - gap * (botCount - 1)) / botCount;
-          for (let i = 0; i < botCount; i++) slots.push([areaX + i * (cellW + gap), areaY + topHeroH + gap, cellW, botRowH]);
-        } else {
-          const cols = count === 2 ? 2 : count <= 4 ? 2 : 3;
-          const rows = Math.ceil(count / cols);
-          const cellH = (areaH - gap * (rows - 1)) / rows;
-          let idx = 0;
-          for (let r = 0; r < rows; r++) {
-            const itemsInRow = Math.min(cols, count - idx);
-            const cellW = (areaW - gap * (itemsInRow - 1)) / itemsInRow;
-            for (let c = 0; c < itemsInRow; c++) {
-              slots.push([areaX + c * (cellW + gap), areaY + r * (cellH + gap), cellW, cellH]);
-              idx++;
-            }
-          }
-        }
-        slots.forEach(([x, y, w, h], i) => {
-          if (loadedImages[i]) drawCoverImage(ctx, loadedImages[i], x, y, w, h);
-        });
-      }
-
-      const maxDim = count > 3 ? 760 : 920;
-      const indivQuality = count > 3 ? 0.64 : 0.74;
-      individualPhotoUrls = loadedImages.map((img) => compressIndividualPhoto(img, maxDim, indivQuality));
-
-      let collageQuality = 0.80;
-      generatedCollageUrl = collageCanvas.toDataURL("image/jpeg", collageQuality);
-      while (generatedCollageUrl.length > 260000 && collageQuality > 0.45) {
-        collageQuality -= 0.1;
-        generatedCollageUrl = collageCanvas.toDataURL("image/jpeg", collageQuality);
-      }
-
-      collagePreview.src = generatedCollageUrl;
-      const totalBytes = generatedCollageUrl.length + individualPhotoUrls.reduce((s, u) => s + u.length, 0);
-      const totalKb = Math.round((totalBytes * 3) / 4 / 1024);
-      sizeBadge.textContent = `${count} photo(s) ready (${totalKb} KB total)`;
-    }
-
+    /* ================= AI Caption & Publish ================= */
     aiCaptionBtn.addEventListener("click", async () => {
       const title = titleInput.value.trim();
-      const notes = document.getElementById("descInput").value.trim();
+      const notes = $("descInput").value.trim();
       if (!title && !notes) {
         alert("Enter a title or brief notes first.");
         return;
@@ -1034,7 +1371,7 @@
         });
         if (!res.ok) throw new Error("API returned " + res.status);
         const data = await res.json();
-        if (data.caption) document.getElementById("descInput").value = data.caption;
+        if (data.caption) $("descInput").value = data.caption;
         formStatus.textContent = "Caption ready.";
       } catch (err) {
         formStatus.textContent = "AI caption endpoint unavailable (" + err.message + ").";
@@ -1044,12 +1381,18 @@
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!isEditor) return;
-      const publishBtn = document.getElementById("publishBtn");
+      const publishBtn = $("publishBtn");
       const title = titleInput.value.trim();
       const eventDate = eventDateInput.value || todayLocal;
-      const description = document.getElementById("descInput").value.trim();
-      const externalUrl = document.getElementById("imageUrl").value.trim();
-      const finalImage = generatedCollageUrl || externalUrl || "";
+      const description = $("descInput").value.trim();
+      const externalUrl = $("imageUrl").value.trim();
+
+      const maxDim = photos.length > 3 ? 760 : 920;
+      const indivQuality = photos.length > 3 ? 0.64 : 0.74;
+      const individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, maxDim, indivQuality));
+      const cleanCollageUrl = photos.length ? exportCleanCollageDataUrl() : "";
+
+      const finalImage = cleanCollageUrl || externalUrl || "";
       const photosToSave = individualPhotoUrls.length ? individualPhotoUrls : (externalUrl ? [externalUrl] : []);
 
       publishBtn.disabled = true;
@@ -1068,10 +1411,9 @@
 
         postForm.reset();
         eventDateInput.value = todayLocal;
-        loadedImages = [];
-        generatedCollageUrl = "";
-        individualPhotoUrls = [];
-        collageStudio.classList.add("hidden");
+        photos.forEach((p) => URL.revokeObjectURL(p.url));
+        photos = [];
+        $("collageStudio").classList.add("hidden");
         formStatus.textContent = "Published successfully!";
         await fetchUpdates();
       } catch (err) {
@@ -1082,6 +1424,7 @@
       }
     });
 
+    /* ================= Feed & Individual Photo Lightbox ================= */
     monthFilter.addEventListener("change", () => {
       resetFilterBtn.classList.toggle("hidden", !monthFilter.value);
       renderUpdatesFeed();
@@ -1101,11 +1444,7 @@
           const fallbackDate = d.createdAt?.toDate
             ? new Date(d.createdAt.toDate().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)
             : "1970-01-01";
-          return {
-            id: docSnap.id,
-            ...d,
-            eventDate: d.eventDate || fallbackDate
-          };
+          return { id: docSnap.id, ...d, eventDate: d.eventDate || fallbackDate };
         });
 
         allUpdatesCache.sort((a, b) => (b.eventDate || "").localeCompare(a.eventDate || ""));
@@ -1178,9 +1517,7 @@
         `;
 
         const imgWrap = card.querySelector(".card-img-wrap");
-        if (imgWrap) {
-          imgWrap.addEventListener("click", () => openLightbox(item, 0));
-        }
+        if (imgWrap) imgWrap.addEventListener("click", () => openLightbox(item, 0));
 
         card.querySelector(".wa-share-btn").addEventListener("click", () => {
           const twoPics = gallery.slice(0, 2).map((g) => g.src);
@@ -1199,11 +1536,9 @@
     }
 
     function updateShareButtonLabel() {
-      const btn = document.getElementById("modalShareCheckedBtn");
+      const btn = $("modalShareCheckedBtn");
       const count = checkedIndices.size;
-      btn.textContent = count > 1
-        ? `Share ${count} Checked Photos to WA`
-        : "Share Selected Photo to WA";
+      btn.textContent = count > 1 ? `Share ${count} Checked Photos to WA` : "Share Selected Photo to WA";
     }
 
     function openLightbox(item, initialIndex = 0) {
@@ -1214,12 +1549,12 @@
       viewingPhotoIndex = Math.min(Math.max(0, initialIndex), gallery.length - 1);
       checkedIndices = new Set([viewingPhotoIndex]);
 
-      document.getElementById("modalDateBadge").textContent = `📅 ${formatDisplayDate(item.eventDate)}`;
-      document.getElementById("modalTitle").textContent = item.title || "Update";
-      document.getElementById("modalDesc").textContent = item.description || "";
+      $("modalDateBadge").textContent = `📅 ${formatDisplayDate(item.eventDate)}`;
+      $("modalTitle").textContent = item.title || "Update";
+      $("modalDesc").textContent = item.description || "";
 
-      const strip = document.getElementById("modalGalleryStrip");
-      const wrap = document.getElementById("modalGalleryWrap");
+      const strip = $("modalGalleryStrip");
+      const wrap = $("modalGalleryWrap");
       strip.innerHTML = "";
 
       if (gallery.length > 1) {
@@ -1265,13 +1600,13 @@
       }
 
       syncGalleryUI();
-      document.getElementById("lightboxModal").classList.remove("hidden");
+      $("lightboxModal").classList.remove("hidden");
     }
 
     function syncGalleryUI() {
       if (!activeModalItem) return;
       const gallery = getGalleryList(activeModalItem);
-      document.getElementById("modalMainImg").src = gallery[viewingPhotoIndex].src;
+      $("modalMainImg").src = gallery[viewingPhotoIndex].src;
 
       document.querySelectorAll(".modal-thumb-card").forEach((el, i) => {
         el.classList.toggle("viewing", i === viewingPhotoIndex);
@@ -1282,14 +1617,14 @@
       updateShareButtonLabel();
     }
 
-    document.getElementById("modalShareCheckedBtn").addEventListener("click", () => {
+    $("modalShareCheckedBtn").addEventListener("click", () => {
       if (!activeModalItem) return;
       const gallery = getGalleryList(activeModalItem);
       const selectedSources = Array.from(checkedIndices).map((i) => gallery[i].src);
       shareToWhatsAppWithPhotos(activeModalItem, selectedSources);
     });
 
-    document.getElementById("modalDownloadBtn").addEventListener("click", () => {
+    $("modalDownloadBtn").addEventListener("click", () => {
       if (!activeModalItem) return;
       const gallery = getGalleryList(activeModalItem);
       const selected = gallery[viewingPhotoIndex];
@@ -1299,8 +1634,8 @@
       a.click();
     });
 
-    document.getElementById("closeModalBtn").addEventListener("click", () => {
-      document.getElementById("lightboxModal").classList.add("hidden");
+    $("closeModalBtn").addEventListener("click", () => {
+      $("lightboxModal").classList.add("hidden");
     });
 
     fetchUpdates();
