@@ -76,7 +76,7 @@
     .btn-danger { background: #dc2626; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
     .btn-share { background: #16a34a; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
 
-    main { max-width: 1160px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
+    main { max-width: 1180px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
     .panel {
       background: var(--card);
       border: 1px solid var(--border);
@@ -175,18 +175,18 @@
     }
     .mode-pills label:has(input:checked) { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; }
     .mode-pills input { margin: 0; }
-    .preview-wrap { overflow-x: auto; background: #e9edf3; padding: 10px; border-radius: 10px; }
+    .preview-wrap { overflow-x: auto; background: #e2e8f0; padding: 12px; border-radius: 10px; }
     #collageCanvas {
       display: block;
       width: 100%;
       height: auto;
-      max-width: 760px;
+      max-width: 920px;
       margin: auto;
       background: #ddd;
       touch-action: none;
       cursor: grab;
       border-radius: 6px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.14);
     }
     .photo-list {
       display: grid;
@@ -230,11 +230,11 @@
       background: #fff;
     }
 
-    /* Updates Feed */
+    /* Updates Feed — Full Uncropped Picture Display */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-      gap: 1.05rem;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 1.15rem;
     }
     .card {
       background: var(--card);
@@ -245,18 +245,32 @@
       flex-direction: column;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
-    .card-img-wrap { position: relative; cursor: pointer; background: #e2e8f0; }
-    .card-img-wrap img { width: 100%; height: 260px; object-fit: cover; object-position: top center; display: block; }
+    .card-img-wrap {
+      position: relative;
+      cursor: pointer;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: auto;
+      max-height: 360px;
+      object-fit: contain;
+      display: block;
+    }
     .photo-count-badge {
       position: absolute;
       bottom: 8px;
       right: 8px;
-      background: rgba(15, 41, 74, 0.88);
+      background: rgba(15, 41, 74, 0.9);
       color: #fff;
       font-size: 0.74rem;
       font-weight: 700;
-      padding: 0.22rem 0.55rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.25);
     }
     .card-body { padding: 0.95rem; flex: 1; display: flex; flex-direction: column; }
     .card-date-badge {
@@ -306,7 +320,7 @@
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -316,7 +330,7 @@
     .modal-inner {
       background: #fff;
       border-radius: 10px;
-      max-width: 920px;
+      max-width: 960px;
       width: 100%;
       max-height: 94vh;
       overflow-y: auto;
@@ -324,7 +338,7 @@
     }
     #modalMainImg {
       width: 100%;
-      max-height: 62vh;
+      max-height: 66vh;
       object-fit: contain;
       border-radius: 6px;
       background: #0f172a;
@@ -338,7 +352,7 @@
     }
     .modal-thumb-card {
       position: relative;
-      width: 88px;
+      width: 92px;
       flex-shrink: 0;
       border-radius: 6px;
       border: 2px solid var(--border);
@@ -348,9 +362,9 @@
     }
     .modal-thumb-card.viewing {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(21, 94, 239, 0.22);
+      box-shadow: 0 0 0 2px rgba(21, 94, 239, 0.25);
     }
-    .modal-thumb-card img { width: 100%; height: 60px; object-fit: cover; display: block; }
+    .modal-thumb-card img { width: 100%; height: 62px; object-fit: cover; display: block; }
     .modal-thumb-label {
       font-size: 0.68rem;
       font-weight: 700;
@@ -402,8 +416,8 @@
       <form id="postForm">
         <div class="form-row-2">
           <div class="form-group">
-            <label for="titleInput">Event / Update Title (Displayed on Poster &amp; Card)</label>
-            <input type="text" id="titleInput" placeholder="e.g., NATIONAL CONSTITUTION DAY / WORKSHOP AT NSTI CALICUT" required />
+            <label for="titleInput">Event / Update Title</label>
+            <input type="text" id="titleInput" placeholder="e.g., Constitution Day Pledge at NSTI Calicut" required />
           </div>
           <div class="form-group">
             <label for="eventDateInput">Event Date</label>
@@ -422,36 +436,51 @@
         </div>
 
         <div class="form-group">
-          <label for="descInput">Description / Caption (Also printed inside Event News Poster)</label>
+          <label for="descInput">Description / Caption</label>
           <textarea id="descInput" placeholder="Generated AI text will appear here, or type directly..." required></textarea>
         </div>
 
         <div class="form-group" id="dropZone">
-          <label for="files">Upload Photos (1–6 photos — choose Institutional Poster Style or Interactive Collage)</label>
+          <label for="files">Upload Photos (1–6 photos — builds your Poster/Collage AND saves every individual photo to tap &amp; view)</label>
           <input id="files" type="file" accept="image/*" multiple />
-          <div class="note">White/black photo borders are trimmed automatically. Drag &amp; zoom photos directly on the preview below.</div>
+          <div class="note">Select multiple photos at once or drag files onto this panel. Both the framed poster/collage and all individual full photos are saved automatically.</div>
 
           <div id="collageStudio" class="collage-studio hidden">
             <div class="studio-grid">
               <div>
                 <label for="posterStyle">1. Poster / Collage Style</label>
                 <select id="posterStyle">
-                  <option value="news-poster">Event News Poster (4:5 Portrait)</option>
-                  <option value="day-poster">Commemorative Day Poster (4:5)</option>
-                  <option value="collage">Interactive Collage / Slider Banner</option>
+                  <option value="free-frame">Free Collage with Frame (Clean Gallery)</option>
+                  <option value="gradient-overlay">Modern Gradient Overlay Poster</option>
+                  <option value="split-editorial">Editorial Split Card (Photo + News)</option>
+                  <option value="news-poster">Event News Poster (Framed + Write-up)</option>
+                  <option value="day-poster">Commemorative Day Poster (Date Badge)</option>
+                  <option value="collage">Classic Banner Collage</option>
                 </select>
               </div>
               <div>
-                <label for="posterTheme">2. Poster Colour Palette</label>
+                <label for="orientation">2. Orientation &amp; Aspect Ratio</label>
+                <select id="orientation">
+                  <option value="landscape-16x10">Landscape (16:10 — 1600 × 1000)</option>
+                  <option value="landscape-16x9">Widescreen Landscape (16:9 — 1600 × 900)</option>
+                  <option value="slider-wide">Website Banner (1920 × 640)</option>
+                  <option value="square">Square Post (1:1 — 1200 × 1200)</option>
+                  <option value="portrait">Portrait Flyer (4:5 — 1080 × 1350)</option>
+                </select>
+              </div>
+              <div>
+                <label for="posterTheme">3. Colour Palette &amp; Frame</label>
                 <select id="posterTheme">
-                  <option value="crimson">Imperial Crimson &amp; Gold</option>
                   <option value="navy">NSTI Royal Navy &amp; Gold</option>
+                  <option value="crimson">Imperial Crimson &amp; Gold</option>
+                  <option value="classic-white">Gallery White &amp; Navy</option>
                   <option value="tricolor">National Tricolor &amp; Cream</option>
                   <option value="teal">Deep Emerald &amp; Gold</option>
+                  <option value="dark">Midnight Slate</option>
                 </select>
               </div>
               <div>
-                <label for="layout">3. Multi-Photo Layout</label>
+                <label for="layout">4. Multi-Photo Layout</label>
                 <select id="layout">
                   <option value="row">Single row (side by side)</option>
                   <option value="hero-left">Large first photo left + others stacked</option>
@@ -464,51 +493,47 @@
                 </div>
               </div>
               <div>
-                <label for="shape">4. Section / Divider Shape</label>
+                <label for="shape">5. Section / Divider Shape</label>
                 <select id="shape">
+                  <option value="rounded">Rounded cards</option>
                   <option value="straight">Straight dividers</option>
                   <option value="slant">Slanted dividers  / / /</option>
                   <option value="zigzag">Alternating slants  \ / \</option>
                   <option value="wave">Curved S-wave dividers</option>
                   <option value="arc">Curved bulge (alternating)</option>
                   <option value="chevron">Arrow / chevron  &gt; &gt; &gt;</option>
-                  <option value="rounded">Rounded cards</option>
                   <option value="oval">Oval frames</option>
                 </select>
                 <label for="strength" style="margin-top:6px; font-size:0.78rem;">Curve / Slant Strength</label>
-                <input id="strength" type="range" min="0" max="100" value="45" />
+                <input id="strength" type="range" min="0" max="100" value="35" />
               </div>
               <div>
-                <label for="fit">5. Photo Fit &amp; Free Space</label>
+                <label for="fit">6. Photo Fit &amp; Free Space</label>
                 <select id="fit">
-                  <option value="cover">Fill section — no empty space</option>
+                  <option value="cover">Fill frame — no empty space</option>
                   <option value="blur">Whole photo + blurred free-space fill</option>
-                  <option value="contain">Whole photo + plain colour bars</option>
+                  <option value="contain">Whole photo + plain frame mat</option>
                 </select>
                 <label class="chk"><input id="trim" type="checkbox" checked /> Trim white/black borders</label>
               </div>
-              <div id="collageOnlyControls">
-                <label for="canvasPreset">Collage Ratio</label>
-                <select id="canvasPreset">
-                  <option value="1600x800">Event Card (1600 × 800)</option>
-                  <option value="1920x500">Website Slider (1920 × 500)</option>
-                  <option value="1200x1200">Square Post (1200 × 1200)</option>
-                </select>
-                <div class="row" style="margin-top:6px;">
-                  <div style="flex:1;"><span style="font-size:0.72rem; color:var(--muted);">Gap (px)</span><input id="gap" type="number" min="0" max="40" value="6" /></div>
-                  <div style="flex:1;"><span style="font-size:0.72rem; color:var(--muted);">Margin</span><input id="margin" type="number" min="0" max="60" value="0" /></div>
+              <div>
+                <label for="frameWidth">7. Outer Frame &amp; Gap (px)</label>
+                <div class="row">
+                  <div style="flex:1;"><span style="font-size:0.72rem; color:var(--muted);">Outer Frame</span><input id="frameWidth" type="number" min="0" max="80" value="28" /></div>
+                  <div style="flex:1;"><span style="font-size:0.72rem; color:var(--muted);">Photo Gap</span><input id="gap" type="number" min="0" max="40" value="12" /></div>
                 </div>
+                <label class="chk"><input id="showFooterStrip" type="checkbox" checked /> Include NSTI Calicut footer bar</label>
               </div>
               <div>
-                <label>6. Quick Actions</label>
+                <label>8. Custom Colors &amp; Reset</label>
                 <div class="row">
+                  <div><span style="font-size:0.72rem; color:var(--muted);">Frame</span><br><input id="gapColor" type="color" value="#ffffff" /></div>
+                  <div><span style="font-size:0.72rem; color:var(--muted);">Accent</span><br><input id="bandColor" type="color" value="#0f294a" /></div>
+                  <div><span style="font-size:0.72rem; color:var(--muted);">Text</span><br><input id="labelColor" type="color" value="#ffffff" /></div>
+                </div>
+                <div class="row" style="margin-top:8px;">
                   <button type="button" class="btn-mini" id="resetStudioBtn">Reset Framing</button>
                   <button type="button" class="btn-mini danger" id="clearPhotosBtn">Remove All</button>
-                </div>
-                <div class="row" style="margin-top:6px;">
-                  <div><span style="font-size:0.72rem; color:var(--muted);">Gap/Bg</span><br><input id="gapColor" type="color" value="#ffffff" /></div>
-                  <div><span style="font-size:0.72rem; color:var(--muted);">Band</span><br><input id="bandColor" type="color" value="#0f294a" /></div>
-                  <div><span style="font-size:0.72rem; color:var(--muted);">Text</span><br><input id="labelColor" type="color" value="#ffffff" /></div>
                 </div>
               </div>
             </div>
@@ -519,9 +544,9 @@
             </div>
 
             <div class="preview-wrap">
-              <canvas id="collageCanvas" width="1080" height="1350"></canvas>
+              <canvas id="collageCanvas" width="1600" height="1000"></canvas>
             </div>
-            <p class="note"><b>Tip:</b> Drag any photo on the poster to reposition faces/subjects, scroll wheel to zoom, or drag the white divider handles to resize multi-photo sections.</p>
+            <p class="note"><b>Interactive Preview:</b> Drag any photo to adjust framing, scroll wheel to zoom, or drag the white handles on dividers to resize sections.</p>
             <div id="photoList" class="photo-list"></div>
           </div>
         </div>
@@ -566,7 +591,7 @@
 
       <div id="modalGalleryWrap" class="hidden">
         <div style="font-size:0.78rem; color:var(--muted); margin-top:0.55rem;">
-          Tap any photo to preview full-size, or tick up to 2 checkboxes to share those exact photos:
+          Tap any individual photo below to view full-size, or tick up to 2 checkboxes to share those exact photos:
         </div>
         <div id="modalGalleryStrip" class="modal-gallery-strip"></div>
       </div>
@@ -767,9 +792,9 @@
     logoutBtn.addEventListener("click", () => signOut(auth));
     onAuthStateChanged(auth, (user) => { currentUser = user; evaluateAccess(); });
 
-    /* ================= Institutional Poster + Interactive Collage Engine ================= */
+    /* ================= Multi-Format Poster & Collage Studio ================= */
     const MAX = 6;
-    let W = 1080, H = 1350;
+    let W = 1600, H = 1000;
     let photos = [], scene = null, heroFrac = 0.58, widthMode = "smart";
     let drag = null, hover = null;
 
@@ -955,12 +980,12 @@
     function cellPath(c) {
       const p = new Path2D(), g = clamp(Number($("gap").value) || 0, 0, 40);
       if (isCard()) {
-        const ins = Math.max(g / 2, 3), x = c.L(0) + ins, y = c.y0 + ins, w = c.R(0) - c.L(0) - 2 * ins, h = c.y1 - c.y0 - 2 * ins;
+        const ins = Math.max(g / 2, 2), x = c.L(0) + ins, y = c.y0 + ins, w = c.R(0) - c.L(0) - 2 * ins, h = c.y1 - c.y0 - 2 * ins;
         if (shapeV() === "oval") {
           p.ellipse(x + w / 2, y + h / 2, Math.max(1, w / 2), Math.max(1, h / 2), 0, 0, Math.PI * 2);
           return p;
         }
-        const r = Math.min($("strength").value * 0.6, w / 2, h / 2);
+        const r = Math.min($("strength").value * 0.65, w / 2, h / 2);
         p.moveTo(x + r, y);
         p.arcTo(x + w, y, x + w, y + h, r);
         p.arcTo(x + w, y + h, x, y + h, r);
@@ -1006,76 +1031,110 @@
       return p;
     }
 
+    function drawDividersAndShadows(strokeColor) {
+      const g = clamp(Number($("gap").value) || 0, 0, 40);
+      if (g > 0 && !isCard()) {
+        ctx.save();
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = g;
+        ctx.lineCap = "butt";
+        ctx.lineJoin = "round";
+        scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
+        scene.lines.forEach((l) => {
+          ctx.beginPath();
+          ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
+          ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
+    }
+
+    // Responsive White Institutional Footer Bar (adapts to Landscape, Wide, Square, or Portrait)
     function drawInstitutionalFooter(footerY, footerH, accentColor) {
       ctx.save();
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, footerY, W, footerH);
-
-      ctx.fillStyle = "#e2e8f0";
+      ctx.fillStyle = "#cbd5e1";
       ctx.fillRect(0, footerY, W, 3);
 
-      const emblemR = 30;
-      const emblemX = 56;
-      const emblemY = footerY + footerH / 2;
+      const cy = footerY + footerH / 2;
+      const emblemR = Math.min(28, footerH * 0.32);
+      const emblemX = 48;
+
       ctx.beginPath();
-      ctx.arc(emblemX, emblemY, emblemR, 0, Math.PI * 2);
+      ctx.arc(emblemX, cy, emblemR, 0, Math.PI * 2);
       ctx.fillStyle = accentColor;
       ctx.fill();
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 16px Arial, sans-serif";
+      ctx.font = "bold 14px Arial, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("NSTI", emblemX, emblemY - 6);
-      ctx.font = "bold 11px Arial, sans-serif";
-      ctx.fillText("DGT", emblemX, emblemY + 10);
+      ctx.fillText("NSTI", emblemX, cy - 5);
+      ctx.font = "bold 10px Arial, sans-serif";
+      ctx.fillText("DGT", emblemX, cy + 9);
 
       ctx.textAlign = "left";
       ctx.fillStyle = accentColor;
-      ctx.font = "900 32px Arial, Helvetica, sans-serif";
-      ctx.fillText("NSTI CALICUT", 102, footerY + footerH / 2 - 8);
+      ctx.font = "900 28px Arial, Helvetica, sans-serif";
+      ctx.fillText("NSTI CALICUT", 88, cy - 8);
       ctx.fillStyle = "#475569";
-      ctx.font = "700 13px Arial, Helvetica, sans-serif";
-      ctx.fillText("KOZHIKODE, KERALAM", 104, footerY + footerH / 2 + 16);
+      ctx.font = "700 12px Arial, Helvetica, sans-serif";
+      ctx.fillText("KOZHIKODE, KERALAM", 90, cy + 14);
 
-      ctx.fillStyle = "#cbd5e1";
-      ctx.fillRect(355, footerY + 22, 2, footerH - 44);
+      if (W >= 1200) {
+        const d1 = Math.round(W * 0.28);
+        const d2 = Math.round(W * 0.56);
 
-      ctx.fillStyle = "#0f294a";
-      ctx.font = "800 14px Arial, Helvetica, sans-serif";
-      ctx.fillText("DGT  •  MSDE", 378, footerY + footerH / 2 - 10);
-      ctx.fillStyle = "#d97706";
-      ctx.font = "700 13px Arial, Helvetica, sans-serif";
-      ctx.fillText("GOVT. OF INDIA  •  SKILL INDIA", 378, footerY + footerH / 2 + 12);
+        ctx.fillStyle = "#cbd5e1";
+        ctx.fillRect(d1, footerY + 18, 2, footerH - 36);
 
-      ctx.fillStyle = "#cbd5e1";
-      ctx.fillRect(645, footerY + 22, 2, footerH - 44);
+        ctx.fillStyle = "#0f294a";
+        ctx.font = "800 14px Arial, Helvetica, sans-serif";
+        ctx.fillText("DGT  •  MSDE", d1 + 24, cy - 9);
+        ctx.fillStyle = "#d97706";
+        ctx.font = "700 13px Arial, Helvetica, sans-serif";
+        ctx.fillText("GOVT. OF INDIA  •  SKILL INDIA", d1 + 24, cy + 12);
 
-      ctx.fillStyle = "#1e293b";
-      ctx.font = "700 13.5px Arial, Helvetica, sans-serif";
-      ctx.fillText("National Skill Training Institute Calicut,", 668, footerY + footerH / 2 - 12);
-      ctx.fillText("Kozhikode, Keralam/DGT/MSDE", 668, footerY + footerH / 2 + 6);
-      ctx.fillStyle = accentColor;
-      ctx.font = "700 13px Arial, Helvetica, sans-serif";
-      ctx.fillText("nsti-calicut-updates.pages.dev", 668, footerY + footerH / 2 + 25);
+        ctx.fillStyle = "#cbd5e1";
+        ctx.fillRect(d2, footerY + 18, 2, footerH - 36);
+
+        ctx.fillStyle = "#1e293b";
+        ctx.font = "700 14px Arial, Helvetica, sans-serif";
+        ctx.fillText(INSTITUTE_BANNER, d2 + 24, cy - 9, W - d2 - 44);
+        ctx.fillStyle = accentColor;
+        ctx.font = "700 13px Arial, Helvetica, sans-serif";
+        ctx.fillText("nsti-calicut-updates.pages.dev", d2 + 24, cy + 12);
+      } else {
+        const d1 = 330;
+        ctx.fillStyle = "#cbd5e1";
+        ctx.fillRect(d1, footerY + 18, 2, footerH - 36);
+
+        ctx.fillStyle = "#1e293b";
+        ctx.font = "700 13px Arial, Helvetica, sans-serif";
+        ctx.fillText("National Skill Training Institute Calicut,", d1 + 22, cy - 12);
+        ctx.fillText("Kozhikode, Keralam/DGT/MSDE", d1 + 22, cy + 6);
+        ctx.fillStyle = accentColor;
+        ctx.font = "700 12.5px Arial, Helvetica, sans-serif";
+        ctx.fillText("nsti-calicut-updates.pages.dev", d1 + 22, cy + 24);
+      }
 
       ctx.restore();
     }
 
-    function draw(forExport) {
-      const style = $("posterStyle").value;
-      const isPoster = style === "news-poster" || style === "day-poster";
-      $("collageOnlyControls").classList.toggle("hidden", isPoster);
-
-      if (isPoster) {
-        W = 1080;
-        H = 1350;
-      } else {
-        const [pw, ph] = ($("canvasPreset").value || "1600x800").split("x").map(Number);
-        W = pw || 1600;
-        H = ph || 800;
-      }
+    function applyOrientationDims() {
+      const ori = $("orientation").value;
+      if (ori === "landscape-16x9") { W = 1600; H = 900; }
+      else if (ori === "slider-wide") { W = 1920; H = 640; }
+      else if (ori === "square") { W = 1200; H = 1200; }
+      else if (ori === "portrait") { W = 1080; H = 1350; }
+      else { W = 1600; H = 1000; } // Default Landscape 16:10
       canvas.width = W;
       canvas.height = H;
+    }
+
+    function draw(forExport) {
+      applyOrientationDims();
       ctx.clearRect(0, 0, W, H);
 
       if (!photos.length) {
@@ -1083,168 +1142,304 @@
         return;
       }
 
-      const palettes = {
-        crimson: { bg1: "#991b1b", bg2: "#58111a", accent: "#881337", gold: "#f59e0b", light: false },
-        navy: { bg1: "#163b6d", bg2: "#09192f", accent: "#0f294a", gold: "#eab308", light: false },
-        tricolor: { bg1: "#f8fafc", bg2: "#e2e8f0", accent: "#0f294a", gold: "#ea580c", light: true },
-        teal: { bg1: "#0f4c5c", bg2: "#082933", accent: "#0f4c5c", gold: "#facc15", light: false }
-      };
-      const pal = palettes[$("posterTheme").value] || palettes.crimson;
+      const style = $("posterStyle").value;
+      const isLandscape = W > H;
+      const showFooter = $("showFooterStrip").checked;
+      const footerH = showFooter ? (isLandscape ? 88 : 114) : 0;
+      const pad = clamp(Number($("frameWidth").value) || 0, 0, 80);
 
-      const titleText = (titleInput.value.trim() || "CAMPUS EVENT UPDATE AT NSTI CALICUT").toUpperCase();
-      const descText = descInput.value.trim() || "Event highlights from National Skill Training Institute Calicut, Kozhikode, Keralam.";
+      const palettes = {
+        navy: { bg1: "#163b6d", bg2: "#09192f", accent: "#0f294a", gold: "#eab308", light: false },
+        crimson: { bg1: "#991b1b", bg2: "#58111a", accent: "#881337", gold: "#f59e0b", light: false },
+        "classic-white": { bg1: "#ffffff", bg2: "#f1f5f9", accent: "#0f294a", gold: "#155eef", light: true },
+        tricolor: { bg1: "#f8fafc", bg2: "#e2e8f0", accent: "#0f294a", gold: "#ea580c", light: true },
+        teal: { bg1: "#0f4c5c", bg2: "#082933", accent: "#0f4c5c", gold: "#facc15", light: false },
+        dark: { bg1: "#1e293b", bg2: "#090d16", accent: "#0f172a", gold: "#38bdf8", light: false }
+      };
+      const pal = palettes[$("posterTheme").value] || palettes.navy;
+
+      const titleText = titleInput.value.trim() || "Campus Event Update at NSTI Calicut";
+      const descText = descInput.value.trim() || "Highlights from National Skill Training Institute Calicut, Kozhikode, Keralam.";
       const dm = getDayAndMonth(eventDateInput.value);
 
-      if (style === "news-poster") {
-        const grad = ctx.createLinearGradient(0, 0, W, H - 125);
+      if (style === "free-frame") {
+        // 1. FREE COLLAGE WITH FRAME (Clean gallery framing, optional blurred backdrop, optional footer)
+        const frameColor = $("gapColor").value;
+        ctx.fillStyle = frameColor;
+        ctx.fillRect(0, 0, W, H);
+
+        if ($("fit").value === "blur" && photos[0]?.blur) {
+          ctx.save();
+          ctx.drawImage(photos[0].blur, 0, 0, W, H - footerH);
+          ctx.fillStyle = "rgba(15, 23, 42, 0.22)";
+          ctx.fillRect(0, 0, W, H - footerH);
+          ctx.restore();
+        }
+
+        const innerArea = { x: pad, y: pad, w: W - 2 * pad, h: H - footerH - 2 * pad };
+
+        // Subtle gallery shadow behind framed photos
+        if (pad > 0) {
+          ctx.save();
+          ctx.shadowColor = "rgba(15, 23, 42, 0.22)";
+          ctx.shadowBlur = 24;
+          ctx.shadowOffsetY = 8;
+          ctx.fillStyle = frameColor;
+          ctx.fillRect(innerArea.x, innerArea.y, innerArea.w, innerArea.h);
+          ctx.restore();
+        }
+
+        scene = buildCellsInArea(innerArea);
+        scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+        drawDividersAndShadows(frameColor);
+
+        if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
+
+      } else if (style === "gradient-overlay") {
+        // 2. MODERN GRADIENT OVERLAY POSTER (Full-bleed photos + sleek gradient fade + floating pill)
+        const frameColor = $("gapColor").value;
+        ctx.fillStyle = frameColor;
+        ctx.fillRect(0, 0, W, H);
+
+        const innerArea = { x: pad, y: pad, w: W - 2 * pad, h: H - footerH - 2 * pad };
+        scene = buildCellsInArea(innerArea);
+        scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+        drawDividersAndShadows(frameColor);
+
+        // Smooth bottom-up gradient over lower 46% of photo area
+        const gradTop = innerArea.y + innerArea.h * 0.45;
+        const gradBot = innerArea.y + innerArea.h;
+        const gFade = ctx.createLinearGradient(0, gradTop, 0, gradBot);
+        gFade.addColorStop(0, "rgba(9, 25, 47, 0)");
+        gFade.addColorStop(0.55, "rgba(9, 25, 47, 0.78)");
+        gFade.addColorStop(1, "rgba(9, 25, 47, 0.96)");
+        ctx.fillStyle = gFade;
+        ctx.fillRect(innerArea.x, gradTop, innerArea.w, gradBot - gradTop);
+
+        // Date Pill + Bold White Title + Subtitle
+        const tx = innerArea.x + 42;
+        const maxTw = innerArea.w - 84;
+        ctx.save();
+        ctx.font = `900 ${isLandscape ? 38 : 42}px Arial, Helvetica, sans-serif`;
+        const tLines = wrapLines(titleText, maxTw, 2);
+        const subLines = wrapLines(descText, maxTw, 2);
+
+        const blockH = 42 + tLines.length * 46 + subLines.length * 28 + 26;
+        let cy = gradBot - blockH;
+
+        ctx.fillStyle = pal.gold;
+        ctx.fillRect(tx, cy, 168, 30);
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 15px Arial, Helvetica, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${dm.day} ${dm.month} ${dm.year}`, tx + 84, cy + 20);
+
+        cy += 66;
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `900 ${isLandscape ? 38 : 42}px Arial, Helvetica, sans-serif`;
+        tLines.forEach((line) => {
+          ctx.fillText(line, tx, cy);
+          cy += 46;
+        });
+
+        ctx.fillStyle = "#cbd5e1";
+        ctx.font = "400 20px Arial, Helvetica, sans-serif";
+        subLines.forEach((line) => {
+          ctx.fillText(line, tx, cy);
+          cy += 28;
+        });
+        ctx.restore();
+
+        if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
+
+      } else if (style === "split-editorial") {
+        // 3. EDITORIAL SPLIT CARD (Photo frame on Left/Top + Clean News Typography on Right/Bottom)
+        const grad = ctx.createLinearGradient(0, 0, W, H - footerH);
         grad.addColorStop(0, pal.bg1);
         grad.addColorStop(1, pal.bg2);
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
 
-        ctx.save();
-        ctx.strokeStyle = pal.light ? "rgba(234, 88, 12, 0.22)" : "rgba(250, 204, 21, 0.35)";
-        ctx.lineWidth = 10;
-        [75, 110, 145, 180].forEach((r) => {
-          ctx.beginPath();
-          ctx.arc(W + 10, 460, r, Math.PI * 0.5, Math.PI * 1.5);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.arc(-10, 880, r, -Math.PI * 0.5, Math.PI * 0.5);
-          ctx.stroke();
-        });
-        ctx.restore();
+        const workH = H - footerH;
+        const margin = Math.max(pad, 36);
 
-        ctx.save();
-        ctx.fillStyle = pal.gold;
-        ctx.fillRect(68, 52, 165, 34);
-        ctx.fillStyle = pal.light ? "#ffffff" : "#0f172a";
-        ctx.font = "900 18px Arial, Helvetica, sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(`${dm.day} ${dm.month} ${dm.year}`, 150, 75);
-
-        ctx.textAlign = "left";
-        ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
-        ctx.font = "900 44px Arial, Helvetica, sans-serif";
-        const headLines = wrapLines(titleText, W - 136, 3);
-        let curY = 138;
-        headLines.forEach((line) => {
-          ctx.fillText(line, 68, curY);
-          curY += 52;
-        });
-        ctx.restore();
-
-        const frameX = 68;
-        const frameY = curY + 12;
-        const frameW = W - 136;
-        const frameH = 490;
-
-        ctx.save();
-        ctx.shadowColor = "rgba(0,0,0,0.35)";
-        ctx.shadowBlur = 22;
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(frameX - 10, frameY - 10, frameW + 20, frameH + 20);
-        ctx.restore();
-
-        scene = buildCellsInArea({ x: frameX, y: frameY, w: frameW, h: frameH });
-        scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
-
-        if (photos.length > 1 && !isCard()) {
+        if (isLandscape) {
+          const photoW = Math.round((W - margin * 3) * 0.56);
+          const photoH = workH - margin * 2;
           ctx.save();
-          ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 6;
-          scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
-          scene.lines.forEach((l) => {
-            ctx.beginPath();
-            ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
-            ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
-            ctx.stroke();
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(margin - 8, margin - 8, photoW + 16, photoH + 16);
+          ctx.restore();
+
+          scene = buildCellsInArea({ x: margin, y: margin, w: photoW, h: photoH });
+          scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+          drawDividersAndShadows("#ffffff");
+
+          // Right editorial text column
+          const rx = margin * 2 + photoW;
+          const rw = W - rx - margin;
+          ctx.save();
+          ctx.fillStyle = pal.gold;
+          ctx.fillRect(rx, margin + 8, 165, 32);
+          ctx.fillStyle = pal.light ? "#ffffff" : "#0f172a";
+          ctx.font = "900 16px Arial, Helvetica, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(`${dm.day} ${dm.month} ${dm.year}`, rx + 82, margin + 29);
+
+          ctx.textAlign = "left";
+          ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
+          ctx.font = "900 34px Arial, Helvetica, sans-serif";
+          const hLines = wrapLines(titleText, rw, 4);
+          let ty = margin + 84;
+          hLines.forEach((line) => { ctx.fillText(line, rx, ty); ty += 42; });
+
+          ctx.fillStyle = pal.gold;
+          ctx.fillRect(rx, ty - 16, 90, 5);
+          ty += 22;
+
+          ctx.fillStyle = pal.light ? "#334155" : "rgba(255,255,255,0.92)";
+          ctx.font = "400 20px Arial, Helvetica, sans-serif";
+          const bLines = wrapLines(descText, rw, 10);
+          bLines.forEach((line) => {
+            if (ty < workH - 24) { ctx.fillText(line, rx, ty); ty += 29; }
+          });
+          ctx.restore();
+        } else {
+          // Stacked editorial layout for Square / Portrait
+          const photoH = Math.round(workH * 0.52);
+          scene = buildCellsInArea({ x: margin, y: margin, w: W - margin * 2, h: photoH });
+          scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+          drawDividersAndShadows("#ffffff");
+
+          let ty = margin + photoH + 46;
+          ctx.save();
+          ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
+          ctx.font = "900 34px Arial, Helvetica, sans-serif";
+          wrapLines(titleText, W - margin * 2, 2).forEach((line) => { ctx.fillText(line, margin, ty); ty += 42; });
+          ctx.fillStyle = pal.light ? "#334155" : "rgba(255,255,255,0.92)";
+          ctx.font = "400 21px Arial, Helvetica, sans-serif";
+          wrapLines(descText, W - margin * 2, 7).forEach((line) => {
+            if (ty < workH - 24) { ctx.fillText(line, margin, ty); ty += 30; }
           });
           ctx.restore();
         }
 
+        if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
+
+      } else if (style === "news-poster") {
+        // 4. EVENT NEWS POSTER (Supports both Landscape & Portrait!)
+        const grad = ctx.createLinearGradient(0, 0, W, H - footerH);
+        grad.addColorStop(0, pal.bg1);
+        grad.addColorStop(1, pal.bg2);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Subtle concentric arc rings
         ctx.save();
-        ctx.fillStyle = pal.light ? "#1e293b" : "rgba(255,255,255,0.94)";
-        ctx.font = "400 25px Arial, Helvetica, sans-serif";
-        const bodyLines = wrapLines(descText, W - 136, 9);
-        let textY = frameY + frameH + 54;
-        bodyLines.forEach((line) => {
-          if (textY < H - 145) {
-            ctx.fillText(line, 68, textY);
-            textY += 35;
-          }
+        ctx.strokeStyle = pal.light ? "rgba(21, 94, 239, 0.14)" : "rgba(250, 204, 21, 0.28)";
+        ctx.lineWidth = 8;
+        [70, 105, 140].forEach((r) => {
+          ctx.beginPath(); ctx.arc(W + 10, H * 0.35, r, Math.PI * 0.5, Math.PI * 1.5); ctx.stroke();
+          ctx.beginPath(); ctx.arc(-10, H * 0.72, r, -Math.PI * 0.5, Math.PI * 0.5); ctx.stroke();
         });
         ctx.restore();
 
-        drawInstitutionalFooter(H - 124, 124, pal.accent);
+        const m = Math.max(pad, 44);
+        ctx.save();
+        ctx.fillStyle = pal.gold;
+        ctx.fillRect(m, m, 160, 32);
+        ctx.fillStyle = pal.light ? "#ffffff" : "#0f172a";
+        ctx.font = "900 16px Arial, Helvetica, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${dm.day} ${dm.month} ${dm.year}`, m + 80, m + 21);
+
+        ctx.textAlign = "left";
+        ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
+        ctx.font = `900 ${isLandscape ? 36 : 42}px Arial, Helvetica, sans-serif`;
+        const headLines = wrapLines(titleText.toUpperCase(), W - m * 2, 2);
+        let curY = m + 76;
+        headLines.forEach((line) => { ctx.fillText(line, m, curY); curY += isLandscape ? 44 : 50; });
+        ctx.restore();
+
+        const frameY = curY + 8;
+        const availH = H - footerH - frameY - m;
+        const frameH = Math.round(availH * (isLandscape ? 0.68 : 0.62));
+
+        ctx.save();
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(m - 8, frameY - 8, W - m * 2 + 16, frameH + 16);
+        ctx.restore();
+
+        scene = buildCellsInArea({ x: m, y: frameY, w: W - m * 2, h: frameH });
+        scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+        drawDividersAndShadows("#ffffff");
+
+        ctx.save();
+        ctx.fillStyle = pal.light ? "#1e293b" : "rgba(255,255,255,0.95)";
+        ctx.font = `400 ${isLandscape ? 21 : 24}px Arial, Helvetica, sans-serif`;
+        let textY = frameY + frameH + 40;
+        wrapLines(descText, W - m * 2, isLandscape ? 4 : 8).forEach((line) => {
+          if (textY < H - footerH - 16) { ctx.fillText(line, m, textY); textY += isLandscape ? 29 : 34; }
+        });
+        ctx.restore();
+
+        if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
 
       } else if (style === "day-poster") {
+        // 5. COMMEMORATIVE DAY POSTER (Date Emblem + Tricolor Accent Rule, Landscape or Portrait)
         ctx.fillStyle = pal.light ? "#f8fafc" : pal.bg2;
         ctx.fillRect(0, 0, W, H);
 
-        const topAreaH = 265;
+        const m = Math.max(pad, 44);
+        const bx = W - m - 116, by = m, bw = 116, bh = 122;
         ctx.save();
-        const bx = W - 185, by = 54, bw = 122, bh = 132;
         ctx.strokeStyle = pal.light ? "#0f294a" : "#ffffff";
         ctx.lineWidth = 3;
         ctx.strokeRect(bx, by, bw, bh);
         ctx.fillStyle = pal.light ? "#991b1b" : pal.gold;
-        ctx.font = "900 52px Arial, Helvetica, sans-serif";
+        ctx.font = "900 48px Arial, Helvetica, sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(dm.day, bx + bw / 2, by + 64);
+        ctx.fillText(dm.day, bx + bw / 2, by + 58);
         ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
-        ctx.font = "800 26px Arial, Helvetica, sans-serif";
-        ctx.fillText(dm.month, bx + bw / 2, by + 104);
+        ctx.font = "800 24px Arial, Helvetica, sans-serif";
+        ctx.fillText(dm.month, bx + bw / 2, by + 96);
 
         ctx.textAlign = "left";
         ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
-        ctx.font = "900 46px Georgia, serif";
-        const dLines = wrapLines(titleText, W - 265, 3);
-        let dy = 96;
-        dLines.forEach((line) => {
-          ctx.fillText(line, 64, dy);
-          dy += 54;
+        ctx.font = `900 ${isLandscape ? 38 : 44}px Georgia, serif`;
+        let dy = m + 42;
+        wrapLines(titleText.toUpperCase(), W - m * 2 - 140, 2).forEach((line) => {
+          ctx.fillText(line, m, dy);
+          dy += isLandscape ? 46 : 52;
         });
 
-        const ruleY = Math.max(dy - 10, 212);
-        ctx.fillStyle = "#ea580c"; ctx.fillRect(64, ruleY, 110, 6);
-        ctx.fillStyle = "#ffffff"; ctx.fillRect(174, ruleY, 110, 6);
-        ctx.fillStyle = "#16a34a"; ctx.fillRect(284, ruleY, 110, 6);
+        const ruleY = Math.max(dy - 8, m + 104);
+        ctx.fillStyle = "#ea580c"; ctx.fillRect(m, ruleY, 100, 6);
+        ctx.fillStyle = "#ffffff"; ctx.fillRect(m + 100, ruleY, 100, 6);
+        ctx.fillStyle = "#16a34a"; ctx.fillRect(m + 200, ruleY, 100, 6);
         ctx.restore();
 
-        const pX = 56, pY = topAreaH, pW = W - 112, pH = 740;
-        scene = buildCellsInArea({ x: pX, y: pY, w: pW, h: pH });
+        const pY = ruleY + 26;
+        const pH = H - footerH - pY - (isLandscape ? 78 : 115);
+        scene = buildCellsInArea({ x: m, y: pY, w: W - m * 2, h: pH });
         scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
-
-        if (photos.length > 1 && !isCard()) {
-          ctx.save();
-          ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 6;
-          scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
-          scene.lines.forEach((l) => {
-            ctx.beginPath();
-            ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
-            ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
-            ctx.stroke();
-          });
-          ctx.restore();
-        }
+        drawDividersAndShadows("#ffffff");
 
         ctx.save();
         ctx.fillStyle = pal.light ? "#1e293b" : "#f8fafc";
-        ctx.font = "italic 700 24px Georgia, serif";
+        ctx.font = `italic 700 ${isLandscape ? 21 : 24}px Georgia, serif`;
         ctx.textAlign = "center";
-        const qLines = wrapLines(descText, W - 140, 3);
-        let qy = pY + pH + 54;
-        qLines.forEach((line) => {
-          ctx.fillText(line, W / 2, qy);
-          qy += 34;
+        let qy = pY + pH + 38;
+        wrapLines(descText, W - m * 2, 2).forEach((line) => {
+          if (qy < H - footerH - 12) { ctx.fillText(line, W / 2, qy); qy += 30; }
         });
         ctx.restore();
 
-        drawInstitutionalFooter(H - 124, 124, pal.accent);
+        if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
 
       } else {
+        // 6. CLASSIC BANNER COLLAGE
         const bgc = $("gapColor").value;
         ctx.fillStyle = bgc;
         ctx.fillRect(0, 0, W, H);
@@ -1257,42 +1452,26 @@
           ctx.restore();
         }
 
-        const m = clamp(Number($("margin").value) || 0, 0, 60);
-        const bandH = 84;
-        const A = { x: m, y: m, w: W - 2 * m, h: H - bandH - 2 * m };
+        const bandH = showFooter ? 78 : 0;
+        const A = { x: pad, y: pad, w: W - 2 * pad, h: H - bandH - 2 * pad };
         scene = buildCellsInArea(A);
         scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+        drawDividersAndShadows(bgc);
 
-        const g = clamp(Number($("gap").value) || 0, 0, 40);
-        if (g > 0 && !isCard()) {
+        if (showFooter) {
+          ctx.fillStyle = $("bandColor").value;
+          ctx.fillRect(0, H - bandH, W, bandH);
           ctx.save();
-          ctx.strokeStyle = bgc;
-          ctx.lineWidth = g;
-          ctx.lineCap = "butt";
-          ctx.lineJoin = "round";
-          scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
-          scene.lines.forEach((l) => {
-            ctx.beginPath();
-            ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
-            ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
-            ctx.stroke();
-          });
+          ctx.font = "bold 25px Arial, Helvetica, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = $("labelColor").value;
+          const evDate = formatDisplayDate(eventDateInput.value);
+          let t = `${titleText}  |  ${INSTITUTE_BANNER} (${evDate})`;
+          while (ctx.measureText(t).width > W - 60 && t.length > 4) t = t.slice(0, -2) + "…";
+          ctx.fillText(t, W / 2, H - bandH / 2);
           ctx.restore();
         }
-
-        ctx.fillStyle = $("bandColor").value;
-        ctx.fillRect(0, H - bandH, W, bandH);
-        ctx.save();
-        ctx.font = "bold 26px Arial, Helvetica, sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = $("labelColor").value;
-        const evTitle = titleInput.value.trim();
-        const evDate = formatDisplayDate(eventDateInput.value);
-        let t = evTitle ? `${evTitle}  |  ${INSTITUTE_BANNER} (${evDate})` : `${INSTITUTE_BANNER}  •  ${evDate}`;
-        while (ctx.measureText(t).width > W - 60 && t.length > 4) t = t.slice(0, -2) + "…";
-        ctx.fillText(t, W / 2, H - bandH / 2);
-        ctx.restore();
       }
 
       if (!forExport) drawOverlays();
@@ -1485,7 +1664,7 @@
     dz.addEventListener("dragleave", () => dz.classList.remove("dragover"));
     dz.addEventListener("drop", (e) => { e.preventDefault(); dz.classList.remove("dragover"); addFiles(e.dataTransfer.files); });
 
-    ["posterStyle", "posterTheme", "canvasPreset", "layout", "shape", "strength", "fit", "gap", "margin", "gapColor", "labelColor", "bandColor", "titleInput", "eventDateInput", "descInput"].forEach((id) => {
+    ["posterStyle", "orientation", "posterTheme", "layout", "shape", "strength", "fit", "frameWidth", "gap", "gapColor", "labelColor", "bandColor", "showFooterStrip", "titleInput", "eventDateInput", "descInput"].forEach((id) => {
       $(id).addEventListener("input", () => { if (photos.length) draw(); });
     });
     $("trim").addEventListener("change", () => { photos.forEach(applyBox); draw(); renderThumbs(); });
@@ -1509,7 +1688,7 @@
     });
 
     /* ================= Export & Firestore Compression ================= */
-    function compressIndividualPhoto(p, maxDim = 900, quality = 0.72) {
+    function compressIndividualPhoto(p, maxDim = 960, quality = 0.74) {
       const b = p.box;
       const c = document.createElement("canvas");
       let w = b.sw, h = b.sh;
@@ -1646,10 +1825,16 @@
       const description = descInput.value.trim();
       const externalUrl = $("imageUrl").value.trim();
 
-      const maxDim = photos.length > 3 ? 760 : 920;
-      const indivQuality = photos.length > 3 ? 0.64 : 0.74;
-      const individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, maxDim, indivQuality));
+      let maxDim = photos.length > 3 ? 820 : 980;
+      let indivQuality = photos.length > 3 ? 0.66 : 0.76;
+      let individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, maxDim, indivQuality));
       const cleanCollageUrl = photos.length ? exportCleanCollageDataUrl() : "";
+
+      // Ensure total payload fits comfortably under Firestore's 1 MB document cap
+      let totalSize = cleanCollageUrl.length + individualPhotoUrls.reduce((s, u) => s + u.length, 0);
+      if (totalSize > 880000 && photos.length) {
+        individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, 680, 0.56));
+      }
 
       const finalImage = cleanCollageUrl || externalUrl || "";
       const photosToSave = individualPhotoUrls.length ? individualPhotoUrls : (externalUrl ? [externalUrl] : []);
@@ -1754,7 +1939,7 @@
       filtered.forEach((item) => {
         const displayDate = formatDisplayDate(item.eventDate);
         const gallery = getGalleryList(item);
-        const photoCount = Array.isArray(item.photos) ? item.photos.length : (item.imageUrl ? 1 : 0);
+        const indivCount = Array.isArray(item.photos) ? item.photos.length : (item.imageUrl ? 1 : 0);
 
         const card = document.createElement("article");
         card.className = "card";
@@ -1762,7 +1947,7 @@
           ${item.imageUrl ? `
             <div class="card-img-wrap">
               <img src="${item.imageUrl}" alt="${item.title}" loading="lazy" />
-              <span class="photo-count-badge">${photoCount > 1 ? `Tap to select (${photoCount} photos)` : "Tap to view"}</span>
+              <span class="photo-count-badge">${indivCount > 1 ? `Tap to view full + ${indivCount} photos` : "Tap to view full"}</span>
             </div>
           ` : ""}
           <div class="card-body">
@@ -1771,6 +1956,7 @@
             <div class="card-text">${item.description || ""}</div>
             <div class="card-actions">
               <button type="button" class="btn btn-share wa-share-btn">${gallery.length >= 2 ? "WhatsApp (2 Pics)" : "WhatsApp (Pic)"}</button>
+              ${gallery.length > 1 ? `<button type="button" class="btn btn-secondary view-photos-btn">View Photos (${indivCount})</button>` : ""}
               ${isEditor ? `<button type="button" class="btn btn-danger">Delete</button>` : ""}
             </div>
           </div>
@@ -1778,6 +1964,9 @@
 
         const imgWrap = card.querySelector(".card-img-wrap");
         if (imgWrap) imgWrap.addEventListener("click", () => openLightbox(item, 0));
+
+        const viewBtn = card.querySelector(".view-photos-btn");
+        if (viewBtn) viewBtn.addEventListener("click", () => openLightbox(item, 0));
 
         card.querySelector(".wa-share-btn").addEventListener("click", () => {
           const twoPics = gallery.slice(0, 2).map((g) => g.src);
