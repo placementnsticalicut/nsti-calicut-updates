@@ -81,6 +81,7 @@
     .btn-mini.danger { background: #fde8e8; color: #a11; }
     .btn-danger { background: #dc2626; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
     .btn-share { background: #16a34a; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
+    .btn-edit { background: #d97706; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
 
     main { max-width: 1180px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
     .panel {
@@ -90,6 +91,10 @@
       padding: 1.15rem;
       margin-bottom: 1.25rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .panel.editing-active {
+      border: 2px solid #d97706;
+      box-shadow: 0 4px 16px rgba(217, 119, 6, 0.12);
     }
     .panel.dragover { outline: 3px dashed var(--accent); outline-offset: -6px; }
     .hidden { display: none !important; }
@@ -116,6 +121,29 @@
     textarea { min-height: 82px; resize: vertical; }
     .row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
     .note { font-size: 0.82rem; color: #5c6678; line-height: 1.4; margin-top: 4px; }
+
+    /* Existing Media Notice During Edit */
+    .existing-media-bar {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      color: #92400e;
+    }
+    .existing-media-bar img {
+      height: 52px;
+      width: auto;
+      border-radius: 5px;
+      border: 1px solid #f59e0b;
+      background: #0f172a;
+    }
 
     /* Dedicated AI Prompt Box */
     .ai-box {
@@ -440,7 +468,11 @@
         <div id="editorChipList" class="editor-chip-list"></div>
       </div>
 
-      <h2 style="font-size:1.05rem; margin-bottom:0.8rem; color:var(--primary);">Publish New Update</h2>
+      <div class="row" style="justify-content:space-between; margin-bottom:0.8rem;">
+        <h2 id="formHeading" style="font-size:1.05rem; color:var(--primary);">Publish New Update</h2>
+        <button type="button" id="cancelEditTopBtn" class="btn btn-secondary hidden">Cancel Edit ✕</button>
+      </div>
+
       <form id="postForm">
         <div class="form-row-2">
           <div class="form-group">
@@ -466,6 +498,18 @@
         <div class="form-group">
           <label for="descInput">Description / Caption</label>
           <textarea id="descInput" placeholder="Generated AI text will appear here, or type directly..." required></textarea>
+        </div>
+
+        <!-- Existing Media Notice when Editing -->
+        <div id="existingMediaBar" class="existing-media-bar hidden">
+          <div class="row">
+            <img id="existingMediaThumb" alt="Current Photo" />
+            <div>
+              <strong id="existingMediaText">Current published photo(s) kept automatically.</strong>
+              <div style="font-size:0.76rem;">Upload new photos below only if you want to replace the current poster/photos.</div>
+            </div>
+          </div>
+          <button type="button" id="removeExistingMediaBtn" class="btn-mini danger">Remove Current Photo</button>
         </div>
 
         <div class="form-group" id="dropZone">
@@ -589,6 +633,7 @@
 
         <div class="row">
           <button type="submit" id="publishBtn" class="btn">Publish Update</button>
+          <button type="button" id="cancelEditBtn" class="btn btn-secondary hidden">Cancel Edit</button>
           <span id="formStatus" style="font-size:0.84rem; color:var(--muted);"></span>
         </div>
       </form>
@@ -639,7 +684,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBlZ-3j4fugUmGxTmB2ilMnsMX0M6GdDWg",
@@ -697,6 +742,11 @@
     let viewingPhotoIndex = 0;
     let checkedIndices = new Set([0]);
 
+    // Edit Mode State
+    let editingDocId = null;
+    let preservedImageUrl = "";
+    let preservedPhotos = [];
+
     function showToast(msg, duration = 4500) {
       toastBanner.textContent = msg;
       toastBanner.classList.remove("hidden");
@@ -722,6 +772,84 @@
         year: String(dt.getFullYear())
       };
     }
+
+    /* ================= Edit Mode Helpers ================= */
+    function startEditingItem(item) {
+      if (!isEditor) return;
+      editingDocId = item.id;
+      preservedImageUrl = item.imageUrl || "";
+      preservedPhotos = Array.isArray(item.photos) ? [...item.photos] : [];
+
+      // Clear any pending new uploads
+      photos.forEach((p) => URL.revokeObjectURL(p.url));
+      photos = [];
+      $("files").value = "";
+      $("collageStudio").classList.add("hidden");
+
+      // Populate form fields
+      titleInput.value = item.title || "";
+      eventDateInput.value = item.eventDate || todayLocal;
+      descInput.value = item.description || "";
+      $("imageUrl").value = preservedImageUrl.startsWith("http") ? preservedImageUrl : "";
+      aiPromptInput.value = "";
+      aiStatus.textContent = "";
+      formStatus.textContent = "";
+
+      // Show existing media notice if item has image(s)
+      if (preservedImageUrl) {
+        $("existingMediaThumb").src = preservedImageUrl;
+        const count = preservedPhotos.length || 1;
+        $("existingMediaText").textContent = count > 1
+          ? `Current published poster + ${count} photo(s) will be kept.`
+          : "Current published photo will be kept.";
+        $("existingMediaBar").classList.remove("hidden");
+      } else {
+        $("existingMediaBar").classList.add("hidden");
+      }
+
+      // Update UI to Edit Mode
+      adminPanel.classList.add("editing-active");
+      $("formHeading").textContent = "Edit Published Update";
+      $("publishBtn").textContent = "Save Changes";
+      $("cancelEditBtn").classList.remove("hidden");
+      $("cancelEditTopBtn").classList.remove("hidden");
+
+      adminPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      showToast("Editing mode active — update fields and click Save Changes.");
+    }
+
+    function cancelEditingMode(clearForm = true) {
+      editingDocId = null;
+      preservedImageUrl = "";
+      preservedPhotos = [];
+
+      adminPanel.classList.remove("editing-active");
+      $("formHeading").textContent = "Publish New Update";
+      $("publishBtn").textContent = "Publish Update";
+      $("cancelEditBtn").classList.add("hidden");
+      $("cancelEditTopBtn").classList.add("hidden");
+      $("existingMediaBar").classList.add("hidden");
+
+      if (clearForm) {
+        postForm.reset();
+        eventDateInput.value = todayLocal;
+        aiStatus.textContent = "";
+        formStatus.textContent = "";
+        photos.forEach((p) => URL.revokeObjectURL(p.url));
+        photos = [];
+        $("collageStudio").classList.add("hidden");
+      }
+    }
+
+    $("cancelEditBtn").addEventListener("click", () => cancelEditingMode(true));
+    $("cancelEditTopBtn").addEventListener("click", () => cancelEditingMode(true));
+    $("removeExistingMediaBtn").addEventListener("click", () => {
+      preservedImageUrl = "";
+      preservedPhotos = [];
+      $("imageUrl").value = "";
+      $("existingMediaBar").classList.add("hidden");
+      showToast("Current photo removed — click Save Changes to apply.");
+    });
 
     /* ================= Colleague Editor Management ================= */
     async function loadEditorsList() {
@@ -812,6 +940,7 @@
         logoutBtn.classList.add("hidden");
         adminPanel.classList.add("hidden");
         editorsManagerBox.classList.add("hidden");
+        cancelEditingMode(false);
       }
       renderUpdatesFeed();
     }
@@ -924,6 +1053,9 @@
       }
       $("files").value = "";
       $("collageStudio").classList.toggle("hidden", photos.length === 0);
+      if (photos.length > 0 && editingDocId) {
+        $("existingMediaBar").classList.add("hidden");
+      }
       draw();
       renderThumbs();
     }
@@ -966,7 +1098,6 @@
       }
     }
 
-    // Detects if uploaded photos are mostly horizontal (landscape)
     function arePhotosMostlyLandscape() {
       if (!photos.length) return true;
       const avgRatio = photos.reduce((s, p) => s + photoAspect(p), 0) / photos.length;
@@ -981,7 +1112,6 @@
       const x0 = A.x, x1 = A.x + A.w, y0 = A.y, y1 = A.y + A.h;
       if (n === 0) return S;
 
-      // Smart Orientation: keeps horizontal photos wide (stacked or 2x2) & vertical photos side-by-side
       if (layout === "smart-orient") {
         const mostlyLandscape = arePhotosMostlyLandscape();
         if (n === 1) {
@@ -996,7 +1126,6 @@
       if (n === 1 || layout === "row") {
         rowOf(all, x0, x1, y0, y1, S);
       } else if (layout === "stack") {
-        // Horizontal Rows stacked top-to-bottom so every landscape photo keeps wide horizontal proportions
         const rowH = A.h / n;
         for (let j = 0; j < n; j++) {
           const ya = y0 + j * rowH, yb = y0 + (j + 1) * rowH;
@@ -1004,7 +1133,6 @@
           if (j > 0) S.lines.push({ x0, x1, y: ya });
         }
       } else if (layout === "hero-top") {
-        // Large horizontal photo on top + remaining photos in a clean row below
         const topH = A.h * 0.56;
         const ym = y0 + topH;
         rowOf([0], x0, x1, y0, ym, S);
@@ -1429,7 +1557,6 @@
 
         const frameY = curY + 8;
         const availH = H - footerH - frameY - m;
-        // Adjust frame height proportionally so horizontal photos fit cleanly without side cropping
         const frameRatio = arePhotosMostlyLandscape() ? (isLandscape ? 0.68 : 0.56) : 0.64;
         const frameH = Math.round(availH * frameRatio);
 
@@ -1880,7 +2007,7 @@
       }
     });
 
-    /* ================= Publish ================= */
+    /* ================= Publish or Save Edited Update ================= */
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!isEditor) return;
@@ -1890,43 +2017,67 @@
       const description = descInput.value.trim();
       const externalUrl = $("imageUrl").value.trim();
 
-      let maxDim = photos.length > 3 ? 820 : 980;
-      let indivQuality = photos.length > 3 ? 0.66 : 0.76;
-      let individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, maxDim, indivQuality));
-      const cleanCollageUrl = photos.length ? exportCleanCollageDataUrl() : "";
+      let finalImage = "";
+      let photosToSave = [];
 
-      let totalSize = cleanCollageUrl.length + individualPhotoUrls.reduce((s, u) => s + u.length, 0);
-      if (totalSize > 880000 && photos.length) {
-        individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, 680, 0.56));
+      if (photos.length > 0) {
+        let maxDim = photos.length > 3 ? 820 : 980;
+        let indivQuality = photos.length > 3 ? 0.66 : 0.76;
+        let individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, maxDim, indivQuality));
+        const cleanCollageUrl = exportCleanCollageDataUrl();
+
+        let totalSize = cleanCollageUrl.length + individualPhotoUrls.reduce((s, u) => s + u.length, 0);
+        if (totalSize > 880000) {
+          individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, 680, 0.56));
+        }
+        finalImage = cleanCollageUrl;
+        photosToSave = individualPhotoUrls;
+      } else if (externalUrl) {
+        finalImage = externalUrl;
+        photosToSave = [externalUrl];
+      } else if (editingDocId && preservedImageUrl) {
+        finalImage = preservedImageUrl;
+        photosToSave = preservedPhotos;
       }
 
-      const finalImage = cleanCollageUrl || externalUrl || "";
-      const photosToSave = individualPhotoUrls.length ? individualPhotoUrls : (externalUrl ? [externalUrl] : []);
-
       publishBtn.disabled = true;
-      formStatus.textContent = "Publishing...";
+      formStatus.textContent = editingDocId ? "Saving changes..." : "Publishing...";
 
       try {
-        await addDoc(collection(db, "updates"), {
-          title,
-          eventDate,
-          description,
-          imageUrl: finalImage,
-          photos: photosToSave,
-          postedBy: currentUser?.email || "",
-          createdAt: serverTimestamp()
-        });
-
-        postForm.reset();
-        eventDateInput.value = todayLocal;
-        aiStatus.textContent = "";
-        photos.forEach((p) => URL.revokeObjectURL(p.url));
-        photos = [];
-        $("collageStudio").classList.add("hidden");
-        formStatus.textContent = "Published successfully!";
+        if (editingDocId) {
+          await updateDoc(doc(db, "updates", editingDocId), {
+            title,
+            eventDate,
+            description,
+            imageUrl: finalImage,
+            photos: photosToSave,
+            updatedBy: currentUser?.email || "",
+            updatedAt: serverTimestamp()
+          });
+          cancelEditingMode(true);
+          formStatus.textContent = "Changes saved!";
+          showToast("Published update saved!");
+        } else {
+          await addDoc(collection(db, "updates"), {
+            title,
+            eventDate,
+            description,
+            imageUrl: finalImage,
+            photos: photosToSave,
+            postedBy: currentUser?.email || "",
+            createdAt: serverTimestamp()
+          });
+          postForm.reset();
+          eventDateInput.value = todayLocal;
+          aiStatus.textContent = "";
+          photos.forEach((p) => URL.revokeObjectURL(p.url));
+          photos = [];
+          $("collageStudio").classList.add("hidden");
+          formStatus.textContent = "Published successfully!";
+        }
         await fetchUpdates();
       } catch (err) {
-        alert("Publish failed: " + err.message);
+        alert((editingDocId ? "Save failed: " : "Publish failed: ") + err.message);
         formStatus.textContent = "Error: " + err.message;
       } finally {
         publishBtn.disabled = false;
@@ -2021,7 +2172,8 @@
             <div class="card-actions">
               <button type="button" class="btn btn-share wa-share-btn">${gallery.length >= 2 ? "WhatsApp (2 Pics)" : "WhatsApp (Pic)"}</button>
               ${gallery.length > 1 ? `<button type="button" class="btn btn-secondary view-photos-btn">View Photos (${indivCount})</button>` : ""}
-              ${isEditor ? `<button type="button" class="btn btn-danger">Delete</button>` : ""}
+              ${isEditor ? `<button type="button" class="btn btn-edit edit-btn">Edit</button>` : ""}
+              ${isEditor ? `<button type="button" class="btn btn-danger delete-btn">Delete</button>` : ""}
             </div>
           </div>
         `;
@@ -2038,8 +2190,11 @@
         });
 
         if (isEditor) {
-          card.querySelector(".btn-danger").addEventListener("click", async () => {
+          card.querySelector(".edit-btn").addEventListener("click", () => startEditingItem(item));
+
+          card.querySelector(".delete-btn").addEventListener("click", async () => {
             if (!confirm("Delete this update?")) return;
+            if (editingDocId === item.id) cancelEditingMode(true);
             await deleteDoc(doc(db, "updates", item.id));
             fetchUpdates();
           });
