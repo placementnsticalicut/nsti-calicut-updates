@@ -127,22 +127,50 @@
       background: #fffbeb;
       border: 1px solid #fcd34d;
       border-radius: 8px;
-      padding: 0.65rem 0.85rem;
+      padding: 0.75rem 0.85rem;
       margin-bottom: 0.75rem;
+      font-size: 0.82rem;
+      color: #92400e;
+    }
+    .existing-media-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
       flex-wrap: wrap;
-      font-size: 0.82rem;
-      color: #92400e;
     }
-    .existing-media-bar img {
+    .existing-media-header img {
       height: 52px;
       width: auto;
       border-radius: 5px;
       border: 1px solid #f59e0b;
       background: #0f172a;
+    }
+    .existing-labels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+    }
+    .existing-label-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #fff;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid #fde68a;
+    }
+    .existing-label-item img {
+      width: 42px;
+      height: 32px;
+      object-fit: cover;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .existing-label-item input {
+      padding: 0.32rem 0.5rem;
+      font-size: 0.8rem;
     }
 
     /* Dedicated AI Prompt Box */
@@ -224,7 +252,7 @@
     }
     .photo-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
       gap: 10px;
       margin-top: 12px;
     }
@@ -245,6 +273,20 @@
       margin-bottom: 6px;
     }
     .thumb-card .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; font-weight: 700; }
+    .thumb-card .photo-label-input {
+      width: 100%;
+      padding: 0.35rem 0.5rem;
+      font-size: 0.8rem;
+      border: 1px solid #93c5fd;
+      background: #f8fafc;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+    .thumb-card .photo-label-input:focus {
+      background: #fff;
+      border-color: var(--accent);
+      outline: none;
+    }
     .thumb-card .zl { font-size: 0.75rem; color: #5c6678; }
 
     /* Filter Bar */
@@ -350,65 +392,155 @@
       text-align: center;
     }
 
-    /* Lightbox & Individual Photo Selector */
+    /* Full-Screen Photo Lightbox with Prev/Next Arrows & Photo Label */
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.9);
+      background: #060b14;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem;
+      flex-direction: column;
       z-index: 1000;
     }
     .modal-inner {
-      position: relative;
-      background: #fff;
-      border-radius: 10px;
-      max-width: 960px;
+      display: flex;
+      flex-direction: column;
       width: 100%;
-      max-height: 94vh;
-      overflow-y: auto;
-      padding: 1rem;
+      height: 100vh;
+      height: 100dvh;
+      max-width: 100%;
+      background: #0b1220;
+      color: #f8fafc;
+      overflow: hidden;
     }
     .modal-top-bar {
       display: flex;
       flex-wrap: nowrap;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
-      margin-bottom: 0.6rem;
+      padding: 0.65rem 1rem;
+      background: #0f294a;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      flex-shrink: 0;
     }
     .modal-title-group {
       flex: 1;
       min-width: 0;
     }
     .modal-title-group h3 {
-      color: var(--primary);
-      font-size: 1.04rem;
-      word-break: break-word;
+      color: #ffffff;
+      font-size: 0.98rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .modal-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.74rem;
+      color: #93c5fd;
+      margin-bottom: 2px;
     }
     #closeModalBtn {
       flex-shrink: 0;
       margin-left: auto;
+      background: rgba(255,255,255,0.16);
+      color: #ffffff;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 0.4rem 0.75rem;
+    }
+    #closeModalBtn:hover {
+      background: #dc2626;
+      border-color: #dc2626;
+    }
+
+    /* Full-Screen Image Stage with Prev/Next Buttons */
+    .modal-stage {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #050911;
+      overflow: hidden;
+      user-select: none;
     }
     #modalMainImg {
       width: 100%;
-      max-height: 66vh;
+      height: 100%;
+      max-width: 100vw;
+      max-height: 100%;
       object-fit: contain;
-      border-radius: 6px;
-      background: #0f172a;
       display: block;
+    }
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 54px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(15, 41, 74, 0.78);
+      color: #ffffff;
+      font-size: 1.7rem;
+      font-weight: 700;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+    }
+    .nav-arrow:hover {
+      background: var(--accent);
+      border-color: #ffffff;
+    }
+    .nav-prev { left: 10px; }
+    .nav-next { right: 10px; }
+
+    /* Active Photo Label Caption Overlay */
+    .photo-caption-overlay {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 41, 74, 0.92);
+      border: 1px solid rgba(147, 197, 253, 0.45);
+      color: #ffffff;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      max-width: 92vw;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      z-index: 9;
+    }
+
+    /* Bottom Drawer for Thumbnails, Event Description & Share Actions */
+    .modal-bottom-drawer {
+      background: #ffffff;
+      color: #172033;
+      padding: 0.65rem 1rem 0.85rem;
+      border-top: 1px solid #cbd5e1;
+      max-height: 36vh;
+      overflow-y: auto;
+      flex-shrink: 0;
     }
     .modal-gallery-strip {
       display: flex;
-      gap: 0.6rem;
+      gap: 0.55rem;
       overflow-x: auto;
-      padding: 0.65rem 0 0.25rem;
+      padding: 0.35rem 0 0.25rem;
     }
     .modal-thumb-card {
       position: relative;
-      width: 92px;
+      width: 96px;
       flex-shrink: 0;
       border-radius: 6px;
       border: 2px solid var(--border);
@@ -420,7 +552,7 @@
       border-color: var(--accent);
       box-shadow: 0 0 0 2px rgba(21, 94, 239, 0.25);
     }
-    .modal-thumb-card img { width: 100%; height: 62px; object-fit: cover; display: block; }
+    .modal-thumb-card img { width: 100%; height: 54px; object-fit: cover; display: block; }
     .modal-thumb-label {
       font-size: 0.68rem;
       font-weight: 700;
@@ -433,10 +565,10 @@
     }
     .modal-thumb-check {
       position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 18px;
-      height: 18px;
+      top: 3px;
+      right: 3px;
+      width: 17px;
+      height: 17px;
       accent-color: #16a34a;
       cursor: pointer;
     }
@@ -502,20 +634,23 @@
 
         <!-- Existing Media Notice when Editing -->
         <div id="existingMediaBar" class="existing-media-bar hidden">
-          <div class="row">
-            <img id="existingMediaThumb" alt="Current Photo" />
-            <div>
-              <strong id="existingMediaText">Current published photo(s) kept automatically.</strong>
-              <div style="font-size:0.76rem;">Upload new photos below only if you want to replace the current poster/photos.</div>
+          <div class="existing-media-header">
+            <div class="row">
+              <img id="existingMediaThumb" alt="Current Photo" />
+              <div>
+                <strong id="existingMediaText">Current published photo(s) kept automatically.</strong>
+                <div style="font-size:0.76rem;">Edit individual photo labels below, or upload new photos to replace them.</div>
+              </div>
             </div>
+            <button type="button" id="removeExistingMediaBtn" class="btn-mini danger">Remove Current Photo</button>
           </div>
-          <button type="button" id="removeExistingMediaBtn" class="btn-mini danger">Remove Current Photo</button>
+          <div id="existingLabelsGrid" class="existing-labels-grid"></div>
         </div>
 
         <div class="form-group" id="dropZone">
-          <label for="files">Upload Photos (1–6 photos — builds your Poster/Collage AND saves every individual photo to tap &amp; view)</label>
+          <label for="files">Upload Photos (1–6 photos — add individual photo labels like "Principal's Speech" or "Chief Guest")</label>
           <input id="files" type="file" accept="image/*" multiple />
-          <div class="note">Select multiple photos at once or drag files onto this panel. Both the framed poster/collage and all individual full photos are saved automatically.</div>
+          <div class="note">Select multiple photos at once or drag files onto this panel. You can type a label for each photo below so viewers see it when tapping through photos.</div>
 
           <div id="collageStudio" class="collage-studio hidden">
             <div class="studio-grid">
@@ -621,7 +756,7 @@
             <div class="preview-wrap">
               <canvas id="collageCanvas" width="1600" height="1000"></canvas>
             </div>
-            <p class="note"><b>Interactive Preview:</b> Drag any photo to adjust framing, scroll wheel to zoom, or drag the white handles on dividers to resize sections.</p>
+            <p class="note"><b>Interactive Preview:</b> Drag any photo to adjust framing, scroll wheel to zoom, or drag the white handles on dividers to resize sections. Enter each photo's caption/label in the boxes below:</p>
             <div id="photoList" class="photo-list"></div>
           </div>
         </div>
@@ -653,30 +788,42 @@
 
   <div id="toastBanner" class="hidden"></div>
 
+  <!-- Full-Screen Photo Lightbox -->
   <div id="lightboxModal" class="modal hidden">
     <div class="modal-inner">
       <div class="modal-top-bar">
         <div class="modal-title-group">
-          <span id="modalDateBadge" class="card-date-badge" style="margin-bottom:0.2rem;"></span>
+          <div class="modal-meta-row">
+            <span id="modalDateBadge"></span>
+            <span>•</span>
+            <span id="modalCounterBadge"></span>
+          </div>
           <h3 id="modalTitle"></h3>
         </div>
-        <button id="closeModalBtn" class="btn btn-secondary">Close ✕</button>
+        <button id="closeModalBtn" class="btn">Close ✕</button>
       </div>
 
-      <img id="modalMainImg" alt="Update Photo" />
+      <div class="modal-stage" id="modalStage">
+        <button type="button" id="prevPhotoBtn" class="nav-arrow nav-prev hidden" aria-label="Previous Photo" title="Previous Photo">‹</button>
+        <img id="modalMainImg" alt="Update Photo" />
+        <button type="button" id="nextPhotoBtn" class="nav-arrow nav-next hidden" aria-label="Next Photo" title="Next Photo">›</button>
+        <div id="modalPhotoLabelOverlay" class="photo-caption-overlay hidden"></div>
+      </div>
 
-      <div id="modalGalleryWrap" class="hidden">
-        <div style="font-size:0.78rem; color:var(--muted); margin-top:0.55rem;">
-          Tap any individual photo below to view full-size, or tick up to 2 checkboxes to share those exact photos:
+      <div class="modal-bottom-drawer">
+        <div id="modalGalleryWrap" class="hidden">
+          <div style="font-size:0.75rem; color:var(--muted);">
+            Tap any photo or use ‹ › arrows • Tick up to 2 boxes to share on WhatsApp:
+          </div>
+          <div id="modalGalleryStrip" class="modal-gallery-strip"></div>
         </div>
-        <div id="modalGalleryStrip" class="modal-gallery-strip"></div>
-      </div>
 
-      <p id="modalDesc" style="margin-top:0.75rem; white-space:pre-line; font-size:0.92rem; color:#334155;"></p>
+        <p id="modalDesc" style="margin-top:0.45rem; white-space:pre-line; font-size:0.88rem; color:#334155;"></p>
 
-      <div class="row" style="margin-top:0.9rem; padding-top:0.75rem; border-top:1px solid var(--border);">
-        <button type="button" id="modalShareCheckedBtn" class="btn btn-share">Share Selected Photo to WA</button>
-        <button type="button" id="modalDownloadBtn" class="btn btn-secondary">Download Viewed JPG</button>
+        <div class="row" style="margin-top:0.65rem; padding-top:0.55rem; border-top:1px solid var(--border);">
+          <button type="button" id="modalShareCheckedBtn" class="btn btn-share">Share Selected Photo to WA</button>
+          <button type="button" id="modalDownloadBtn" class="btn btn-secondary">Download Viewed JPG</button>
+        </div>
       </div>
     </div>
   </div>
@@ -746,6 +893,7 @@
     let editingDocId = null;
     let preservedImageUrl = "";
     let preservedPhotos = [];
+    let preservedPhotoLabels = [];
 
     function showToast(msg, duration = 4500) {
       toastBanner.textContent = msg;
@@ -774,19 +922,36 @@
     }
 
     /* ================= Edit Mode Helpers ================= */
+    function renderExistingLabelsEditor() {
+      const grid = $("existingLabelsGrid");
+      grid.innerHTML = "";
+      if (!preservedPhotos.length) return;
+      preservedPhotos.forEach((src, i) => {
+        const row = document.createElement("div");
+        row.className = "existing-label-item";
+        row.innerHTML = `
+          <img src="${src}" alt="Photo ${i + 1}" />
+          <input type="text" placeholder="Photo ${i + 1} label (e.g. Principal's Speech)" value="${(preservedPhotoLabels[i] || "").replace(/"/g, "&quot;")}" />
+        `;
+        row.querySelector("input").addEventListener("input", (e) => {
+          preservedPhotoLabels[i] = e.target.value;
+        });
+        grid.appendChild(row);
+      });
+    }
+
     function startEditingItem(item) {
       if (!isEditor) return;
       editingDocId = item.id;
       preservedImageUrl = item.imageUrl || "";
       preservedPhotos = Array.isArray(item.photos) ? [...item.photos] : [];
+      preservedPhotoLabels = Array.isArray(item.photoLabels) ? [...item.photoLabels] : [];
 
-      // Clear any pending new uploads
       photos.forEach((p) => URL.revokeObjectURL(p.url));
       photos = [];
       $("files").value = "";
       $("collageStudio").classList.add("hidden");
 
-      // Populate form fields
       titleInput.value = item.title || "";
       eventDateInput.value = item.eventDate || todayLocal;
       descInput.value = item.description || "";
@@ -795,19 +960,18 @@
       aiStatus.textContent = "";
       formStatus.textContent = "";
 
-      // Show existing media notice if item has image(s)
       if (preservedImageUrl) {
         $("existingMediaThumb").src = preservedImageUrl;
         const count = preservedPhotos.length || 1;
         $("existingMediaText").textContent = count > 1
-          ? `Current published poster + ${count} photo(s) will be kept.`
-          : "Current published photo will be kept.";
+          ? `Current published poster + ${count} photo(s) kept.`
+          : "Current published photo kept.";
+        renderExistingLabelsEditor();
         $("existingMediaBar").classList.remove("hidden");
       } else {
         $("existingMediaBar").classList.add("hidden");
       }
 
-      // Update UI to Edit Mode
       adminPanel.classList.add("editing-active");
       $("formHeading").textContent = "Edit Published Update";
       $("publishBtn").textContent = "Save Changes";
@@ -815,13 +979,14 @@
       $("cancelEditTopBtn").classList.remove("hidden");
 
       adminPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-      showToast("Editing mode active — update fields and click Save Changes.");
+      showToast("Editing mode active — update fields or photo labels and click Save Changes.");
     }
 
     function cancelEditingMode(clearForm = true) {
       editingDocId = null;
       preservedImageUrl = "";
       preservedPhotos = [];
+      preservedPhotoLabels = [];
 
       adminPanel.classList.remove("editing-active");
       $("formHeading").textContent = "Publish New Update";
@@ -829,6 +994,7 @@
       $("cancelEditBtn").classList.add("hidden");
       $("cancelEditTopBtn").classList.add("hidden");
       $("existingMediaBar").classList.add("hidden");
+      $("existingLabelsGrid").innerHTML = "";
 
       if (clearForm) {
         postForm.reset();
@@ -846,6 +1012,7 @@
     $("removeExistingMediaBtn").addEventListener("click", () => {
       preservedImageUrl = "";
       preservedPhotos = [];
+      preservedPhotoLabels = [];
       $("imageUrl").value = "";
       $("existingMediaBar").classList.add("hidden");
       showToast("Current photo removed — click Save Changes to apply.");
@@ -1044,7 +1211,17 @@
         const url = URL.createObjectURL(f);
         try {
           const img = await loadImg(url);
-          const p = { img, url, name: f.name, full: { sx: 0, sy: 0, sw: img.naturalWidth, sh: img.naturalHeight }, fx: 0.5, fy: 0.5, zoom: 1, w: 1 };
+          const p = {
+            img,
+            url,
+            name: f.name,
+            label: "", // Custom caption for this individual photo
+            full: { sx: 0, sy: 0, sw: img.naturalWidth, sh: img.naturalHeight },
+            fx: 0.5,
+            fy: 0.5,
+            zoom: 1,
+            w: 1
+          };
           p.tbox = trimBox(img);
           applyBox(p);
           if (widthMode !== "smart") p.w = widthMode === "equal" ? 1 : photoAspect(p);
@@ -1722,16 +1899,25 @@
         const d = document.createElement("div");
         d.className = "thumb-card";
         d.innerHTML =
-          '<img alt="Photo ' + (i + 1) + '"><div class="name"></div><div class="row">' +
+          '<img alt="Photo ' + (i + 1) + '"><div class="name"></div>' +
+          '<input type="text" class="photo-label-input" placeholder="Label (e.g. Principal\'s Speech)" />' +
+          '<div class="row" style="margin-bottom:6px;">' +
           '<button type="button" class="btn-mini" data-a="left" title="Move earlier"' + (i === 0 ? " disabled" : "") + ">◀</button>" +
           '<button type="button" class="btn-mini" data-a="right" title="Move later"' + (i === photos.length - 1 ? " disabled" : "") + ">▶</button>" +
-          '<button type="button" class="btn-mini" data-a="centre" title="Reset position and zoom">Centre</button>' +
+          '<button type="button" class="btn-mini" data-a="centre" title="Reset position and zoom">Centre</button>" +
           '<button type="button" class="btn-mini danger" data-a="remove" title="Remove">✕</button></div>' +
           '<div class="zl">Zoom</div><input type="range" min="100" max="300" value="' + Math.round(p.zoom * 100) + '" data-zoom="' + i + '">';
         d.querySelector("img").src = p.url;
         const nm = d.querySelector(".name");
         nm.textContent = (i + 1) + ". " + p.name;
         nm.title = p.name;
+
+        const labelInp = d.querySelector(".photo-label-input");
+        labelInp.value = p.label || "";
+        labelInp.addEventListener("input", (e) => {
+          p.label = e.target.value;
+        });
+
         d.querySelectorAll("button").forEach((btn) => btn.addEventListener("click", () => {
           const a = btn.dataset.a;
           if (a === "left" && i > 0) swap(i, i - 1);
@@ -1745,7 +1931,7 @@
           draw();
           renderThumbs();
         }));
-        d.querySelector("input").addEventListener("input", (e) => {
+        d.querySelector('input[type="range"]').addEventListener("input", (e) => {
           p.zoom = Number(e.target.value) / 100;
           draw();
         });
@@ -2019,6 +2205,7 @@
 
       let finalImage = "";
       let photosToSave = [];
+      let labelsToSave = [];
 
       if (photos.length > 0) {
         let maxDim = photos.length > 3 ? 820 : 980;
@@ -2032,12 +2219,15 @@
         }
         finalImage = cleanCollageUrl;
         photosToSave = individualPhotoUrls;
+        labelsToSave = photos.map((p) => (p.label || "").trim());
       } else if (externalUrl) {
         finalImage = externalUrl;
         photosToSave = [externalUrl];
+        labelsToSave = [];
       } else if (editingDocId && preservedImageUrl) {
         finalImage = preservedImageUrl;
         photosToSave = preservedPhotos;
+        labelsToSave = preservedPhotoLabels.map((l) => (l || "").trim());
       }
 
       publishBtn.disabled = true;
@@ -2051,6 +2241,7 @@
             description,
             imageUrl: finalImage,
             photos: photosToSave,
+            photoLabels: labelsToSave,
             updatedBy: currentUser?.email || "",
             updatedAt: serverTimestamp()
           });
@@ -2064,6 +2255,7 @@
             description,
             imageUrl: finalImage,
             photos: photosToSave,
+            photoLabels: labelsToSave,
             postedBy: currentUser?.email || "",
             createdAt: serverTimestamp()
           });
@@ -2084,7 +2276,7 @@
       }
     });
 
-    /* ================= Feed & Individual Photo Lightbox ================= */
+    /* ================= Feed & Full-Screen Photo Lightbox ================= */
     monthFilter.addEventListener("change", () => {
       resetFilterBtn.classList.toggle("hidden", !monthFilter.value);
       renderUpdatesFeed();
@@ -2126,11 +2318,28 @@
 
     function getGalleryList(item) {
       const list = [];
-      if (item.imageUrl) list.push({ label: "Photo 1", src: item.imageUrl });
+      const customLabels = Array.isArray(item.photoLabels) ? item.photoLabels : [];
+      const hasMultiple = Array.isArray(item.photos) && item.photos.length > 1;
+
+      if (item.imageUrl) {
+        // If only 1 photo was uploaded, use its custom label directly; otherwise label the collage cover
+        const coverCaption = (!hasMultiple && customLabels[0]) ? customLabels[0] : (hasMultiple ? (item.title || "Event Highlights") : "");
+        list.push({
+          thumbLabel: hasMultiple ? "Collage" : (customLabels[0] || "Photo 1"),
+          caption: coverCaption,
+          src: item.imageUrl
+        });
+      }
+
       if (Array.isArray(item.photos)) {
-        item.photos.forEach((src) => {
+        item.photos.forEach((src, idx) => {
           if (src && src !== item.imageUrl) {
-            list.push({ label: `Photo ${list.length + 1}`, src });
+            const lbl = (customLabels[idx] || "").trim();
+            list.push({
+              thumbLabel: lbl || `Photo ${list.length + 1}`,
+              caption: lbl,
+              src
+            });
           }
         });
       }
@@ -2209,6 +2418,15 @@
       btn.textContent = count > 1 ? `Share ${count} Checked Photos to WA` : "Share Selected Photo to WA";
     }
 
+    function stepModalPhoto(delta) {
+      if (!activeModalItem) return;
+      const gallery = getGalleryList(activeModalItem);
+      if (gallery.length <= 1) return;
+      viewingPhotoIndex = (viewingPhotoIndex + delta + gallery.length) % gallery.length;
+      checkedIndices = new Set([viewingPhotoIndex]);
+      syncGalleryUI();
+    }
+
     function openLightbox(item, initialIndex = 0) {
       activeModalItem = item;
       const gallery = getGalleryList(item);
@@ -2225,15 +2443,19 @@
       const wrap = $("modalGalleryWrap");
       strip.innerHTML = "";
 
-      if (gallery.length > 1) {
+      const hasMultiple = gallery.length > 1;
+      $("prevPhotoBtn").classList.toggle("hidden", !hasMultiple);
+      $("nextPhotoBtn").classList.toggle("hidden", !hasMultiple);
+
+      if (hasMultiple) {
         wrap.classList.remove("hidden");
         gallery.forEach((g, idx) => {
           const card = document.createElement("div");
           card.className = "modal-thumb-card" + (idx === viewingPhotoIndex ? " viewing" : "");
           card.innerHTML = `
             <input type="checkbox" class="modal-thumb-check" ${checkedIndices.has(idx) ? "checked" : ""} title="Select photo for WhatsApp" />
-            <img src="${g.src}" alt="${g.label}" />
-            <div class="modal-thumb-label">${g.label}</div>
+            <img src="${g.src}" alt="${g.thumbLabel}" />
+            <div class="modal-thumb-label">${g.thumbLabel}</div>
           `;
 
           const checkbox = card.querySelector(".modal-thumb-check");
@@ -2274,16 +2496,55 @@
     function syncGalleryUI() {
       if (!activeModalItem) return;
       const gallery = getGalleryList(activeModalItem);
-      $("modalMainImg").src = gallery[viewingPhotoIndex].src;
+      const current = gallery[viewingPhotoIndex];
 
-      document.querySelectorAll(".modal-thumb-card").forEach((el, i) => {
+      $("modalMainImg").src = current.src;
+      $("modalCounterBadge").textContent = `${viewingPhotoIndex + 1} of ${gallery.length}`;
+
+      // Show corresponding photo label overlay if present
+      const labelOverlay = $("modalPhotoLabelOverlay");
+      if (current.caption) {
+        labelOverlay.textContent = current.caption;
+        labelOverlay.classList.remove("hidden");
+      } else {
+        labelOverlay.classList.add("hidden");
+      }
+
+      const thumbCards = document.querySelectorAll(".modal-thumb-card");
+      thumbCards.forEach((el, i) => {
         el.classList.toggle("viewing", i === viewingPhotoIndex);
+        if (i === viewingPhotoIndex) {
+          el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        }
         const cb = el.querySelector(".modal-thumb-check");
         if (cb) cb.checked = checkedIndices.has(i);
       });
 
       updateShareButtonLabel();
     }
+
+    $("prevPhotoBtn").addEventListener("click", (e) => { e.stopPropagation(); stepModalPhoto(-1); });
+    $("nextPhotoBtn").addEventListener("click", (e) => { e.stopPropagation(); stepModalPhoto(1); });
+
+    // Keyboard Left / Right / Escape navigation when lightbox is open
+    document.addEventListener("keydown", (e) => {
+      if ($("lightboxModal").classList.contains("hidden")) return;
+      if (e.key === "ArrowLeft") stepModalPhoto(-1);
+      else if (e.key === "ArrowRight") stepModalPhoto(1);
+      else if (e.key === "Escape") $("lightboxModal").classList.add("hidden");
+    });
+
+    // Touch swipe navigation on mobile full-screen viewer
+    let touchStartX = 0;
+    $("modalStage").addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    $("modalStage").addEventListener("touchend", (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 45) {
+        stepModalPhoto(dx < 0 ? 1 : -1);
+      }
+    }, { passive: true });
 
     $("modalShareCheckedBtn").addEventListener("click", () => {
       if (!activeModalItem) return;
