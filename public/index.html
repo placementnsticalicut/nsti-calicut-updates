@@ -422,12 +422,12 @@
         </div>
 
         <div class="form-group">
-          <label for="descInput">Description / Caption (Also printed inside CUSAT-style Event Poster)</label>
+          <label for="descInput">Description / Caption (Also printed inside Event News Poster)</label>
           <textarea id="descInput" placeholder="Generated AI text will appear here, or type directly..." required></textarea>
         </div>
 
         <div class="form-group" id="dropZone">
-          <label for="files">Upload Photos (1–6 photos — choose CUSAT Poster Style or Interactive Collage)</label>
+          <label for="files">Upload Photos (1–6 photos — choose Institutional Poster Style or Interactive Collage)</label>
           <input id="files" type="file" accept="image/*" multiple />
           <div class="note">White/black photo borders are trimmed automatically. Drag &amp; zoom photos directly on the preview below.</div>
 
@@ -436,15 +436,15 @@
               <div>
                 <label for="posterStyle">1. Poster / Collage Style</label>
                 <select id="posterStyle">
-                  <option value="cusat-news">CUSAT Event News Poster (4:5 Portrait)</option>
-                  <option value="cusat-day">CUSAT Commemorative Day Poster (4:5)</option>
+                  <option value="news-poster">Event News Poster (4:5 Portrait)</option>
+                  <option value="day-poster">Commemorative Day Poster (4:5)</option>
                   <option value="collage">Interactive Collage / Slider Banner</option>
                 </select>
               </div>
               <div>
                 <label for="posterTheme">2. Poster Colour Palette</label>
                 <select id="posterTheme">
-                  <option value="crimson">CUSAT Crimson &amp; Gold</option>
+                  <option value="crimson">Imperial Crimson &amp; Gold</option>
                   <option value="navy">NSTI Royal Navy &amp; Gold</option>
                   <option value="tricolor">National Tricolor &amp; Cream</option>
                   <option value="teal">Deep Emerald &amp; Gold</option>
@@ -767,7 +767,7 @@
     logoutBtn.addEventListener("click", () => signOut(auth));
     onAuthStateChanged(auth, (user) => { currentUser = user; evaluateAccess(); });
 
-    /* ================= CUSAT Poster + Interactive Collage Engine ================= */
+    /* ================= Institutional Poster + Interactive Collage Engine ================= */
     const MAX = 6;
     let W = 1080, H = 1350;
     let photos = [], scene = null, heroFrac = 0.58, widthMode = "smart";
@@ -1006,17 +1006,14 @@
       return p;
     }
 
-    // White CUSAT-style institutional footer bar across the bottom of posters
     function drawInstitutionalFooter(footerY, footerH, accentColor) {
       ctx.save();
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, footerY, W, footerH);
 
-      // Subtle top border line
       ctx.fillStyle = "#e2e8f0";
       ctx.fillRect(0, footerY, W, 3);
 
-      // Left Emblem + Bold Institute Name
       const emblemR = 30;
       const emblemX = 56;
       const emblemY = footerY + footerH / 2;
@@ -1040,11 +1037,9 @@
       ctx.font = "700 13px Arial, Helvetica, sans-serif";
       ctx.fillText("KOZHIKODE, KERALAM", 104, footerY + footerH / 2 + 16);
 
-      // Vertical Divider 1
       ctx.fillStyle = "#cbd5e1";
       ctx.fillRect(355, footerY + 22, 2, footerH - 44);
 
-      // Center Government / Ministry Badges
       ctx.fillStyle = "#0f294a";
       ctx.font = "800 14px Arial, Helvetica, sans-serif";
       ctx.fillText("DGT  •  MSDE", 378, footerY + footerH / 2 - 10);
@@ -1052,11 +1047,9 @@
       ctx.font = "700 13px Arial, Helvetica, sans-serif";
       ctx.fillText("GOVT. OF INDIA  •  SKILL INDIA", 378, footerY + footerH / 2 + 12);
 
-      // Vertical Divider 2
       ctx.fillStyle = "#cbd5e1";
       ctx.fillRect(645, footerY + 22, 2, footerH - 44);
 
-      // Right Full Official Title & Portal
       ctx.fillStyle = "#1e293b";
       ctx.font = "700 13.5px Arial, Helvetica, sans-serif";
       ctx.fillText("National Skill Training Institute Calicut,", 668, footerY + footerH / 2 - 12);
@@ -1070,7 +1063,7 @@
 
     function draw(forExport) {
       const style = $("posterStyle").value;
-      const isPoster = style === "cusat-news" || style === "cusat-day";
+      const isPoster = style === "news-poster" || style === "day-poster";
       $("collageOnlyControls").classList.toggle("hidden", isPoster);
 
       if (isPoster) {
@@ -1102,15 +1095,13 @@
       const descText = descInput.value.trim() || "Event highlights from National Skill Training Institute Calicut, Kozhikode, Keralam.";
       const dm = getDayAndMonth(eventDateInput.value);
 
-      if (style === "cusat-news") {
-        // 1. Rich Editorial Gradient Background + Concentric Arc Rings (Matches cu3.jpg)
+      if (style === "news-poster") {
         const grad = ctx.createLinearGradient(0, 0, W, H - 125);
         grad.addColorStop(0, pal.bg1);
         grad.addColorStop(1, pal.bg2);
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
 
-        // Decorative concentric arc rings on right and left edges
         ctx.save();
         ctx.strokeStyle = pal.light ? "rgba(234, 88, 12, 0.22)" : "rgba(250, 204, 21, 0.35)";
         ctx.lineWidth = 10;
@@ -1124,7 +1115,6 @@
         });
         ctx.restore();
 
-        // 2. Top Bold Headline + Date Pill
         ctx.save();
         ctx.fillStyle = pal.gold;
         ctx.fillRect(68, 52, 165, 34);
@@ -1144,7 +1134,6 @@
         });
         ctx.restore();
 
-        // 3. White-Bordered Photo Frame in Center
         const frameX = 68;
         const frameY = curY + 12;
         const frameW = W - 136;
@@ -1160,7 +1149,6 @@
         scene = buildCellsInArea({ x: frameX, y: frameY, w: frameW, h: frameH });
         scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
 
-        // Divider strokes inside multi-photo frame
         if (photos.length > 1 && !isCard()) {
           ctx.save();
           ctx.strokeStyle = "#ffffff";
@@ -1175,7 +1163,6 @@
           ctx.restore();
         }
 
-        // 4. Event Description Write-up Below Photo
         ctx.save();
         ctx.fillStyle = pal.light ? "#1e293b" : "rgba(255,255,255,0.94)";
         ctx.font = "400 25px Arial, Helvetica, sans-serif";
@@ -1189,18 +1176,14 @@
         });
         ctx.restore();
 
-        // 5. White Institutional Footer Bar
         drawInstitutionalFooter(H - 124, 124, pal.accent);
 
-      } else if (style === "cusat-day") {
-        // Commemorative Poster Style (Matches 1cu.jpg & cu2.jpg)
+      } else if (style === "day-poster") {
         ctx.fillStyle = pal.light ? "#f8fafc" : pal.bg2;
         ctx.fillRect(0, 0, W, H);
 
-        // Top Header Band with Boxed Date Badge
         const topAreaH = 265;
         ctx.save();
-        // Boxed Date Emblem (Top Right like 1cu.jpg)
         const bx = W - 185, by = 54, bw = 122, bh = 132;
         ctx.strokeStyle = pal.light ? "#0f294a" : "#ffffff";
         ctx.lineWidth = 3;
@@ -1213,7 +1196,6 @@
         ctx.font = "800 26px Arial, Helvetica, sans-serif";
         ctx.fillText(dm.month, bx + bw / 2, by + 104);
 
-        // Centered Display Headline + Tricolor Accent Bar
         ctx.textAlign = "left";
         ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
         ctx.font = "900 46px Georgia, serif";
@@ -1224,14 +1206,12 @@
           dy += 54;
         });
 
-        // Tricolor accent rule
         const ruleY = Math.max(dy - 10, 212);
         ctx.fillStyle = "#ea580c"; ctx.fillRect(64, ruleY, 110, 6);
         ctx.fillStyle = "#ffffff"; ctx.fillRect(174, ruleY, 110, 6);
         ctx.fillStyle = "#16a34a"; ctx.fillRect(284, ruleY, 110, 6);
         ctx.restore();
 
-        // Main Photo Area
         const pX = 56, pY = topAreaH, pW = W - 112, pH = 740;
         scene = buildCellsInArea({ x: pX, y: pY, w: pW, h: pH });
         scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
@@ -1250,7 +1230,6 @@
           ctx.restore();
         }
 
-        // Centered Quote / Highlight Strip Above Footer
         ctx.save();
         ctx.fillStyle = pal.light ? "#1e293b" : "#f8fafc";
         ctx.font = "italic 700 24px Georgia, serif";
@@ -1266,7 +1245,6 @@
         drawInstitutionalFooter(H - 124, 124, pal.accent);
 
       } else {
-        // Interactive Collage / Slider Banner Mode
         const bgc = $("gapColor").value;
         ctx.fillStyle = bgc;
         ctx.fillRect(0, 0, W, H);
