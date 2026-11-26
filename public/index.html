@@ -24,16 +24,15 @@
     header {
       background: var(--primary);
       color: #fff;
-      padding: 1rem 1.25rem;
+      padding: 0.9rem 1.2rem;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 0.75rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     }
-    header h1 { font-size: 1.15rem; font-weight: 700; }
-    header p { font-size: 0.82rem; color: #cbd5e1; }
+    header h1 { font-size: 1.12rem; font-weight: 700; line-height: 1.25; }
+    header p { font-size: 0.8rem; color: #cbd5e1; margin-top: 2px; }
     .btn {
       background: var(--accent);
       color: #fff;
@@ -54,6 +53,13 @@
       background: transparent;
       border: 1px solid rgba(255,255,255,0.45);
       color: #fff;
+    }
+    .btn-admin-sm {
+      padding: 0.32rem 0.65rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border-radius: 6px;
+      flex-shrink: 0;
     }
     .btn-secondary {
       background: #e9eef7;
@@ -256,7 +262,7 @@
     .card-img-wrap img {
       width: 100%;
       height: auto;
-      max-height: 360px;
+      max-height: 380px;
       object-fit: contain;
       display: block;
     }
@@ -324,10 +330,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.85rem;
+      padding: 0.75rem;
       z-index: 1000;
     }
     .modal-inner {
+      position: relative;
       background: #fff;
       border-radius: 10px;
       max-width: 960px;
@@ -335,6 +342,27 @@
       max-height: 94vh;
       overflow-y: auto;
       padding: 1rem;
+    }
+    .modal-top-bar {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+    }
+    .modal-title-group {
+      flex: 1;
+      min-width: 0;
+    }
+    .modal-title-group h3 {
+      color: var(--primary);
+      font-size: 1.04rem;
+      word-break: break-word;
+    }
+    #closeModalBtn {
+      flex-shrink: 0;
+      margin-left: auto;
     }
     #modalMainImg {
       width: 100%;
@@ -392,10 +420,10 @@
       <h1>National Skill Training Institute Calicut, Kozhikode, Keralam</h1>
       <p>Directorate General of Training (DGT) • Ministry of Skill Development &amp; Entrepreneurship (MSDE)</p>
     </div>
-    <div class="row">
-      <span id="userLabel" style="font-size:0.82rem;"></span>
-      <button id="loginBtn" class="btn btn-outline">Admin / Editor Sign In</button>
-      <button id="logoutBtn" class="btn btn-outline hidden">Sign Out</button>
+    <div class="row" style="flex-shrink:0;">
+      <span id="userLabel" style="font-size:0.78rem;"></span>
+      <button id="loginBtn" class="btn btn-outline btn-admin-sm">Admin</button>
+      <button id="logoutBtn" class="btn btn-outline btn-admin-sm hidden">Sign Out</button>
     </div>
   </header>
 
@@ -482,10 +510,13 @@
               <div>
                 <label for="layout">4. Multi-Photo Layout</label>
                 <select id="layout">
-                  <option value="row">Single row (side by side)</option>
+                  <option value="smart-orient">Smart Orientation (No Horizontal Crop)</option>
+                  <option value="stack">Horizontal Rows (Stacked Top-to-Bottom)</option>
+                  <option value="hero-top">Large Top Landscape + Row Below</option>
+                  <option value="grid">Two-row grid</option>
                   <option value="hero-left">Large first photo left + others stacked</option>
                   <option value="hero-right">Large first photo right + others stacked</option>
-                  <option value="grid">Two-row grid</option>
+                  <option value="row">Single row (side by side)</option>
                 </select>
                 <div class="row" style="margin-top:6px;">
                   <button type="button" class="btn-mini" id="smartW">Smart Widths</button>
@@ -579,10 +610,10 @@
 
   <div id="lightboxModal" class="modal hidden">
     <div class="modal-inner">
-      <div class="row" style="justify-content:space-between; margin-bottom:0.5rem;">
-        <div>
+      <div class="modal-top-bar">
+        <div class="modal-title-group">
           <span id="modalDateBadge" class="card-date-badge" style="margin-bottom:0.2rem;"></span>
-          <h3 id="modalTitle" style="color:var(--primary); font-size:1.05rem;"></h3>
+          <h3 id="modalTitle"></h3>
         </div>
         <button id="closeModalBtn" class="btn btn-secondary">Close ✕</button>
       </div>
@@ -935,17 +966,61 @@
       }
     }
 
+    // Detects if uploaded photos are mostly horizontal (landscape)
+    function arePhotosMostlyLandscape() {
+      if (!photos.length) return true;
+      const avgRatio = photos.reduce((s, p) => s + photoAspect(p), 0) / photos.length;
+      return avgRatio >= 1.12;
+    }
+
     function buildCellsInArea(A) {
       const n = photos.length;
       const S = { cells: [], strokes: [], lines: [], dividers: [], k: 0, A };
-      const all = photos.map((_, i) => i), layout = $("layout").value;
+      const all = photos.map((_, i) => i);
+      let layout = $("layout").value;
       const x0 = A.x, x1 = A.x + A.w, y0 = A.y, y1 = A.y + A.h;
       if (n === 0) return S;
+
+      // Smart Orientation: keeps horizontal photos wide (stacked or 2x2) & vertical photos side-by-side
+      if (layout === "smart-orient") {
+        const mostlyLandscape = arePhotosMostlyLandscape();
+        if (n === 1) {
+          layout = "row";
+        } else if (mostlyLandscape) {
+          layout = n <= 3 ? "stack" : "grid";
+        } else {
+          layout = n <= 3 ? "row" : "grid";
+        }
+      }
+
       if (n === 1 || layout === "row") {
         rowOf(all, x0, x1, y0, y1, S);
+      } else if (layout === "stack") {
+        // Horizontal Rows stacked top-to-bottom so every landscape photo keeps wide horizontal proportions
+        const rowH = A.h / n;
+        for (let j = 0; j < n; j++) {
+          const ya = y0 + j * rowH, yb = y0 + (j + 1) * rowH;
+          rowOf([j], x0, x1, ya, yb, S);
+          if (j > 0) S.lines.push({ x0, x1, y: ya });
+        }
+      } else if (layout === "hero-top") {
+        // Large horizontal photo on top + remaining photos in a clean row below
+        const topH = A.h * 0.56;
+        const ym = y0 + topH;
+        rowOf([0], x0, x1, y0, ym, S);
+        rowOf(all.slice(1), x0, x1, ym, y1, S);
+        S.lines.push({ x0, x1, y: ym });
       } else if (layout === "grid") {
-        if (n <= 3) rowOf(all, x0, x1, y0, y1, S);
-        else {
+        if (n <= 2) {
+          if (arePhotosMostlyLandscape()) {
+            const ym = y0 + A.h / 2;
+            rowOf([0], x0, x1, y0, ym, S);
+            rowOf([1], x0, x1, ym, y1, S);
+            S.lines.push({ x0, x1, y: ym });
+          } else {
+            rowOf(all, x0, x1, y0, y1, S);
+          }
+        } else {
           const c = Math.ceil(n / 2), ym = y0 + A.h / 2;
           rowOf(all.slice(0, c), x0, x1, y0, ym, S);
           rowOf(all.slice(c), x0, x1, ym, y1, S);
@@ -964,6 +1039,7 @@
         S.strokes.push({ fn: B, y0, y1 });
         S.dividers.push({ type: "hero", left, fn: B, y0, y1, x0, x1 });
       }
+
       S.cells.forEach((c) => {
         let lo = Infinity, hi = -Infinity;
         for (let s = 0; s <= 40; s++) {
@@ -1050,7 +1126,6 @@
       }
     }
 
-    // Responsive White Institutional Footer Bar (adapts to Landscape, Wide, Square, or Portrait)
     function drawInstitutionalFooter(footerY, footerH, accentColor) {
       ctx.save();
       ctx.fillStyle = "#ffffff";
@@ -1128,7 +1203,7 @@
       else if (ori === "slider-wide") { W = 1920; H = 640; }
       else if (ori === "square") { W = 1200; H = 1200; }
       else if (ori === "portrait") { W = 1080; H = 1350; }
-      else { W = 1600; H = 1000; } // Default Landscape 16:10
+      else { W = 1600; H = 1000; }
       canvas.width = W;
       canvas.height = H;
     }
@@ -1163,7 +1238,6 @@
       const dm = getDayAndMonth(eventDateInput.value);
 
       if (style === "free-frame") {
-        // 1. FREE COLLAGE WITH FRAME (Clean gallery framing, optional blurred backdrop, optional footer)
         const frameColor = $("gapColor").value;
         ctx.fillStyle = frameColor;
         ctx.fillRect(0, 0, W, H);
@@ -1178,7 +1252,6 @@
 
         const innerArea = { x: pad, y: pad, w: W - 2 * pad, h: H - footerH - 2 * pad };
 
-        // Subtle gallery shadow behind framed photos
         if (pad > 0) {
           ctx.save();
           ctx.shadowColor = "rgba(15, 23, 42, 0.22)";
@@ -1196,7 +1269,6 @@
         if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
 
       } else if (style === "gradient-overlay") {
-        // 2. MODERN GRADIENT OVERLAY POSTER (Full-bleed photos + sleek gradient fade + floating pill)
         const frameColor = $("gapColor").value;
         ctx.fillStyle = frameColor;
         ctx.fillRect(0, 0, W, H);
@@ -1206,7 +1278,6 @@
         scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
         drawDividersAndShadows(frameColor);
 
-        // Smooth bottom-up gradient over lower 46% of photo area
         const gradTop = innerArea.y + innerArea.h * 0.45;
         const gradBot = innerArea.y + innerArea.h;
         const gFade = ctx.createLinearGradient(0, gradTop, 0, gradBot);
@@ -1216,7 +1287,6 @@
         ctx.fillStyle = gFade;
         ctx.fillRect(innerArea.x, gradTop, innerArea.w, gradBot - gradTop);
 
-        // Date Pill + Bold White Title + Subtitle
         const tx = innerArea.x + 42;
         const maxTw = innerArea.w - 84;
         ctx.save();
@@ -1254,7 +1324,6 @@
         if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
 
       } else if (style === "split-editorial") {
-        // 3. EDITORIAL SPLIT CARD (Photo frame on Left/Top + Clean News Typography on Right/Bottom)
         const grad = ctx.createLinearGradient(0, 0, W, H - footerH);
         grad.addColorStop(0, pal.bg1);
         grad.addColorStop(1, pal.bg2);
@@ -1276,7 +1345,6 @@
           scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
           drawDividersAndShadows("#ffffff");
 
-          // Right editorial text column
           const rx = margin * 2 + photoW;
           const rw = W - rx - margin;
           ctx.save();
@@ -1306,8 +1374,7 @@
           });
           ctx.restore();
         } else {
-          // Stacked editorial layout for Square / Portrait
-          const photoH = Math.round(workH * 0.52);
+          const photoH = Math.round(workH * 0.54);
           scene = buildCellsInArea({ x: margin, y: margin, w: W - margin * 2, h: photoH });
           scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
           drawDividersAndShadows("#ffffff");
@@ -1328,14 +1395,12 @@
         if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
 
       } else if (style === "news-poster") {
-        // 4. EVENT NEWS POSTER (Supports both Landscape & Portrait!)
         const grad = ctx.createLinearGradient(0, 0, W, H - footerH);
         grad.addColorStop(0, pal.bg1);
         grad.addColorStop(1, pal.bg2);
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
 
-        // Subtle concentric arc rings
         ctx.save();
         ctx.strokeStyle = pal.light ? "rgba(21, 94, 239, 0.14)" : "rgba(250, 204, 21, 0.28)";
         ctx.lineWidth = 8;
@@ -1364,7 +1429,9 @@
 
         const frameY = curY + 8;
         const availH = H - footerH - frameY - m;
-        const frameH = Math.round(availH * (isLandscape ? 0.68 : 0.62));
+        // Adjust frame height proportionally so horizontal photos fit cleanly without side cropping
+        const frameRatio = arePhotosMostlyLandscape() ? (isLandscape ? 0.68 : 0.56) : 0.64;
+        const frameH = Math.round(availH * frameRatio);
 
         ctx.save();
         ctx.fillStyle = "#ffffff";
@@ -1379,7 +1446,7 @@
         ctx.fillStyle = pal.light ? "#1e293b" : "rgba(255,255,255,0.95)";
         ctx.font = `400 ${isLandscape ? 21 : 24}px Arial, Helvetica, sans-serif`;
         let textY = frameY + frameH + 40;
-        wrapLines(descText, W - m * 2, isLandscape ? 4 : 8).forEach((line) => {
+        wrapLines(descText, W - m * 2, isLandscape ? 4 : 9).forEach((line) => {
           if (textY < H - footerH - 16) { ctx.fillText(line, m, textY); textY += isLandscape ? 29 : 34; }
         });
         ctx.restore();
@@ -1387,7 +1454,6 @@
         if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
 
       } else if (style === "day-poster") {
-        // 5. COMMEMORATIVE DAY POSTER (Date Emblem + Tricolor Accent Rule, Landscape or Portrait)
         ctx.fillStyle = pal.light ? "#f8fafc" : pal.bg2;
         ctx.fillRect(0, 0, W, H);
 
@@ -1439,7 +1505,6 @@
         if (showFooter) drawInstitutionalFooter(H - footerH, footerH, pal.accent);
 
       } else {
-        // 6. CLASSIC BANNER COLLAGE
         const bgc = $("gapColor").value;
         ctx.fillStyle = bgc;
         ctx.fillRect(0, 0, W, H);
@@ -1830,7 +1895,6 @@
       let individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, maxDim, indivQuality));
       const cleanCollageUrl = photos.length ? exportCleanCollageDataUrl() : "";
 
-      // Ensure total payload fits comfortably under Firestore's 1 MB document cap
       let totalSize = cleanCollageUrl.length + individualPhotoUrls.reduce((s, u) => s + u.length, 0);
       if (totalSize > 880000 && photos.length) {
         individualPhotoUrls = photos.map((p) => compressIndividualPhoto(p, 680, 0.56));
