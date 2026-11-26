@@ -111,6 +111,16 @@
     .row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
     .note { font-size: 0.82rem; color: #5c6678; line-height: 1.4; margin-top: 4px; }
 
+    /* Dedicated AI Prompt Box */
+    .ai-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 0.9rem;
+    }
+    .ai-box textarea { min-height: 62px; background: #ffffff; }
+
     /* Editor Management Box */
     .editors-box {
       background: #f8fafc;
@@ -135,7 +145,7 @@
     .editor-chip.super { background: #eef2ff; color: #3730a3; border-color: #c7d2fe; }
     .editor-chip button { background: none; border: none; color: #dc2626; font-weight: 700; cursor: pointer; font-size: 0.95rem; line-height: 1; }
 
-    /* Full Collage Studio Controls */
+    /* Full Collage & Poster Studio */
     .collage-studio {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
@@ -170,12 +180,13 @@
       display: block;
       width: 100%;
       height: auto;
-      max-width: 1100px;
+      max-width: 760px;
       margin: auto;
       background: #ddd;
       touch-action: none;
       cursor: grab;
       border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
     }
     .photo-list {
       display: grid;
@@ -235,7 +246,7 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
     .card-img-wrap { position: relative; cursor: pointer; background: #e2e8f0; }
-    .card-img-wrap img { width: 100%; height: 215px; object-fit: cover; display: block; }
+    .card-img-wrap img { width: 100%; height: 260px; object-fit: cover; object-position: top center; display: block; }
     .photo-count-badge {
       position: absolute;
       bottom: 8px;
@@ -313,7 +324,7 @@
     }
     #modalMainImg {
       width: 100%;
-      max-height: 58vh;
+      max-height: 62vh;
       object-fit: contain;
       border-radius: 6px;
       background: #0f172a;
@@ -376,7 +387,6 @@
 
   <main>
     <section id="adminPanel" class="panel hidden">
-      <!-- Super-Admin Colleague Editor Management -->
       <div id="editorsManagerBox" class="editors-box hidden">
         <div style="font-size:0.92rem; font-weight:700; color:var(--primary); margin-bottom:0.4rem;">
           Manage Authorized Editors (Colleagues)
@@ -392,8 +402,8 @@
       <form id="postForm">
         <div class="form-row-2">
           <div class="form-group">
-            <label for="titleInput">Event / Update Title</label>
-            <input type="text" id="titleInput" placeholder="e.g., Constitution Day (Samvidhan Diwas) 2026" required />
+            <label for="titleInput">Event / Update Title (Displayed on Poster &amp; Card)</label>
+            <input type="text" id="titleInput" placeholder="e.g., NATIONAL CONSTITUTION DAY / WORKSHOP AT NSTI CALICUT" required />
           </div>
           <div class="form-group">
             <label for="eventDateInput">Event Date</label>
@@ -401,23 +411,47 @@
           </div>
         </div>
 
+        <!-- Separate AI Prompt Area -->
+        <div class="ai-box">
+          <div class="row" style="justify-content:space-between; margin-bottom:0.35rem;">
+            <label for="aiPromptInput" style="margin:0; color:var(--primary);">AI Text Generator Prompt (Write key points for AI description)</label>
+            <button type="button" id="aiCaptionBtn" class="btn" style="padding:0.3rem 0.75rem; font-size:0.8rem;">Generate AI Text</button>
+          </div>
+          <textarea id="aiPromptInput" placeholder="e.g., Principal Shri Yuvaraj C administered the Constitution Day pledge to CITS and CTS trainees and faculty at 11 AM in the main portico..."></textarea>
+          <div id="aiStatus" class="note" style="color:var(--primary); font-weight:600;"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="descInput">Description / Caption (Also printed inside CUSAT-style Event Poster)</label>
+          <textarea id="descInput" placeholder="Generated AI text will appear here, or type directly..." required></textarea>
+        </div>
+
         <div class="form-group" id="dropZone">
-          <label for="files">Upload Photos (1–6 photos — drag files here, resize dividers, slant/curve/chevron shapes, pan &amp; zoom)</label>
+          <label for="files">Upload Photos (1–6 photos — choose CUSAT Poster Style or Interactive Collage)</label>
           <input id="files" type="file" accept="image/*" multiple />
-          <div class="note">White/black photo borders are trimmed automatically. You can also add more photos in batches up to 6.</div>
+          <div class="note">White/black photo borders are trimmed automatically. Drag &amp; zoom photos directly on the preview below.</div>
 
           <div id="collageStudio" class="collage-studio hidden">
             <div class="studio-grid">
               <div>
-                <label for="canvasPreset">Canvas Proportions</label>
-                <select id="canvasPreset">
-                  <option value="1600x800">Event Card (1600 × 800)</option>
-                  <option value="1920x500">Website Slider Banner (1920 × 500)</option>
-                  <option value="1200x1200">Square Post (1200 × 1200)</option>
+                <label for="posterStyle">1. Poster / Collage Style</label>
+                <select id="posterStyle">
+                  <option value="cusat-news">CUSAT Event News Poster (4:5 Portrait)</option>
+                  <option value="cusat-day">CUSAT Commemorative Day Poster (4:5)</option>
+                  <option value="collage">Interactive Collage / Slider Banner</option>
                 </select>
               </div>
               <div>
-                <label for="layout">Layout</label>
+                <label for="posterTheme">2. Poster Colour Palette</label>
+                <select id="posterTheme">
+                  <option value="crimson">CUSAT Crimson &amp; Gold</option>
+                  <option value="navy">NSTI Royal Navy &amp; Gold</option>
+                  <option value="tricolor">National Tricolor &amp; Cream</option>
+                  <option value="teal">Deep Emerald &amp; Gold</option>
+                </select>
+              </div>
+              <div>
+                <label for="layout">3. Multi-Photo Layout</label>
                 <select id="layout">
                   <option value="row">Single row (side by side)</option>
                   <option value="hero-left">Large first photo left + others stacked</option>
@@ -430,8 +464,9 @@
                 </div>
               </div>
               <div>
-                <label for="shape">Section / Divider Shape</label>
+                <label for="shape">4. Section / Divider Shape</label>
                 <select id="shape">
+                  <option value="straight">Straight dividers</option>
                   <option value="slant">Slanted dividers  / / /</option>
                   <option value="zigzag">Alternating slants  \ / \</option>
                   <option value="wave">Curved S-wave dividers</option>
@@ -439,13 +474,12 @@
                   <option value="chevron">Arrow / chevron  &gt; &gt; &gt;</option>
                   <option value="rounded">Rounded cards</option>
                   <option value="oval">Oval frames</option>
-                  <option value="straight">Straight dividers</option>
                 </select>
                 <label for="strength" style="margin-top:6px; font-size:0.78rem;">Curve / Slant Strength</label>
-                <input id="strength" type="range" min="0" max="100" value="50" />
+                <input id="strength" type="range" min="0" max="100" value="45" />
               </div>
               <div>
-                <label for="fit">Photo Fit &amp; Free Space</label>
+                <label for="fit">5. Photo Fit &amp; Free Space</label>
                 <select id="fit">
                   <option value="cover">Fill section — no empty space</option>
                   <option value="blur">Whole photo + blurred free-space fill</option>
@@ -453,54 +487,41 @@
                 </select>
                 <label class="chk"><input id="trim" type="checkbox" checked /> Trim white/black borders</label>
               </div>
-              <div>
-                <label for="gap">Divider / Gap Width (px)</label>
-                <input id="gap" type="number" min="0" max="40" value="6" />
-                <label for="margin" style="margin-top:6px; font-size:0.78rem;">Outer Margin (px)</label>
-                <input id="margin" type="number" min="0" max="60" value="0" />
+              <div id="collageOnlyControls">
+                <label for="canvasPreset">Collage Ratio</label>
+                <select id="canvasPreset">
+                  <option value="1600x800">Event Card (1600 × 800)</option>
+                  <option value="1920x500">Website Slider (1920 × 500)</option>
+                  <option value="1200x1200">Square Post (1200 × 1200)</option>
+                </select>
+                <div class="row" style="margin-top:6px;">
+                  <div style="flex:1;"><span style="font-size:0.72rem; color:var(--muted);">Gap (px)</span><input id="gap" type="number" min="0" max="40" value="6" /></div>
+                  <div style="flex:1;"><span style="font-size:0.72rem; color:var(--muted);">Margin</span><input id="margin" type="number" min="0" max="60" value="0" /></div>
+                </div>
               </div>
               <div>
-                <label for="position">Institutional Band Position</label>
-                <select id="position">
-                  <option value="bottom">Bottom band</option>
-                  <option value="top">Top band</option>
-                  <option value="none">No band</option>
-                </select>
-                <label class="chk"><input id="reserve" type="checkbox" checked /> Keep photos clear of band</label>
-              </div>
-              <div>
-                <label for="band">Band Style</label>
-                <select id="band">
-                  <option value="blue">NSTI Navy / Custom colour</option>
-                  <option value="dark">Dark band</option>
-                  <option value="light">Light band</option>
-                  <option value="none">Text only / no band</option>
-                </select>
+                <label>6. Quick Actions</label>
+                <div class="row">
+                  <button type="button" class="btn-mini" id="resetStudioBtn">Reset Framing</button>
+                  <button type="button" class="btn-mini danger" id="clearPhotosBtn">Remove All</button>
+                </div>
                 <div class="row" style="margin-top:6px;">
                   <div><span style="font-size:0.72rem; color:var(--muted);">Gap/Bg</span><br><input id="gapColor" type="color" value="#ffffff" /></div>
                   <div><span style="font-size:0.72rem; color:var(--muted);">Band</span><br><input id="bandColor" type="color" value="#0f294a" /></div>
                   <div><span style="font-size:0.72rem; color:var(--muted);">Text</span><br><input id="labelColor" type="color" value="#ffffff" /></div>
                 </div>
               </div>
-              <div>
-                <label for="fontSize">Banner Font Size (px)</label>
-                <input id="fontSize" type="number" min="18" max="72" value="28" />
-                <div class="row" style="margin-top:8px;">
-                  <button type="button" class="btn-mini" id="resetStudioBtn">Reset Settings</button>
-                  <button type="button" class="btn-mini danger" id="clearPhotosBtn">Remove All</button>
-                </div>
-              </div>
             </div>
 
             <div class="mode-pills" role="radiogroup">
-              <label><input type="radio" name="dragMode" value="move" checked /> ✋ Drag = Reposition photo inside section</label>
-              <label><input type="radio" name="dragMode" value="swap" /> ⇄ Drag = Swap photo to another section</label>
+              <label><input type="radio" name="dragMode" value="move" checked /> ✋ Drag = Reposition photo inside frame</label>
+              <label><input type="radio" name="dragMode" value="swap" /> ⇄ Drag = Swap photo to another slot</label>
             </div>
 
             <div class="preview-wrap">
-              <canvas id="collageCanvas" width="1600" height="800"></canvas>
+              <canvas id="collageCanvas" width="1080" height="1350"></canvas>
             </div>
-            <p class="note"><b>Resize sections:</b> drag the white handles on the dividers. <b>Zoom:</b> scroll wheel over any photo or drag its Zoom slider below. Handles appear only in preview, never in the published photo.</p>
+            <p class="note"><b>Tip:</b> Drag any photo on the poster to reposition faces/subjects, scroll wheel to zoom, or drag the white divider handles to resize multi-photo sections.</p>
             <div id="photoList" class="photo-list"></div>
           </div>
         </div>
@@ -508,14 +529,6 @@
         <div class="form-group">
           <label for="imageUrl">Or External Image URL (optional if no photos uploaded)</label>
           <input type="url" id="imageUrl" placeholder="https://..." />
-        </div>
-
-        <div class="form-group">
-          <div class="row" style="justify-content:space-between; margin-bottom:0.3rem;">
-            <label for="descInput" style="margin:0;">Description / Caption</label>
-            <button type="button" id="aiCaptionBtn" class="btn" style="padding:0.25rem 0.6rem; font-size:0.78rem;">Generate AI Caption</button>
-          </div>
-          <textarea id="descInput" placeholder="Write event details or click Generate AI Caption..." required></textarea>
         </div>
 
         <div class="row">
@@ -606,11 +619,14 @@
     const statusBar = $("statusBar");
     const updatesGrid = $("updatesGrid");
     const aiCaptionBtn = $("aiCaptionBtn");
+    const aiPromptInput = $("aiPromptInput");
+    const aiStatus = $("aiStatus");
     const monthFilter = $("monthFilter");
     const resetFilterBtn = $("resetFilterBtn");
     const toastBanner = $("toastBanner");
     const titleInput = $("titleInput");
     const eventDateInput = $("eventDateInput");
+    const descInput = $("descInput");
 
     const todayLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
     eventDateInput.value = todayLocal;
@@ -639,6 +655,16 @@
       return new Date(y, m - 1, d).toLocaleDateString("en-IN", {
         weekday: "short", day: "numeric", month: "short", year: "numeric"
       });
+    }
+
+    function getDayAndMonth(isoDate) {
+      const [y, m, d] = (isoDate || todayLocal).split("-").map(Number);
+      const dt = new Date(y || 2026, (m || 1) - 1, d || 1);
+      return {
+        day: String(dt.getDate()).padStart(2, "0"),
+        month: dt.toLocaleDateString("en-IN", { month: "short" }).toUpperCase(),
+        year: String(dt.getFullYear())
+      };
     }
 
     /* ================= Colleague Editor Management ================= */
@@ -741,26 +767,37 @@
     logoutBtn.addEventListener("click", () => signOut(auth));
     onAuthStateChanged(auth, (user) => { currentUser = user; evaluateAccess(); });
 
-    /* ================= Full Slider Collage Engine (From Your Attachment) ================= */
+    /* ================= CUSAT Poster + Interactive Collage Engine ================= */
     const MAX = 6;
-    const DEF = {
-      canvasPreset: "1600x800", layout: "row", shape: "slant", strength: 50,
-      fit: "cover", gap: 6, margin: 0, gapColor: "#ffffff", position: "bottom",
-      band: "blue", fontSize: 28, labelColor: "#ffffff", bandColor: "#0f294a"
-    };
-    let W = 1600, H = 800;
+    let W = 1080, H = 1350;
     let photos = [], scene = null, heroFrac = 0.58, widthMode = "smart";
     let drag = null, hover = null;
 
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     const dragMode = () => document.querySelector("input[name=dragMode]:checked").value;
 
-    function updateCanvasDims() {
-      const [pw, ph] = ($("canvasPreset").value || "1600x800").split("x").map(Number);
-      W = pw || 1600;
-      H = ph || 800;
-      canvas.width = W;
-      canvas.height = H;
+    function wrapLines(text, maxWidth, maxLines = 10) {
+      const paragraphs = (text || "").split(/\n+/);
+      const out = [];
+      for (const para of paragraphs) {
+        const words = para.trim().split(/\s+/);
+        let line = "";
+        for (const word of words) {
+          const test = line ? line + " " + word : word;
+          if (ctx.measureText(test).width > maxWidth && line) {
+            out.push(line);
+            line = word;
+            if (out.length >= maxLines) return out;
+          } else {
+            line = test;
+          }
+        }
+        if (line) {
+          out.push(line);
+          if (out.length >= maxLines) return out;
+        }
+      }
+      return out;
     }
 
     function loadImg(url) {
@@ -835,19 +872,6 @@
       renderThumbs();
     }
 
-    function labelInfo() {
-      const pos = $("position").value;
-      if (pos === "none") return null;
-      const evTitle = titleInput.value.trim();
-      const evDate = formatDisplayDate(eventDateInput.value);
-      const text = evTitle
-        ? `${evTitle}  |  ${INSTITUTE_BANNER} (${evDate})`
-        : `${INSTITUTE_BANNER}  •  ${evDate}`;
-      const fs = clamp(Number($("fontSize").value) || 28, 18, 72);
-      const bandH = Math.round(clamp(fs * 2.1, 64, 108));
-      return { pos, text, fs, bandH, y: pos === "top" ? 0 : H - bandH };
-    }
-
     const shapeV = () => $("shape").value;
     const isCard = () => ["rounded", "oval"].includes(shapeV());
 
@@ -876,7 +900,7 @@
       X[X.length - 1] = x1;
       let minW = Infinity;
       for (let j = 0; j < idx.length; j++) minW = Math.min(minW, X[j + 1] - X[j]);
-      const a = Math.min($("strength").value * 1.6, minW * 0.45);
+      const a = Math.min($("strength").value * 1.4, minW * 0.42);
       const F = X.map((x, j) => (j === 0 || j === X.length - 1 ? straight(x) : boundary(x, j + S.k, y0, y1, a)));
       S.k += idx.length;
       idx.forEach((i, j) => S.cells.push({ i, y0, y1, L: F[j], R: F[j + 1] }));
@@ -886,15 +910,11 @@
       }
     }
 
-    function buildScene() {
-      const n = photos.length, L = labelInfo(), band = $("band").value, m = clamp(Number($("margin").value) || 0, 0, 60);
-      let A = { x: 0, y: 0, w: W, h: H };
-      if (L && $("reserve").checked && band !== "none") {
-        A = L.pos === "top" ? { x: 0, y: L.bandH, w: W, h: H - L.bandH } : { x: 0, y: 0, w: W, h: H - L.bandH };
-      }
-      A = { x: A.x + m, y: A.y + m, w: A.w - 2 * m, h: A.h - 2 * m };
-      const S = { cells: [], strokes: [], lines: [], dividers: [], k: 0, L, A };
-      const all = photos.map((_, i) => i), layout = $("layout").value, x0 = A.x, x1 = A.x + A.w, y0 = A.y, y1 = A.y + A.h;
+    function buildCellsInArea(A) {
+      const n = photos.length;
+      const S = { cells: [], strokes: [], lines: [], dividers: [], k: 0, A };
+      const all = photos.map((_, i) => i), layout = $("layout").value;
+      const x0 = A.x, x1 = A.x + A.w, y0 = A.y, y1 = A.y + A.h;
       if (n === 0) return S;
       if (n === 1 || layout === "row") {
         rowOf(all, x0, x1, y0, y1, S);
@@ -908,7 +928,7 @@
         }
       } else {
         const left = layout === "hero-left", hw = A.w * heroFrac, Xb = left ? x0 + hw : x1 - hw;
-        const a = Math.min($("strength").value * 1.6, Math.min(hw, A.w - hw) * 0.45);
+        const a = Math.min($("strength").value * 1.4, Math.min(hw, A.w - hw) * 0.42);
         const B = boundary(Xb, 0, y0, y1, a), k = n - 1;
         S.cells.push(left ? { i: 0, y0, y1, L: straight(x0), R: B } : { i: 0, y0, y1, L: B, R: straight(x1) });
         for (let j = 0; j < k; j++) {
@@ -986,64 +1006,314 @@
       return p;
     }
 
+    // White CUSAT-style institutional footer bar across the bottom of posters
+    function drawInstitutionalFooter(footerY, footerH, accentColor) {
+      ctx.save();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, footerY, W, footerH);
+
+      // Subtle top border line
+      ctx.fillStyle = "#e2e8f0";
+      ctx.fillRect(0, footerY, W, 3);
+
+      // Left Emblem + Bold Institute Name
+      const emblemR = 30;
+      const emblemX = 56;
+      const emblemY = footerY + footerH / 2;
+      ctx.beginPath();
+      ctx.arc(emblemX, emblemY, emblemR, 0, Math.PI * 2);
+      ctx.fillStyle = accentColor;
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 16px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("NSTI", emblemX, emblemY - 6);
+      ctx.font = "bold 11px Arial, sans-serif";
+      ctx.fillText("DGT", emblemX, emblemY + 10);
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = accentColor;
+      ctx.font = "900 32px Arial, Helvetica, sans-serif";
+      ctx.fillText("NSTI CALICUT", 102, footerY + footerH / 2 - 8);
+      ctx.fillStyle = "#475569";
+      ctx.font = "700 13px Arial, Helvetica, sans-serif";
+      ctx.fillText("KOZHIKODE, KERALAM", 104, footerY + footerH / 2 + 16);
+
+      // Vertical Divider 1
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fillRect(355, footerY + 22, 2, footerH - 44);
+
+      // Center Government / Ministry Badges
+      ctx.fillStyle = "#0f294a";
+      ctx.font = "800 14px Arial, Helvetica, sans-serif";
+      ctx.fillText("DGT  •  MSDE", 378, footerY + footerH / 2 - 10);
+      ctx.fillStyle = "#d97706";
+      ctx.font = "700 13px Arial, Helvetica, sans-serif";
+      ctx.fillText("GOVT. OF INDIA  •  SKILL INDIA", 378, footerY + footerH / 2 + 12);
+
+      // Vertical Divider 2
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fillRect(645, footerY + 22, 2, footerH - 44);
+
+      // Right Full Official Title & Portal
+      ctx.fillStyle = "#1e293b";
+      ctx.font = "700 13.5px Arial, Helvetica, sans-serif";
+      ctx.fillText("National Skill Training Institute Calicut,", 668, footerY + footerH / 2 - 12);
+      ctx.fillText("Kozhikode, Keralam/DGT/MSDE", 668, footerY + footerH / 2 + 6);
+      ctx.fillStyle = accentColor;
+      ctx.font = "700 13px Arial, Helvetica, sans-serif";
+      ctx.fillText("nsti-calicut-updates.pages.dev", 668, footerY + footerH / 2 + 25);
+
+      ctx.restore();
+    }
+
     function draw(forExport) {
-      updateCanvasDims();
+      const style = $("posterStyle").value;
+      const isPoster = style === "cusat-news" || style === "cusat-day";
+      $("collageOnlyControls").classList.toggle("hidden", isPoster);
+
+      if (isPoster) {
+        W = 1080;
+        H = 1350;
+      } else {
+        const [pw, ph] = ($("canvasPreset").value || "1600x800").split("x").map(Number);
+        W = pw || 1600;
+        H = ph || 800;
+      }
+      canvas.width = W;
+      canvas.height = H;
       ctx.clearRect(0, 0, W, H);
+
       if (!photos.length) {
         scene = null;
         return;
       }
-      const bgc = $("gapColor").value;
-      ctx.fillStyle = bgc;
-      ctx.fillRect(0, 0, W, H);
 
-      // If blur mode is active on rounded/oval cards, fill outer free space with blurred backdrop too
-      if ($("fit").value === "blur" && isCard() && photos[0]?.blur) {
-        ctx.save();
-        ctx.drawImage(photos[0].blur, 0, 0, W, H);
-        ctx.fillStyle = "rgba(15, 23, 42, 0.25)";
+      const palettes = {
+        crimson: { bg1: "#991b1b", bg2: "#58111a", accent: "#881337", gold: "#f59e0b", light: false },
+        navy: { bg1: "#163b6d", bg2: "#09192f", accent: "#0f294a", gold: "#eab308", light: false },
+        tricolor: { bg1: "#f8fafc", bg2: "#e2e8f0", accent: "#0f294a", gold: "#ea580c", light: true },
+        teal: { bg1: "#0f4c5c", bg2: "#082933", accent: "#0f4c5c", gold: "#facc15", light: false }
+      };
+      const pal = palettes[$("posterTheme").value] || palettes.crimson;
+
+      const titleText = (titleInput.value.trim() || "CAMPUS EVENT UPDATE AT NSTI CALICUT").toUpperCase();
+      const descText = descInput.value.trim() || "Event highlights from National Skill Training Institute Calicut, Kozhikode, Keralam.";
+      const dm = getDayAndMonth(eventDateInput.value);
+
+      if (style === "cusat-news") {
+        // 1. Rich Editorial Gradient Background + Concentric Arc Rings (Matches cu3.jpg)
+        const grad = ctx.createLinearGradient(0, 0, W, H - 125);
+        grad.addColorStop(0, pal.bg1);
+        grad.addColorStop(1, pal.bg2);
+        ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
-        ctx.restore();
-      }
 
-      scene = buildScene();
-      scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
-
-      const g = clamp(Number($("gap").value) || 0, 0, 40);
-      if (g > 0 && !isCard()) {
+        // Decorative concentric arc rings on right and left edges
         ctx.save();
-        ctx.strokeStyle = bgc;
-        ctx.lineWidth = g;
-        ctx.lineCap = "butt";
-        ctx.lineJoin = "round";
-        scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
-        scene.lines.forEach((l) => {
+        ctx.strokeStyle = pal.light ? "rgba(234, 88, 12, 0.22)" : "rgba(250, 204, 21, 0.35)";
+        ctx.lineWidth = 10;
+        [75, 110, 145, 180].forEach((r) => {
           ctx.beginPath();
-          ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
-          ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
+          ctx.arc(W + 10, 460, r, Math.PI * 0.5, Math.PI * 1.5);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(-10, 880, r, -Math.PI * 0.5, Math.PI * 0.5);
           ctx.stroke();
         });
         ctx.restore();
-      }
 
-      const L = scene.L, band = $("band").value;
-      if (L) {
-        if (band !== "none") {
-          ctx.fillStyle = band === "dark"
-            ? ($("reserve").checked ? "#262b33" : "rgba(0,0,0,0.78)")
-            : band === "light" ? "rgba(255,255,255,0.92)" : $("bandColor").value;
-          ctx.fillRect(0, L.y, W, L.bandH);
-        }
+        // 2. Top Bold Headline + Date Pill
         ctx.save();
-        ctx.font = "bold " + L.fs + "px Arial, Helvetica, sans-serif";
+        ctx.fillStyle = pal.gold;
+        ctx.fillRect(68, 52, 165, 34);
+        ctx.fillStyle = pal.light ? "#ffffff" : "#0f172a";
+        ctx.font = "900 18px Arial, Helvetica, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${dm.day} ${dm.month} ${dm.year}`, 150, 75);
+
+        ctx.textAlign = "left";
+        ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
+        ctx.font = "900 44px Arial, Helvetica, sans-serif";
+        const headLines = wrapLines(titleText, W - 136, 3);
+        let curY = 138;
+        headLines.forEach((line) => {
+          ctx.fillText(line, 68, curY);
+          curY += 52;
+        });
+        ctx.restore();
+
+        // 3. White-Bordered Photo Frame in Center
+        const frameX = 68;
+        const frameY = curY + 12;
+        const frameW = W - 136;
+        const frameH = 490;
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,0.35)";
+        ctx.shadowBlur = 22;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(frameX - 10, frameY - 10, frameW + 20, frameH + 20);
+        ctx.restore();
+
+        scene = buildCellsInArea({ x: frameX, y: frameY, w: frameW, h: frameH });
+        scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+
+        // Divider strokes inside multi-photo frame
+        if (photos.length > 1 && !isCard()) {
+          ctx.save();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 6;
+          scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
+          scene.lines.forEach((l) => {
+            ctx.beginPath();
+            ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
+            ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
+            ctx.stroke();
+          });
+          ctx.restore();
+        }
+
+        // 4. Event Description Write-up Below Photo
+        ctx.save();
+        ctx.fillStyle = pal.light ? "#1e293b" : "rgba(255,255,255,0.94)";
+        ctx.font = "400 25px Arial, Helvetica, sans-serif";
+        const bodyLines = wrapLines(descText, W - 136, 9);
+        let textY = frameY + frameH + 54;
+        bodyLines.forEach((line) => {
+          if (textY < H - 145) {
+            ctx.fillText(line, 68, textY);
+            textY += 35;
+          }
+        });
+        ctx.restore();
+
+        // 5. White Institutional Footer Bar
+        drawInstitutionalFooter(H - 124, 124, pal.accent);
+
+      } else if (style === "cusat-day") {
+        // Commemorative Poster Style (Matches 1cu.jpg & cu2.jpg)
+        ctx.fillStyle = pal.light ? "#f8fafc" : pal.bg2;
+        ctx.fillRect(0, 0, W, H);
+
+        // Top Header Band with Boxed Date Badge
+        const topAreaH = 265;
+        ctx.save();
+        // Boxed Date Emblem (Top Right like 1cu.jpg)
+        const bx = W - 185, by = 54, bw = 122, bh = 132;
+        ctx.strokeStyle = pal.light ? "#0f294a" : "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(bx, by, bw, bh);
+        ctx.fillStyle = pal.light ? "#991b1b" : pal.gold;
+        ctx.font = "900 52px Arial, Helvetica, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(dm.day, bx + bw / 2, by + 64);
+        ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
+        ctx.font = "800 26px Arial, Helvetica, sans-serif";
+        ctx.fillText(dm.month, bx + bw / 2, by + 104);
+
+        // Centered Display Headline + Tricolor Accent Bar
+        ctx.textAlign = "left";
+        ctx.fillStyle = pal.light ? "#0f294a" : "#ffffff";
+        ctx.font = "900 46px Georgia, serif";
+        const dLines = wrapLines(titleText, W - 265, 3);
+        let dy = 96;
+        dLines.forEach((line) => {
+          ctx.fillText(line, 64, dy);
+          dy += 54;
+        });
+
+        // Tricolor accent rule
+        const ruleY = Math.max(dy - 10, 212);
+        ctx.fillStyle = "#ea580c"; ctx.fillRect(64, ruleY, 110, 6);
+        ctx.fillStyle = "#ffffff"; ctx.fillRect(174, ruleY, 110, 6);
+        ctx.fillStyle = "#16a34a"; ctx.fillRect(284, ruleY, 110, 6);
+        ctx.restore();
+
+        // Main Photo Area
+        const pX = 56, pY = topAreaH, pW = W - 112, pH = 740;
+        scene = buildCellsInArea({ x: pX, y: pY, w: pW, h: pH });
+        scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+
+        if (photos.length > 1 && !isCard()) {
+          ctx.save();
+          ctx.strokeStyle = "#ffffff";
+          ctx.lineWidth = 6;
+          scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
+          scene.lines.forEach((l) => {
+            ctx.beginPath();
+            ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
+            ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
+            ctx.stroke();
+          });
+          ctx.restore();
+        }
+
+        // Centered Quote / Highlight Strip Above Footer
+        ctx.save();
+        ctx.fillStyle = pal.light ? "#1e293b" : "#f8fafc";
+        ctx.font = "italic 700 24px Georgia, serif";
+        ctx.textAlign = "center";
+        const qLines = wrapLines(descText, W - 140, 3);
+        let qy = pY + pH + 54;
+        qLines.forEach((line) => {
+          ctx.fillText(line, W / 2, qy);
+          qy += 34;
+        });
+        ctx.restore();
+
+        drawInstitutionalFooter(H - 124, 124, pal.accent);
+
+      } else {
+        // Interactive Collage / Slider Banner Mode
+        const bgc = $("gapColor").value;
+        ctx.fillStyle = bgc;
+        ctx.fillRect(0, 0, W, H);
+
+        if ($("fit").value === "blur" && isCard() && photos[0]?.blur) {
+          ctx.save();
+          ctx.drawImage(photos[0].blur, 0, 0, W, H);
+          ctx.fillStyle = "rgba(15, 23, 42, 0.25)";
+          ctx.fillRect(0, 0, W, H);
+          ctx.restore();
+        }
+
+        const m = clamp(Number($("margin").value) || 0, 0, 60);
+        const bandH = 84;
+        const A = { x: m, y: m, w: W - 2 * m, h: H - bandH - 2 * m };
+        scene = buildCellsInArea(A);
+        scene.cells.forEach((c) => drawPhoto(photos[c.i], c));
+
+        const g = clamp(Number($("gap").value) || 0, 0, 40);
+        if (g > 0 && !isCard()) {
+          ctx.save();
+          ctx.strokeStyle = bgc;
+          ctx.lineWidth = g;
+          ctx.lineCap = "butt";
+          ctx.lineJoin = "round";
+          scene.strokes.forEach((s) => ctx.stroke(fnPath(s.fn, s.y0, s.y1)));
+          scene.lines.forEach((l) => {
+            ctx.beginPath();
+            ctx.moveTo(l.fromFn ? l.fromFn(l.y) : l.x0, l.y);
+            ctx.lineTo(l.toFn ? l.toFn(l.y) : l.x1, l.y);
+            ctx.stroke();
+          });
+          ctx.restore();
+        }
+
+        ctx.fillStyle = $("bandColor").value;
+        ctx.fillRect(0, H - bandH, W, bandH);
+        ctx.save();
+        ctx.font = "bold 26px Arial, Helvetica, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = $("labelColor").value;
-        if (band === "light" && $("labelColor").value.toLowerCase() === "#ffffff") ctx.fillStyle = "#172033";
-        if (band === "none") { ctx.shadowColor = "rgba(0,0,0,.85)"; ctx.shadowBlur = 6; }
-        let t = L.text;
+        const evTitle = titleInput.value.trim();
+        const evDate = formatDisplayDate(eventDateInput.value);
+        let t = evTitle ? `${evTitle}  |  ${INSTITUTE_BANNER} (${evDate})` : `${INSTITUTE_BANNER}  •  ${evDate}`;
         while (ctx.measureText(t).width > W - 60 && t.length > 4) t = t.slice(0, -2) + "…";
-        ctx.fillText(t, W / 2, L.y + L.bandH / 2);
+        ctx.fillText(t, W / 2, H - bandH / 2);
         ctx.restore();
       }
 
@@ -1051,6 +1321,7 @@
     }
 
     function drawOverlays() {
+      if (!scene) return;
       scene.dividers.forEach((d, di) => {
         const ym = (d.y0 + d.y1) / 2, x = d.fn(ym), hot = (hover && hover.div === di) || (drag && drag.div === di);
         ctx.save();
@@ -1236,7 +1507,7 @@
     dz.addEventListener("dragleave", () => dz.classList.remove("dragover"));
     dz.addEventListener("drop", (e) => { e.preventDefault(); dz.classList.remove("dragover"); addFiles(e.dataTransfer.files); });
 
-    ["canvasPreset", "layout", "shape", "strength", "fit", "gap", "margin", "gapColor", "position", "band", "fontSize", "labelColor", "bandColor", "reserve", "titleInput", "eventDateInput"].forEach((id) => {
+    ["posterStyle", "posterTheme", "canvasPreset", "layout", "shape", "strength", "fit", "gap", "margin", "gapColor", "labelColor", "bandColor", "titleInput", "eventDateInput", "descInput"].forEach((id) => {
       $(id).addEventListener("input", () => { if (photos.length) draw(); });
     });
     $("trim").addEventListener("change", () => { photos.forEach(applyBox); draw(); renderThumbs(); });
@@ -1244,10 +1515,6 @@
     $("equalW").addEventListener("click", () => { widthMode = "equal"; photos.forEach((p) => (p.w = 1)); heroFrac = 0.58; draw(); });
 
     $("resetStudioBtn").addEventListener("click", () => {
-      Object.entries(DEF).forEach(([k, v]) => { $(k).value = v; });
-      $("trim").checked = true;
-      $("reserve").checked = true;
-      document.querySelector("input[name=dragMode][value=move]").checked = true;
       widthMode = "smart";
       heroFrac = 0.58;
       photos.forEach((p) => { p.fx = 0.5; p.fy = 0.5; p.zoom = 1; applyBox(p); });
@@ -1354,37 +1621,51 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(caption)}`, "_blank", "noopener");
     }
 
-    /* ================= AI Caption & Publish ================= */
+    /* ================= Separate AI Text Generator ================= */
     aiCaptionBtn.addEventListener("click", async () => {
-      const title = titleInput.value.trim();
-      const notes = $("descInput").value.trim();
-      if (!title && !notes) {
-        alert("Enter a title or brief notes first.");
+      const prompt = aiPromptInput.value.trim();
+      if (!prompt) {
+        alert("Please type your instructions or key points in the AI Text Generator Prompt box first.");
+        aiPromptInput.focus();
         return;
       }
-      formStatus.textContent = "Generating AI caption...";
+      aiCaptionBtn.disabled = true;
+      aiStatus.style.color = "#155eef";
+      aiStatus.textContent = "Generating AI text...";
       try {
         const res = await fetch("/api/caption", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, notes })
+          body: JSON.stringify({ prompt })
         });
-        if (!res.ok) throw new Error("API returned " + res.status);
-        const data = await res.json();
-        if (data.caption) $("descInput").value = data.caption;
-        formStatus.textContent = "Caption ready.";
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || `Server returned ${res.status}`);
+        }
+        if (data.caption) {
+          descInput.value = data.caption;
+          if (photos.length) draw();
+          aiStatus.style.color = "#16a34a";
+          aiStatus.textContent = "AI description generated below!";
+        } else {
+          throw new Error("Empty response from Gemini.");
+        }
       } catch (err) {
-        formStatus.textContent = "AI caption endpoint unavailable (" + err.message + ").";
+        aiStatus.style.color = "#dc2626";
+        aiStatus.textContent = "AI Error: " + err.message;
+      } finally {
+        aiCaptionBtn.disabled = false;
       }
     });
 
+    /* ================= Publish ================= */
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!isEditor) return;
       const publishBtn = $("publishBtn");
       const title = titleInput.value.trim();
       const eventDate = eventDateInput.value || todayLocal;
-      const description = $("descInput").value.trim();
+      const description = descInput.value.trim();
       const externalUrl = $("imageUrl").value.trim();
 
       const maxDim = photos.length > 3 ? 760 : 920;
@@ -1411,6 +1692,7 @@
 
         postForm.reset();
         eventDateInput.value = todayLocal;
+        aiStatus.textContent = "";
         photos.forEach((p) => URL.revokeObjectURL(p.url));
         photos = [];
         $("collageStudio").classList.add("hidden");
