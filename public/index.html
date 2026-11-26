@@ -82,7 +82,7 @@
     @media (max-width: 600px) { .form-row-2 { grid-template-columns: 1fr; } }
     .form-group { margin-bottom: 0.9rem; }
     label { display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 0.3rem; }
-    input[type="text"], input[type="date"], input[type="url"], select, textarea {
+    input[type="text"], input[type="email"], input[type="date"], input[type="url"], select, textarea {
       width: 100%;
       padding: 0.52rem 0.7rem;
       border: 1px solid var(--border);
@@ -94,7 +94,48 @@
     textarea { min-height: 82px; resize: vertical; }
     .row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
 
-    /* Collage Studio */
+    /* Editor Management Box */
+    .editors-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.85rem;
+      margin-bottom: 1.1rem;
+    }
+    .editor-chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.6rem;
+    }
+    .editor-chip {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .editor-chip.super {
+      background: #eef2ff;
+      color: #3730a3;
+      border-color: #c7d2fe;
+    }
+    .editor-chip button {
+      background: none;
+      border: none;
+      color: #dc2626;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+
+    /* Photo Layout Studio */
     .collage-box {
       background: #f8fafc;
       border: 1px dashed #94a3b8;
@@ -329,13 +370,25 @@
     </div>
     <div class="row">
       <span id="userLabel" style="font-size:0.82rem;"></span>
-      <button id="loginBtn" class="btn btn-outline">Admin Sign In</button>
+      <button id="loginBtn" class="btn btn-outline">Admin / Editor Sign In</button>
       <button id="logoutBtn" class="btn btn-outline hidden">Sign Out</button>
     </div>
   </header>
 
   <main>
     <section id="adminPanel" class="panel hidden">
+      <!-- Super-Admin Colleague Editor Management -->
+      <div id="editorsManagerBox" class="editors-box hidden">
+        <div style="font-size:0.92rem; font-weight:700; color:var(--primary); margin-bottom:0.4rem;">
+          Manage Authorized Editors (Colleagues)
+        </div>
+        <div class="row">
+          <input type="email" id="newEditorEmail" placeholder="Enter colleague's Gmail address (e.g., colleague@gmail.com)" style="flex:1; min-width:220px;" />
+          <button type="button" id="addEditorBtn" class="btn">Add Editor</button>
+        </div>
+        <div id="editorChipList" class="editor-chip-list"></div>
+      </div>
+
       <h2 style="font-size:1.05rem; margin-bottom:0.8rem; color:var(--primary);">Publish New Update</h2>
       <form id="postForm">
         <div class="form-row-2">
@@ -476,7 +529,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBlZ-3j4fugUmGxTmB2ilMnsMX0M6GdDWg",
@@ -488,7 +541,7 @@
       measurementId: "G-2W0Q7VC281"
     };
 
-    const ADMIN_EMAILS = ["oneplusme25@gmail.com", "prasadum@gmail.com"];
+    const SUPER_ADMINS = ["oneplusme25@gmail.com", "prasadum@gmail.com"];
     const INSTITUTE_BANNER = "National Skill Training Institute Calicut, Kozhikode, Keralam/DGT/MSDE";
 
     const app = initializeApp(firebaseConfig);
@@ -499,6 +552,11 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const userLabel = document.getElementById("userLabel");
     const adminPanel = document.getElementById("adminPanel");
+    const editorsManagerBox = document.getElementById("editorsManagerBox");
+    const newEditorEmailInput = document.getElementById("newEditorEmail");
+    const addEditorBtn = document.getElementById("addEditorBtn");
+    const editorChipList = document.getElementById("editorChipList");
+
     const postForm = document.getElementById("postForm");
     const formStatus = document.getElementById("formStatus");
     const statusBar = document.getElementById("statusBar");
@@ -526,7 +584,10 @@
     const todayLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
     eventDateInput.value = todayLocal;
 
-    let isAdmin = false;
+    let currentUser = null;
+    let isSuperAdmin = false;
+    let isEditor = false;
+    let colleagueEditors = [];
     let loadedImages = [];
     let generatedCollageUrl = "";
     let individualPhotoUrls = [];
@@ -550,6 +611,116 @@
         weekday: "short", day: "numeric", month: "short", year: "numeric"
       });
     }
+
+    // Load dynamic colleague editor emails from Firestore
+    async function loadEditorsList() {
+      try {
+        const snap = await getDoc(doc(db, "settings", "editors"));
+        if (snap.exists() && Array.isArray(snap.data().emails)) {
+          colleagueEditors = snap.data().emails.map((e) => e.toLowerCase().trim()).filter(Boolean);
+        } else {
+          colleagueEditors = [];
+        }
+      } catch (err) {
+        colleagueEditors = [];
+      }
+      renderEditorChips();
+    }
+
+    function renderEditorChips() {
+      editorChipList.innerHTML = "";
+      SUPER_ADMINS.forEach((email) => {
+        const chip = document.createElement("span");
+        chip.className = "editor-chip super";
+        chip.textContent = `${email} (Admin)`;
+        editorChipList.appendChild(chip);
+      });
+      colleagueEditors.forEach((email) => {
+        const chip = document.createElement("span");
+        chip.className = "editor-chip";
+        chip.innerHTML = `${email} <button type="button" title="Remove Editor">×</button>`;
+        chip.querySelector("button").addEventListener("click", async () => {
+          if (!confirm(`Remove ${email} from editors?`)) return;
+          const updated = colleagueEditors.filter((e) => e !== email);
+          await setDoc(doc(db, "settings", "editors"), { emails: updated });
+          colleagueEditors = updated;
+          renderEditorChips();
+          showToast(`Removed ${email}`);
+        });
+        editorChipList.appendChild(chip);
+      });
+    }
+
+    addEditorBtn.addEventListener("click", async () => {
+      if (!isSuperAdmin) return;
+      const email = newEditorEmailInput.value.trim().toLowerCase();
+      if (!email || !email.includes("@")) {
+        alert("Enter a valid email address.");
+        return;
+      }
+      if (SUPER_ADMINS.includes(email) || colleagueEditors.includes(email)) {
+        alert("This email already has editor access.");
+        return;
+      }
+      addEditorBtn.disabled = true;
+      try {
+        const updated = [...colleagueEditors, email];
+        await setDoc(doc(db, "settings", "editors"), { emails: updated });
+        colleagueEditors = updated;
+        newEditorEmailInput.value = "";
+        renderEditorChips();
+        showToast(`Added ${email} as Editor!`);
+      } catch (err) {
+        alert("Could not save editor: " + err.message);
+      } finally {
+        addEditorBtn.disabled = false;
+      }
+    });
+
+    async function evaluateAccess() {
+      await loadEditorsList();
+      if (currentUser) {
+        const email = (currentUser.email || "").toLowerCase();
+        isSuperAdmin = SUPER_ADMINS.includes(email);
+        isEditor = isSuperAdmin || colleagueEditors.includes(email);
+        userLabel.textContent = `${currentUser.email}${isSuperAdmin ? " (Admin)" : isEditor ? " (Editor)" : ""}`;
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+
+        if (isEditor) {
+          adminPanel.classList.remove("hidden");
+          editorsManagerBox.classList.toggle("hidden", !isSuperAdmin);
+        } else {
+          adminPanel.classList.add("hidden");
+          editorsManagerBox.classList.add("hidden");
+          alert(`Signed in as ${currentUser.email}. Ask Admin to add your email in Manage Authorized Editors.`);
+        }
+      } else {
+        isSuperAdmin = false;
+        isEditor = false;
+        userLabel.textContent = "";
+        loginBtn.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+        adminPanel.classList.add("hidden");
+        editorsManagerBox.classList.add("hidden");
+      }
+      renderUpdatesFeed();
+    }
+
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      } catch (err) {
+        alert("Sign-in error: " + err.message);
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => signOut(auth));
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      evaluateAccess();
+    });
 
     async function urlToJpegFile(src, filename) {
       if (src.startsWith("data:")) {
@@ -616,38 +787,6 @@
 
       window.open(`https://wa.me/?text=${encodeURIComponent(caption)}`, "_blank", "noopener");
     }
-
-    loginBtn.addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, new GoogleAuthProvider());
-      } catch (err) {
-        alert("Sign-in error: " + err.message);
-      }
-    });
-
-    logoutBtn.addEventListener("click", () => signOut(auth));
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        isAdmin = ADMIN_EMAILS.includes((user.email || "").toLowerCase());
-        userLabel.textContent = user.email;
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
-        if (isAdmin) {
-          adminPanel.classList.remove("hidden");
-        } else {
-          adminPanel.classList.add("hidden");
-          alert("Signed in as " + user.email + ", which is not authorized as admin.");
-        }
-      } else {
-        isAdmin = false;
-        userLabel.textContent = "";
-        loginBtn.classList.remove("hidden");
-        logoutBtn.classList.add("hidden");
-        adminPanel.classList.add("hidden");
-      }
-      renderUpdatesFeed();
-    });
 
     function compressIndividualPhoto(img, maxDim = 900, quality = 0.72) {
       const canvas = document.createElement("canvas");
@@ -904,7 +1043,7 @@
 
     postForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      if (!isAdmin) return;
+      if (!isEditor) return;
       const publishBtn = document.getElementById("publishBtn");
       const title = titleInput.value.trim();
       const eventDate = eventDateInput.value || todayLocal;
@@ -923,6 +1062,7 @@
           description,
           imageUrl: finalImage,
           photos: photosToSave,
+          postedBy: currentUser?.email || "",
           createdAt: serverTimestamp()
         });
 
@@ -1032,7 +1172,7 @@
             <div class="card-text">${item.description || ""}</div>
             <div class="card-actions">
               <button type="button" class="btn btn-share wa-share-btn">${gallery.length >= 2 ? "WhatsApp (2 Pics)" : "WhatsApp (Pic)"}</button>
-              ${isAdmin ? `<button type="button" class="btn btn-danger">Delete</button>` : ""}
+              ${isEditor ? `<button type="button" class="btn btn-danger">Delete</button>` : ""}
             </div>
           </div>
         `;
@@ -1047,7 +1187,7 @@
           shareToWhatsAppWithPhotos(item, twoPics);
         });
 
-        if (isAdmin) {
+        if (isEditor) {
           card.querySelector(".btn-danger").addEventListener("click", async () => {
             if (!confirm("Delete this update?")) return;
             await deleteDoc(doc(db, "updates", item.id));
