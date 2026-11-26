@@ -1215,7 +1215,7 @@
             img,
             url,
             name: f.name,
-            label: "", // Custom caption for this individual photo
+            label: "",
             full: { sx: 0, sy: 0, sw: img.naturalWidth, sh: img.naturalHeight },
             fx: 0.5,
             fy: 0.5,
@@ -1904,7 +1904,7 @@
           '<div class="row" style="margin-bottom:6px;">' +
           '<button type="button" class="btn-mini" data-a="left" title="Move earlier"' + (i === 0 ? " disabled" : "") + ">◀</button>" +
           '<button type="button" class="btn-mini" data-a="right" title="Move later"' + (i === photos.length - 1 ? " disabled" : "") + ">▶</button>" +
-          '<button type="button" class="btn-mini" data-a="centre" title="Reset position and zoom">Centre</button>" +
+          '<button type="button" class="btn-mini" data-a="centre" title="Reset position and zoom">Centre</button>' +
           '<button type="button" class="btn-mini danger" data-a="remove" title="Remove">✕</button></div>' +
           '<div class="zl">Zoom</div><input type="range" min="100" max="300" value="' + Math.round(p.zoom * 100) + '" data-zoom="' + i + '">';
         d.querySelector("img").src = p.url;
@@ -2322,7 +2322,6 @@
       const hasMultiple = Array.isArray(item.photos) && item.photos.length > 1;
 
       if (item.imageUrl) {
-        // If only 1 photo was uploaded, use its custom label directly; otherwise label the collage cover
         const coverCaption = (!hasMultiple && customLabels[0]) ? customLabels[0] : (hasMultiple ? (item.title || "Event Highlights") : "");
         list.push({
           thumbLabel: hasMultiple ? "Collage" : (customLabels[0] || "Photo 1"),
@@ -2501,7 +2500,6 @@
       $("modalMainImg").src = current.src;
       $("modalCounterBadge").textContent = `${viewingPhotoIndex + 1} of ${gallery.length}`;
 
-      // Show corresponding photo label overlay if present
       const labelOverlay = $("modalPhotoLabelOverlay");
       if (current.caption) {
         labelOverlay.textContent = current.caption;
@@ -2526,7 +2524,6 @@
     $("prevPhotoBtn").addEventListener("click", (e) => { e.stopPropagation(); stepModalPhoto(-1); });
     $("nextPhotoBtn").addEventListener("click", (e) => { e.stopPropagation(); stepModalPhoto(1); });
 
-    // Keyboard Left / Right / Escape navigation when lightbox is open
     document.addEventListener("keydown", (e) => {
       if ($("lightboxModal").classList.contains("hidden")) return;
       if (e.key === "ArrowLeft") stepModalPhoto(-1);
@@ -2534,7 +2531,6 @@
       else if (e.key === "Escape") $("lightboxModal").classList.add("hidden");
     });
 
-    // Touch swipe navigation on mobile full-screen viewer
     let touchStartX = 0;
     $("modalStage").addEventListener("touchstart", (e) => {
       touchStartX = e.changedTouches[0].clientX;
