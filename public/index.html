@@ -45,38 +45,101 @@
       cursor: pointer;
     }
     .btn:hover { opacity: 0.92; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
     .btn-outline {
       background: transparent;
       border: 1px solid rgba(255,255,255,0.45);
       color: #fff;
     }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #1e293b;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+    }
     .btn-danger { background: #dc2626; padding: 0.35rem 0.65rem; font-size: 0.8rem; }
     .btn-share { background: #16a34a; padding: 0.35rem 0.7rem; font-size: 0.8rem; }
-    main { max-width: 960px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
+    main { max-width: 980px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
     .panel {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 1.1rem;
+      padding: 1.15rem;
       margin-bottom: 1.25rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .hidden { display: none !important; }
-    .form-group { margin-bottom: 0.85rem; }
+    .form-group { margin-bottom: 0.9rem; }
     label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
-    input[type="text"], input[type="url"], textarea {
+    input[type="text"], input[type="url"], select, textarea {
       width: 100%;
       padding: 0.55rem 0.7rem;
       border: 1px solid var(--border);
       border-radius: 6px;
       font-size: 0.92rem;
       font-family: inherit;
+      background: #fff;
     }
     textarea { min-height: 85px; resize: vertical; }
     .row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+
+    /* Collage Studio */
+    .collage-box {
+      background: #f8fafc;
+      border: 1px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    .collage-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+    .thumb-strip {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .thumb-item {
+      position: relative;
+      width: 68px;
+      height: 52px;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb-remove {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(220,38,38,0.9);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    #collagePreview {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff;
+      display: block;
+    }
+
+    /* Updates Feed */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1rem;
     }
     .card {
@@ -90,9 +153,10 @@
     }
     .card img {
       width: 100%;
-      height: 200px;
+      height: 220px;
       object-fit: cover;
       background: #e2e8f0;
+      cursor: pointer;
     }
     .card-body { padding: 0.95rem; flex: 1; display: flex; flex-direction: column; }
     .card-date { font-size: 0.76rem; color: var(--muted); margin-bottom: 0.25rem; }
@@ -108,6 +172,33 @@
       gap: 0.5rem;
     }
     #statusBar { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.9rem; }
+
+    /* Lightbox Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+    }
+    .modal-inner {
+      background: #fff;
+      border-radius: 10px;
+      max-width: 860px;
+      width: 100%;
+      max-height: 92vh;
+      overflow: auto;
+      padding: 1rem;
+    }
+    .modal-inner img {
+      width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
@@ -129,16 +220,53 @@
       <form id="postForm">
         <div class="form-group">
           <label for="titleInput">Title</label>
-          <input type="text" id="titleInput" placeholder="e.g., Campus Placement Drive / Workshop Update" required />
+          <input type="text" id="titleInput" placeholder="e.g., Constitution Day (Samvidhan Diwas) 2026" required />
         </div>
+
         <div class="form-group">
-          <label for="imageFile">Upload Photo (optional)</label>
-          <input type="file" id="imageFile" accept="image/*" />
+          <label for="imageFiles">Upload Photos (Select 1 to 6 photos for auto-collage)</label>
+          <input type="file" id="imageFiles" accept="image/*" multiple />
+          <div id="collageStudio" class="collage-box hidden">
+            <div class="thumb-strip" id="thumbStrip"></div>
+            <div class="collage-controls">
+              <div>
+                <label for="layoutSelect" style="font-size:0.78rem;">Collage Layout</label>
+                <select id="layoutSelect">
+                  <option value="auto">Auto Grid (Recommended)</option>
+                  <option value="featured">1 Large Left + Stack Right</option>
+                  <option value="horizontal">Horizontal Strip</option>
+                </select>
+              </div>
+              <div>
+                <label for="bannerSelect" style="font-size:0.78rem;">Header / Footer Banner</label>
+                <select id="bannerSelect">
+                  <option value="top">Top NSTI Title Strip</option>
+                  <option value="none">Clean Photos Only (No Text)</option>
+                </select>
+              </div>
+              <div>
+                <label for="gapSelect" style="font-size:0.78rem;">Frame Border</label>
+                <select id="gapSelect">
+                  <option value="10">White Border (10px)</option>
+                  <option value="4">Thin Border (4px)</option>
+                  <option value="0">Seamless (0px)</option>
+                </select>
+              </div>
+            </div>
+            <canvas id="collageCanvas" width="1200" height="800" class="hidden"></canvas>
+            <img id="collagePreview" alt="Collage Preview" />
+            <div class="row" style="margin-top:0.6rem; justify-content:space-between;">
+              <span id="sizeBadge" style="font-size:0.78rem; color:var(--muted);"></span>
+              <button type="button" id="clearPhotosBtn" class="btn btn-secondary">Clear Photos</button>
+            </div>
+          </div>
         </div>
+
         <div class="form-group">
-          <label for="imageUrl">Or Image URL (optional)</label>
+          <label for="imageUrl">Or External Image URL (optional if no photos uploaded)</label>
           <input type="url" id="imageUrl" placeholder="https://..." />
         </div>
+
         <div class="form-group">
           <div class="row" style="justify-content:space-between; margin-bottom:0.3rem;">
             <label for="descInput" style="margin:0;">Description / Caption</label>
@@ -146,6 +274,7 @@
           </div>
           <textarea id="descInput" placeholder="Write event details or click Generate AI Caption..." required></textarea>
         </div>
+
         <div class="row">
           <button type="submit" id="publishBtn" class="btn">Publish Update</button>
           <span id="formStatus" style="font-size:0.84rem; color:var(--muted);"></span>
@@ -157,11 +286,21 @@
     <section id="updatesGrid" class="grid"></section>
   </main>
 
+  <div id="lightboxModal" class="modal hidden">
+    <div class="modal-inner">
+      <div class="row" style="justify-content:space-between; margin-bottom:0.6rem;">
+        <strong id="modalTitle" style="color:var(--primary);"></strong>
+        <button id="closeModalBtn" class="btn btn-secondary">Close</button>
+      </div>
+      <img id="modalImg" alt="Full Update Image" />
+      <p id="modalDesc" style="margin-top:0.75rem; white-space:pre-line; font-size:0.92rem;"></p>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBlZ-3j4fugUmGxTmB2ilMnsMX0M6GdDWg",
@@ -178,7 +317,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
@@ -190,7 +328,22 @@
     const updatesGrid = document.getElementById("updatesGrid");
     const aiCaptionBtn = document.getElementById("aiCaptionBtn");
 
+    // Collage elements
+    const titleInput = document.getElementById("titleInput");
+    const imageFilesInput = document.getElementById("imageFiles");
+    const collageStudio = document.getElementById("collageStudio");
+    const thumbStrip = document.getElementById("thumbStrip");
+    const layoutSelect = document.getElementById("layoutSelect");
+    const bannerSelect = document.getElementById("bannerSelect");
+    const gapSelect = document.getElementById("gapSelect");
+    const collageCanvas = document.getElementById("collageCanvas");
+    const collagePreview = document.getElementById("collagePreview");
+    const sizeBadge = document.getElementById("sizeBadge");
+    const clearPhotosBtn = document.getElementById("clearPhotosBtn");
+
     let isAdmin = false;
+    let loadedImages = []; // Array of HTMLImageElement
+    let generatedDataUrl = "";
 
     loginBtn.addEventListener("click", async () => {
       try {
@@ -212,7 +365,7 @@
           adminPanel.classList.remove("hidden");
         } else {
           adminPanel.classList.add("hidden");
-          alert("Signed in as " + user.email + ", which is not listed as an admin.");
+          alert("Signed in as " + user.email + ", which is not authorized as admin.");
         }
       } else {
         isAdmin = false;
@@ -224,8 +377,164 @@
       loadUpdates();
     });
 
+    // Load multiple selected images
+    imageFilesInput.addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files || []).slice(0, 6);
+      if (!files.length) return;
+      loadedImages = await Promise.all(files.map(loadFileAsImage));
+      renderThumbs();
+      renderCollage();
+    });
+
+    [layoutSelect, bannerSelect, gapSelect, titleInput].forEach((el) => {
+      el.addEventListener("input", () => {
+        if (loadedImages.length) renderCollage();
+      });
+    });
+
+    clearPhotosBtn.addEventListener("click", () => {
+      loadedImages = [];
+      generatedDataUrl = "";
+      imageFilesInput.value = "";
+      collageStudio.classList.add("hidden");
+    });
+
+    function loadFileAsImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderThumbs() {
+      thumbStrip.innerHTML = "";
+      if (!loadedImages.length) {
+        collageStudio.classList.add("hidden");
+        generatedDataUrl = "";
+        return;
+      }
+      collageStudio.classList.remove("hidden");
+      loadedImages.forEach((img, idx) => {
+        const div = document.createElement("div");
+        div.className = "thumb-item";
+        div.innerHTML = `<img src="${img.src}" alt="Photo ${idx + 1}" /><button type="button" class="thumb-remove" title="Remove">×</button>`;
+        div.querySelector("button").addEventListener("click", () => {
+          loadedImages.splice(idx, 1);
+          renderThumbs();
+          if (loadedImages.length) renderCollage();
+        });
+        thumbStrip.appendChild(div);
+      });
+    }
+
+    function drawCoverImage(ctx, img, x, y, w, h) {
+      const imgRatio = img.width / img.height;
+      const boxRatio = w / h;
+      let sx = 0, sy = 0, sw = img.width, sh = img.height;
+      if (imgRatio > boxRatio) {
+        sw = img.height * boxRatio;
+        sx = (img.width - sw) / 2;
+      } else {
+        sh = img.width / boxRatio;
+        sy = (img.height - sh) / 2;
+      }
+      ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+    }
+
+    function renderCollage() {
+      const count = loadedImages.length;
+      if (!count) return;
+
+      const W = 1200;
+      const showBanner = bannerSelect.value === "top";
+      const headerH = showBanner ? 84 : 0;
+      const H = 760 + headerH;
+      const gap = parseInt(gapSelect.value, 10);
+      const layout = layoutSelect.value;
+
+      collageCanvas.width = W;
+      collageCanvas.height = H;
+      const ctx = collageCanvas.getContext("2d");
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, W, H);
+
+      if (showBanner) {
+        ctx.fillStyle = "#0f294a";
+        ctx.fillRect(0, 0, W, headerH);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 28px Segoe UI, sans-serif";
+        const heading = titleInput.value.trim() || "NSTI CALICUT • CAMPUS UPDATE";
+        ctx.fillText(heading.slice(0, 56), 28, 42);
+        ctx.fillStyle = "#93c5fd";
+        ctx.font = "600 17px Segoe UI, sans-serif";
+        ctx.fillText("National Skill Training Institute (DGT), Kozhikode", 28, 68);
+      }
+
+      const areaX = gap;
+      const areaY = headerH + gap;
+      const areaW = W - gap * 2;
+      const areaH = H - headerH - gap * 2;
+
+      const slots = [];
+      if (count === 1) {
+        slots.push([areaX, areaY, areaW, areaH]);
+      } else if (layout === "horizontal") {
+        const cellW = (areaW - gap * (count - 1)) / count;
+        for (let i = 0; i < count; i++) {
+          slots.push([areaX + i * (cellW + gap), areaY, cellW, areaH]);
+        }
+      } else if (layout === "featured" && count >= 2) {
+        const leftW = areaW * 0.58 - gap / 2;
+        const rightW = areaW - leftW - gap;
+        slots.push([areaX, areaY, leftW, areaH]);
+        const rightCount = count - 1;
+        const cellH = (areaH - gap * (rightCount - 1)) / rightCount;
+        for (let i = 0; i < rightCount; i++) {
+          slots.push([areaX + leftW + gap, areaY + i * (cellH + gap), rightW, cellH]);
+        }
+      } else {
+        // Auto Grid
+        const cols = count === 2 ? 2 : count <= 4 ? 2 : 3;
+        const rows = Math.ceil(count / cols);
+        const cellH = (areaH - gap * (rows - 1)) / rows;
+        let idx = 0;
+        for (let r = 0; r < rows; r++) {
+          const itemsInRow = Math.min(cols, count - idx);
+          const cellW = (areaW - gap * (itemsInRow - 1)) / itemsInRow;
+          for (let c = 0; c < itemsInRow; c++) {
+            slots.push([areaX + c * (cellW + gap), areaY + r * (cellH + gap), cellW, cellH]);
+            idx++;
+          }
+        }
+      }
+
+      slots.forEach(([x, y, w, h], i) => {
+        if (loadedImages[i]) drawCoverImage(ctx, loadedImages[i], x, y, w, h);
+      });
+
+      // Compress safely under 350 KB for fast Firestore storage
+      let quality = 0.82;
+      generatedDataUrl = collageCanvas.toDataURL("image/jpeg", quality);
+      while (generatedDataUrl.length > 450000 && quality > 0.45) {
+        quality -= 0.1;
+        generatedDataUrl = collageCanvas.toDataURL("image/jpeg", quality);
+      }
+
+      collagePreview.src = generatedDataUrl;
+      const kb = Math.round((generatedDataUrl.length * 3) / 4 / 1024);
+      sizeBadge.textContent = `${count} photo(s) merged • Optimized size: ${kb} KB`;
+    }
+
     aiCaptionBtn.addEventListener("click", async () => {
-      const title = document.getElementById("titleInput").value.trim();
+      const title = titleInput.value.trim();
       const notes = document.getElementById("descInput").value.trim();
       if (!title && !notes) {
         alert("Enter a title or brief notes first.");
@@ -243,7 +552,7 @@
         if (data.caption) document.getElementById("descInput").value = data.caption;
         formStatus.textContent = "Caption ready.";
       } catch (err) {
-        formStatus.textContent = "AI endpoint unavailable (" + err.message + ").";
+        formStatus.textContent = "AI caption endpoint not configured (" + err.message + ").";
       }
     });
 
@@ -251,31 +560,27 @@
       e.preventDefault();
       if (!isAdmin) return;
       const publishBtn = document.getElementById("publishBtn");
-      const title = document.getElementById("titleInput").value.trim();
+      const title = titleInput.value.trim();
       const description = document.getElementById("descInput").value.trim();
-      const fileInput = document.getElementById("imageFile");
-      let imageUrl = document.getElementById("imageUrl").value.trim();
+      const externalUrl = document.getElementById("imageUrl").value.trim();
+      const finalImage = generatedDataUrl || externalUrl || "";
 
       publishBtn.disabled = true;
-      formStatus.textContent = "Publishing...";
+      formStatus.textContent = "Saving update...";
 
       try {
-        if (fileInput.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const storageRef = ref(storage, `updates/${Date.now()}_${file.name}`);
-          await uploadBytes(storageRef, file);
-          imageUrl = await getDownloadURL(storageRef);
-        }
-
         await addDoc(collection(db, "updates"), {
           title,
           description,
-          imageUrl: imageUrl || "",
+          imageUrl: finalImage,
           createdAt: serverTimestamp()
         });
 
         postForm.reset();
-        formStatus.textContent = "Published!";
+        loadedImages = [];
+        generatedDataUrl = "";
+        collageStudio.classList.add("hidden");
+        formStatus.textContent = "Published successfully!";
         await loadUpdates();
       } catch (err) {
         alert("Publish failed: " + err.message);
@@ -299,7 +604,9 @@
         statusBar.textContent = `Showing ${snap.size} update(s)`;
         snap.forEach((docSnap) => {
           const d = docSnap.data();
-          const dateStr = d.createdAt?.toDate ? d.createdAt.toDate().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "";
+          const dateStr = d.createdAt?.toDate
+            ? d.createdAt.toDate().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+            : "";
           const shareUrl = `${window.location.origin}/?id=${docSnap.id}`;
           const waText = encodeURIComponent(`*${d.title}*\n${d.description}\n${shareUrl}`);
 
@@ -317,6 +624,17 @@
               </div>
             </div>
           `;
+
+          const imgEl = card.querySelector("img");
+          if (imgEl) {
+            imgEl.addEventListener("click", () => {
+              document.getElementById("modalTitle").textContent = d.title || "Update";
+              document.getElementById("modalImg").src = d.imageUrl;
+              document.getElementById("modalDesc").textContent = d.description || "";
+              document.getElementById("lightboxModal").classList.remove("hidden");
+            });
+          }
+
           if (isAdmin) {
             card.querySelector(".btn-danger").addEventListener("click", async () => {
               if (!confirm("Delete this update?")) return;
@@ -330,6 +648,10 @@
         statusBar.textContent = "Could not load updates: " + err.message;
       }
     }
+
+    document.getElementById("closeModalBtn").addEventListener("click", () => {
+      document.getElementById("lightboxModal").classList.add("hidden");
+    });
 
     loadUpdates();
   </script>
