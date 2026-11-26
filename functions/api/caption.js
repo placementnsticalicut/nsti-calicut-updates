@@ -29,7 +29,7 @@ Rules:
 - Keep it concise (2 to 4 sentences) and ready to publish on the institute portal and WhatsApp.
 - Do not include hashtags, markdown symbols (like ** or #), or introductory filler.`;
 
-    const models = ["gemini-2.5-flash", "gemini-2.0-flash"];
+    const models = ["gemini-3.8-flash", "gemini-2.5-flash"];
     let lastError = "Unknown Gemini API error";
 
     for (const model of models) {
