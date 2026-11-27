@@ -393,14 +393,19 @@
       text-align: center;
     }
 
-    /* Full-Screen Photo Lightbox with Photo-Only / Details Switcher */
+    /* Full-Screen Photo Lightbox */
     .modal {
       position: fixed;
       inset: 0;
-      background: #060b14;
+      background: #000000;
       display: flex;
       flex-direction: column;
       z-index: 1000;
+    }
+    .modal:fullscreen, .modal:-webkit-full-screen {
+      width: 100vw;
+      height: 100vh;
+      background: #000000;
     }
     .modal-inner {
       display: flex;
@@ -409,7 +414,7 @@
       height: 100vh;
       height: 100dvh;
       max-width: 100%;
-      background: #0b1220;
+      background: #050911;
       color: #f8fafc;
       overflow: hidden;
     }
@@ -469,7 +474,7 @@
       border-color: #dc2626;
     }
 
-    /* Full-Screen Image Stage with Prev/Next Buttons */
+    /* Full-Screen Image Stage with Prev/Next Buttons & Floating Exit Pill */
     .modal-stage {
       position: relative;
       flex: 1;
@@ -478,7 +483,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #050911;
+      background: #000000;
       overflow: hidden;
       user-select: none;
     }
@@ -491,6 +496,35 @@
       display: block;
       cursor: pointer;
     }
+
+    /* Floating Exit Photo View Pill (Shown Only in True Full-Screen Photo View) */
+    .exit-photo-pill {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(15, 41, 74, 0.82);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 20;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+    .exit-photo-pill:hover {
+      background: #155eef;
+      border-color: #ffffff;
+    }
+    #lightboxModal.photo-only .exit-photo-pill {
+      display: inline-flex;
+    }
+
     .nav-arrow {
       position: absolute;
       top: 50%;
@@ -524,50 +558,29 @@
       bottom: 14px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 41, 74, 0.92);
+      background: rgba(15, 41, 74, 0.88);
       border: 1px solid rgba(147, 197, 253, 0.45);
       color: #ffffff;
-      padding: 0.42rem 1.05rem;
+      padding: 0.4rem 1.05rem;
       border-radius: 999px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
       max-width: 92vw;
       text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
       z-index: 9;
     }
 
-    /* Photo-Only Full-Screen Mode (Hides Long Text & Bottom Drawer) */
+    /* True Full-Screen Photo-Only Mode (Hides Top Title Bar & Bottom Drawer) */
+    #lightboxModal.photo-only .modal-top-bar,
     #lightboxModal.photo-only .modal-bottom-drawer {
       display: none !important;
     }
     #lightboxModal.photo-only .modal-stage {
-      height: 100%;
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
       flex: 1;
-    }
-
-    /* Compact Top Bar when Phone is Rotated to Landscape */
-    @media (max-height: 540px) and (orientation: landscape) {
-      .modal-top-bar {
-        padding: 0.32rem 0.75rem;
-      }
-      .modal-meta-row {
-        display: inline-flex;
-        margin-right: 0.5rem;
-        margin-bottom: 0;
-      }
-      .modal-title-group {
-        display: flex;
-        align-items: center;
-      }
-      .modal-title-group h3 {
-        font-size: 0.86rem;
-      }
-      .photo-caption-overlay {
-        bottom: 8px;
-        padding: 0.28rem 0.85rem;
-        font-size: 0.82rem;
-      }
     }
 
     /* Bottom Drawer for Thumbnails, Event Description & Share Actions */
@@ -576,7 +589,7 @@
       color: #172033;
       padding: 0.65rem 1rem 0.85rem;
       border-top: 1px solid #cbd5e1;
-      max-height: 38vh;
+      max-height: 42vh;
       overflow-y: auto;
       flex-shrink: 0;
     }
@@ -852,14 +865,15 @@
           <h3 id="modalTitle"></h3>
         </div>
         <div class="modal-top-actions">
-          <button type="button" id="toggleViewBtn" class="modal-top-btn" title="Switch between Full-Screen Photo Only and Details/Share">Details &amp; Share</button>
+          <button type="button" id="enterFullPhotoBtn" class="modal-top-btn active-mode" title="Expand photo to full screen">Full Photo</button>
           <button type="button" id="closeModalBtn" class="modal-top-btn">Close ✕</button>
         </div>
       </div>
 
       <div class="modal-stage" id="modalStage">
+        <button type="button" id="exitPhotoViewBtn" class="exit-photo-pill" title="Exit full-screen photo view to see details & share">Exit Photo View ✕</button>
         <button type="button" id="prevPhotoBtn" class="nav-arrow nav-prev hidden" aria-label="Previous Photo" title="Previous Photo">‹</button>
-        <img id="modalMainImg" alt="Update Photo" title="Tap photo to toggle Full-Screen Photo Only / Details view" />
+        <img id="modalMainImg" alt="Update Photo" title="Tap photo to toggle Full-Screen Photo View" />
         <button type="button" id="nextPhotoBtn" class="nav-arrow nav-next hidden" aria-label="Next Photo" title="Next Photo">›</button>
         <div id="modalPhotoLabelOverlay" class="photo-caption-overlay hidden"></div>
       </div>
@@ -2664,7 +2678,7 @@
           const found = allUpdatesCache.find((item) => item.id === targetId);
           if (found) {
             const photoIdx = parseInt(params.get("photo") || "0", 10) || 0;
-            openLightbox(found, photoIdx);
+            openLightbox(found, photoIdx, false);
           }
         }
       } catch (err) {
@@ -2745,10 +2759,10 @@
         `;
 
         const imgWrap = card.querySelector(".card-img-wrap");
-        if (imgWrap) imgWrap.addEventListener("click", () => openLightbox(item, 0));
+        if (imgWrap) imgWrap.addEventListener("click", () => openLightbox(item, 0, true));
 
         const viewBtn = card.querySelector(".view-photos-btn");
-        if (viewBtn) viewBtn.addEventListener("click", () => openLightbox(item, 0));
+        if (viewBtn) viewBtn.addEventListener("click", () => openLightbox(item, 0, true));
 
         card.querySelector(".share-social-btn").addEventListener("click", () => {
           const allPics = gallery.map((g) => g.src);
@@ -2779,23 +2793,56 @@
       });
     }
 
-    function setPhotoOnlyMode(enable) {
+    /* ================= True Full-Screen Photo View & Exit Controls ================= */
+    function enterTrueFullPhoto(requestBrowserFullscreen = true) {
       const modal = $("lightboxModal");
-      const btn = $("toggleViewBtn");
-      modal.classList.toggle("photo-only", enable);
-      btn.textContent = enable ? "Details & Share" : "Photo Only";
-      btn.classList.toggle("active-mode", !enable);
+      modal.classList.add("photo-only");
+      if (requestBrowserFullscreen) {
+        const reqFs = modal.requestFullscreen || modal.webkitRequestFullscreen;
+        if (reqFs && !document.fullscreenElement && !document.webkitFullscreenElement) {
+          reqFs.call(modal).catch(() => {});
+        }
+      }
     }
 
-    $("toggleViewBtn").addEventListener("click", (e) => {
+    function exitTrueFullPhoto() {
+      const modal = $("lightboxModal");
+      modal.classList.remove("photo-only");
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exitFs) exitFs.call(document).catch(() => {});
+      }
+    }
+
+    // Keep UI synchronized if user presses the device hardware Back button while in Fullscreen
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement) {
+        $("lightboxModal").classList.remove("photo-only");
+      }
+    });
+    document.addEventListener("webkitfullscreenchange", () => {
+      if (!document.webkitFullscreenElement) {
+        $("lightboxModal").classList.remove("photo-only");
+      }
+    });
+
+    $("exitPhotoViewBtn").addEventListener("click", (e) => {
       e.stopPropagation();
-      const isCurrentlyPhotoOnly = $("lightboxModal").classList.contains("photo-only");
-      setPhotoOnlyMode(!isCurrentlyPhotoOnly);
+      exitTrueFullPhoto();
+    });
+
+    $("enterFullPhotoBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      enterTrueFullPhoto(true);
     });
 
     $("modalMainImg").addEventListener("click", () => {
-      const isCurrentlyPhotoOnly = $("lightboxModal").classList.contains("photo-only");
-      setPhotoOnlyMode(!isCurrentlyPhotoOnly);
+      const isPhotoOnly = $("lightboxModal").classList.contains("photo-only");
+      if (isPhotoOnly) {
+        exitTrueFullPhoto();
+      } else {
+        enterTrueFullPhoto(true);
+      }
     });
 
     function updateShareButtonLabels() {
@@ -2815,16 +2862,13 @@
       syncGalleryUI();
     }
 
-    function openLightbox(item, initialIndex = 0) {
+    function openLightbox(item, initialIndex = 0, fromUserTap = false) {
       activeModalItem = item;
       const gallery = getGalleryList(item);
       if (!gallery.length) return;
 
       viewingPhotoIndex = Math.min(Math.max(0, initialIndex), gallery.length - 1);
       checkedIndices = new Set([viewingPhotoIndex]);
-
-      // Default to clean Full-Screen Photo-Only view on mobile screens (portrait & landscape)
-      setPhotoOnlyMode(window.innerWidth <= 768);
 
       $("modalDateBadge").textContent = `📅 ${formatDisplayDate(item.eventDate)}`;
       $("modalTitle").textContent = item.title || "Update";
@@ -2878,6 +2922,9 @@
 
       syncGalleryUI();
       $("lightboxModal").classList.remove("hidden");
+
+      // Open directly in True Full-Screen Photo View (hides Chrome URL bar, title bar, and long text)
+      enterTrueFullPhoto(fromUserTap);
     }
 
     function syncGalleryUI() {
@@ -2916,7 +2963,13 @@
       if ($("lightboxModal").classList.contains("hidden")) return;
       if (e.key === "ArrowLeft") stepModalPhoto(-1);
       else if (e.key === "ArrowRight") stepModalPhoto(1);
-      else if (e.key === "Escape") $("lightboxModal").classList.add("hidden");
+      else if (e.key === "Escape") {
+        if ($("lightboxModal").classList.contains("photo-only")) {
+          exitTrueFullPhoto();
+        } else {
+          $("lightboxModal").classList.add("hidden");
+        }
+      }
     });
 
     let touchStartX = 0;
@@ -2961,6 +3014,7 @@
     });
 
     $("closeModalBtn").addEventListener("click", () => {
+      exitTrueFullPhoto();
       $("lightboxModal").classList.add("hidden");
     });
 
