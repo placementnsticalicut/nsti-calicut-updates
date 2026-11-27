@@ -845,6 +845,7 @@
 
     const SUPER_ADMINS = ["oneplusme25@gmail.com", "prasadum@gmail.com"];
     const INSTITUTE_BANNER = "National Skill Training Institute Calicut, Kozhikode, Keralam/DGT/MSDE";
+    const OFFICIAL_SITE = "nsti.calicut.dgt.gov.in";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -1431,6 +1432,208 @@
       }
     }
 
+    /* ================= High-Resolution Official Emblems (DGT, Skill India, ITI) ================= */
+    function drawDgtLogo(cx, cy, s) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(s, s);
+
+      // Outer navy cogwheel
+      const teeth = 16;
+      const rOuter = 26, rInner = 21.5;
+      ctx.beginPath();
+      for (let i = 0; i < teeth * 2; i++) {
+        const ang = (i * Math.PI) / teeth;
+        const r = i % 2 === 0 ? rOuter : rInner;
+        const x = Math.cos(ang) * r;
+        const y = Math.sin(ang) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "#172554";
+      ctx.fill();
+
+      // White inner dial
+      ctx.beginPath();
+      ctx.arc(0, 0, 18.2, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+
+      // Green hammer (top-left)
+      ctx.save();
+      ctx.translate(-8, -7);
+      ctx.rotate(-0.65);
+      ctx.fillStyle = "#15803d";
+      ctx.fillRect(-5, -4, 10, 4);
+      ctx.fillRect(-1.5, 0, 3, 11);
+      ctx.restore();
+
+      // Saffron spanner (top-right)
+      ctx.save();
+      ctx.translate(8, -7);
+      ctx.rotate(0.65);
+      ctx.fillStyle = "#ea580c";
+      ctx.fillRect(-1.8, -5, 3.6, 12);
+      ctx.beginPath();
+      ctx.arc(0, -6, 4.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-1.5, -9, 3, 4);
+      ctx.restore();
+
+      // Saffron wrench (bottom-left)
+      ctx.save();
+      ctx.translate(-8, 6);
+      ctx.rotate(0.75);
+      ctx.fillStyle = "#ea580c";
+      ctx.fillRect(-1.8, -6, 3.6, 11);
+      ctx.beginPath();
+      ctx.arc(0, -6.5, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-1.4, -9.5, 2.8, 3.8);
+      ctx.restore();
+
+      // Green chisel/file (bottom-right)
+      ctx.save();
+      ctx.translate(8, 6);
+      ctx.rotate(-0.7);
+      ctx.fillStyle = "#15803d";
+      ctx.fillRect(-2.2, -6, 4.4, 12);
+      ctx.restore();
+
+      // Central navy lightning bolt
+      ctx.beginPath();
+      ctx.moveTo(2, -16);
+      ctx.lineTo(-5, 1);
+      ctx.lineTo(0.5, 1);
+      ctx.lineTo(-2, 16);
+      ctx.lineTo(5, -1);
+      ctx.lineTo(-0.5, -1);
+      ctx.closePath();
+      ctx.fillStyle = "#172554";
+      ctx.fill();
+
+      // Caption below emblem
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "800 7.4px Arial, Helvetica, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText("Directorate General of Training", 0, 28);
+
+      ctx.restore();
+    }
+
+    function drawSkillIndiaLogo(cx, cy, s) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(s, s);
+
+      // Monitor silhouette above text
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(-18, -28, 36, 22);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-15, -25, 30, 16);
+      // Stand
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(-4, -6, 8, 3);
+      ctx.fillRect(-11, -3, 22, 2.5);
+
+      // Gear + orange/green wrench inside monitor
+      ctx.beginPath();
+      ctx.arc(-2, -17, 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = "#1e3a8a";
+      ctx.fill();
+      ctx.save();
+      ctx.translate(2, -17);
+      ctx.rotate(0.7);
+      ctx.fillStyle = "#ea580c";
+      ctx.fillRect(-1.5, -6, 3, 12);
+      ctx.fillStyle = "#16a34a";
+      ctx.fillRect(-5, -1.5, 10, 3);
+      ctx.restore();
+
+      // "Skill India" typography with saffron & green arrow-i stems
+      ctx.font = "900 17px Arial, Helvetica, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = "#172554";
+      ctx.fillText("Sk", -43, 16);
+
+      // Saffron arrow 'i'
+      ctx.fillStyle = "#ea580c";
+      ctx.fillRect(-20, 5, 3.2, 11);
+      ctx.beginPath();
+      ctx.moveTo(-21.5, 5);
+      ctx.lineTo(-18.4, 1);
+      ctx.lineTo(-15.3, 5);
+      ctx.closePath();
+      ctx.fill();
+
+      // Green arrow 'i'
+      ctx.fillStyle = "#16a34a";
+      ctx.fillRect(-14, 5, 3.2, 11);
+      ctx.beginPath();
+      ctx.moveTo(-15.5, 5);
+      ctx.lineTo(-12.4, 1);
+      ctx.lineTo(-9.3, 5);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#172554";
+      ctx.fillText("ll India", -8, 16);
+
+      // Hindi tagline
+      ctx.font = "700 7.6px Arial, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#334155";
+      ctx.fillText("कौशल भारत - कुशल भारत", 0, 27);
+
+      ctx.restore();
+    }
+
+    function drawItiLogo(cx, cy, s) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(s, s);
+
+      // Left 'i' (Saffron)
+      ctx.fillStyle = "#ea580c";
+      ctx.fillRect(-30, -24, 11, 7);
+      ctx.fillRect(-30, -14, 11, 26);
+
+      // Center 'T' with factory sawtooth roof (Green)
+      ctx.fillStyle = "#15803d";
+      ctx.beginPath();
+      ctx.moveTo(-16, -15);
+      ctx.lineTo(0, -22);
+      ctx.lineTo(0, -15);
+      ctx.lineTo(16, -22);
+      ctx.lineTo(16, -4);
+      ctx.lineTo(6, -4);
+      ctx.lineTo(6, 12);
+      ctx.lineTo(-6, 12);
+      ctx.lineTo(-6, -4);
+      ctx.lineTo(-16, -4);
+      ctx.closePath();
+      ctx.fill();
+
+      // Right 'i' (Navy)
+      ctx.fillStyle = "#1e3a8a";
+      ctx.fillRect(19, -24, 11, 7);
+      ctx.fillRect(19, -14, 11, 26);
+
+      // Caption below emblem
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "800 7.6px Arial, Helvetica, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText("Industrial Training Institute", 0, 17);
+
+      ctx.restore();
+    }
+
     function drawInstitutionalFooter(footerY, footerH, accentColor) {
       ctx.save();
       ctx.fillStyle = "#ffffff";
@@ -1439,64 +1642,66 @@
       ctx.fillRect(0, footerY, W, 3);
 
       const cy = footerY + footerH / 2;
-      const emblemR = Math.min(28, footerH * 0.32);
-      const emblemX = 48;
 
-      ctx.beginPath();
-      ctx.arc(emblemX, cy, emblemR, 0, Math.PI * 2);
-      ctx.fillStyle = accentColor;
-      ctx.fill();
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 14px Arial, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("NSTI", emblemX, cy - 5);
-      ctx.font = "bold 10px Arial, sans-serif";
-      ctx.fillText("DGT", emblemX, cy + 9);
-
+      // Left: NSTI Calicut title (round NSTI DGT circle removed)
       ctx.textAlign = "left";
       ctx.fillStyle = accentColor;
-      ctx.font = "900 28px Arial, Helvetica, sans-serif";
-      ctx.fillText("NSTI CALICUT", 88, cy - 8);
+      ctx.font = "900 30px Arial, Helvetica, sans-serif";
+      ctx.fillText("NSTI CALICUT", 36, cy - 8);
       ctx.fillStyle = "#475569";
-      ctx.font = "700 12px Arial, Helvetica, sans-serif";
-      ctx.fillText("KOZHIKODE, KERALAM", 90, cy + 14);
+      ctx.font = "700 12.5px Arial, Helvetica, sans-serif";
+      ctx.fillText("KOZHIKODE, KERALAM", 38, cy + 15);
 
       if (W >= 1200) {
-        const d1 = Math.round(W * 0.28);
-        const d2 = Math.round(W * 0.56);
+        const d1 = Math.round(W * 0.23);
+        const d2 = Math.round(W * 0.62);
+
+        ctx.fillStyle = "#cbd5e1";
+        ctx.fillRect(d1, footerY + 16, 2, footerH - 32);
+
+        // Center: High-Resolution DGT, Skill India & ITI Logos
+        const logoZoneW = d2 - d1;
+        const logoScale = Math.min(1.18, (footerH - 14) / 68);
+        drawDgtLogo(d1 + logoZoneW * 0.20, cy - 2, logoScale);
+        drawSkillIndiaLogo(d1 + logoZoneW * 0.52, cy + 1, logoScale);
+        drawItiLogo(d1 + logoZoneW * 0.82, cy + 2, logoScale);
+
+        ctx.fillStyle = "#cbd5e1";
+        ctx.fillRect(d2, footerY + 16, 2, footerH - 32);
+
+        // Right: Official Ministry Title & nsti.calicut.dgt.gov.in URL
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#1e293b";
+        ctx.font = "700 14px Arial, Helvetica, sans-serif";
+        ctx.fillText(INSTITUTE_BANNER, d2 + 24, cy - 9, W - d2 - 42);
+        ctx.fillStyle = accentColor;
+        ctx.font = "800 14px Arial, Helvetica, sans-serif";
+        ctx.fillText(OFFICIAL_SITE, d2 + 24, cy + 14);
+      } else {
+        // Square & Portrait (1080 / 1200 px) layout
+        const d1 = 290;
+        const d2 = W - 295;
 
         ctx.fillStyle = "#cbd5e1";
         ctx.fillRect(d1, footerY + 18, 2, footerH - 36);
 
-        ctx.fillStyle = "#0f294a";
-        ctx.font = "800 14px Arial, Helvetica, sans-serif";
-        ctx.fillText("DGT  •  MSDE", d1 + 24, cy - 9);
-        ctx.fillStyle = "#d97706";
-        ctx.font = "700 13px Arial, Helvetica, sans-serif";
-        ctx.fillText("GOVT. OF INDIA  •  SKILL INDIA", d1 + 24, cy + 12);
+        const logoZoneW = d2 - d1;
+        const logoScale = Math.min(1.16, (footerH - 18) / 68);
+        drawDgtLogo(d1 + logoZoneW * 0.20, cy - 2, logoScale);
+        drawSkillIndiaLogo(d1 + logoZoneW * 0.52, cy + 1, logoScale);
+        drawItiLogo(d1 + logoZoneW * 0.83, cy + 2, logoScale);
 
         ctx.fillStyle = "#cbd5e1";
         ctx.fillRect(d2, footerY + 18, 2, footerH - 36);
 
+        ctx.textAlign = "left";
         ctx.fillStyle = "#1e293b";
-        ctx.font = "700 14px Arial, Helvetica, sans-serif";
-        ctx.fillText(INSTITUTE_BANNER, d2 + 24, cy - 9, W - d2 - 44);
-        ctx.fillStyle = accentColor;
-        ctx.font = "700 13px Arial, Helvetica, sans-serif";
-        ctx.fillText("nsti-calicut-updates.pages.dev", d2 + 24, cy + 12);
-      } else {
-        const d1 = 330;
-        ctx.fillStyle = "#cbd5e1";
-        ctx.fillRect(d1, footerY + 18, 2, footerH - 36);
-
-        ctx.fillStyle = "#1e293b";
-        ctx.font = "700 13px Arial, Helvetica, sans-serif";
-        ctx.fillText("National Skill Training Institute Calicut,", d1 + 22, cy - 12);
-        ctx.fillText("Kozhikode, Keralam/DGT/MSDE", d1 + 22, cy + 6);
-        ctx.fillStyle = accentColor;
         ctx.font = "700 12.5px Arial, Helvetica, sans-serif";
-        ctx.fillText("nsti-calicut-updates.pages.dev", d1 + 22, cy + 24);
+        ctx.fillText("National Skill Training Institute Calicut,", d2 + 16, cy - 13);
+        ctx.fillText("Kozhikode, Keralam/DGT/MSDE", d2 + 16, cy + 5);
+        ctx.fillStyle = accentColor;
+        ctx.font = "800 13.5px Arial, Helvetica, sans-serif";
+        ctx.fillText(OFFICIAL_SITE, d2 + 16, cy + 25);
       }
 
       ctx.restore();
@@ -1525,7 +1730,7 @@
       const style = $("posterStyle").value;
       const isLandscape = W > H;
       const showFooter = $("showFooterStrip").checked;
-      const footerH = showFooter ? (isLandscape ? 88 : 114) : 0;
+      const footerH = showFooter ? (isLandscape ? 92 : 116) : 0;
       const pad = clamp(Number($("frameWidth").value) || 0, 0, 80);
 
       const palettes = {
@@ -1836,7 +2041,7 @@
           ctx.textBaseline = "middle";
           ctx.fillStyle = $("labelColor").value;
           const evDate = formatDisplayDate(eventDateInput.value);
-          let t = `${titleText}  |  ${INSTITUTE_BANNER} (${evDate})`;
+          let t = `${titleText}  |  ${INSTITUTE_BANNER} (${evDate})  •  ${OFFICIAL_SITE}`;
           while (ctx.measureText(t).width > W - 60 && t.length > 4) t = t.slice(0, -2) + "…";
           ctx.fillText(t, W / 2, H - bandH / 2);
           ctx.restore();
@@ -1902,8 +2107,8 @@
           '<img alt="Photo ' + (i + 1) + '"><div class="name"></div>' +
           '<input type="text" class="photo-label-input" placeholder="Label (e.g. Principal\'s Speech)" />' +
           '<div class="row" style="margin-bottom:6px;">' +
-          '<button type="button" class="btn-mini" data-a="left" title="Move earlier"' + (i === 0 ? " disabled" : "") + ">◀</button>" +
-          '<button type="button" class="btn-mini" data-a="right" title="Move later"' + (i === photos.length - 1 ? " disabled" : "") + ">▶</button>" +
+          '<button type="button" class="btn-mini" data-a="left" title="Move earlier"' + (i === 0 ? " disabled" : "") + '>◀</button>' +
+          '<button type="button" class="btn-mini" data-a="right" title="Move later"' + (i === photos.length - 1 ? " disabled" : "") + '>▶</button>' +
           '<button type="button" class="btn-mini" data-a="centre" title="Reset position and zoom">Centre</button>' +
           '<button type="button" class="btn-mini danger" data-a="remove" title="Remove">✕</button></div>' +
           '<div class="zl">Zoom</div><input type="range" min="100" max="300" value="' + Math.round(p.zoom * 100) + '" data-zoom="' + i + '">';
