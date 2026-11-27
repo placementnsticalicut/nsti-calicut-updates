@@ -1,43 +1,71 @@
+function escapeAttr(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export async function onRequest(context) {
   const url = new URL(context.request.url);
-  if (url.pathname !== "/" && url.pathname !== "/index.html") {
+  const id = (url.searchParams.get("id") || "").trim();
+
+  if (url.pathname !== "/" || !id) {
     return context.next();
   }
 
   const response = await context.next();
-  const projectId = context.env.FIREBASE_PROJECT_ID;
-  const dateParam = url.searchParams.get("d");
-  if (!projectId || !dateParam) return response;
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) {
+    return response;
+  }
 
   try {
-    const fsUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/updates/${encodeURIComponent(dateParam)}`;
+    const fsUrl = `https://firestore.googleapis.com/v1/projects/nsticalicuteventsupdate/databases/(default)/documents/updates/${encodeURIComponent(id)}`;
     const fsRes = await fetch(fsUrl);
-    if (!fsRes.ok) return response;
+    if (!fsRes.ok) {
+      return response;
+    }
 
     const doc = await fsRes.json();
     const fields = doc.fields || {};
-    const title = fields.title?.stringValue || `NSTI Calicut updates : ${dateParam}`;
-    const summary = fields.summary?.stringValue || "Official event highlights from NSTI Calicut.";
-    const imgUrl = `${url.origin}/api/image?d=${encodeURIComponent(dateParam)}`;
+    const title = escapeAttr(fields.title?.stringValue || "NSTI Calicut — Campus Update");
+    const desc = escapeAttr(
+      (fields.description?.stringValue || "National Skill Training Institute Calicut, Kozhikode, Keralam/DGT/MSDE").slice(0, 220)
+    );
+    const photoIdx = parseInt(url.searchParams.get("photo") || "0", 10) || 0;
+    const ogImage = `${url.origin}/api/og-image?id=${encodeURIComponent(id)}&photo=${photoIdx}`;
+    const pageUrl = escapeAttr(url.toString());
+
+    const ogTags = `
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="NSTI Calicut — Campus Updates & Events" />
+  <meta property="og:url" content="${pageUrl}" />
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${desc}" />
+  <meta property="og:image" content="${ogImage}" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${title}" />
+  <meta name="twitter:description" content="${desc}" />
+  <meta name="twitter:image" content="${ogImage}" />
+</head>`;
 
     let html = await response.text();
-    html = html
-      .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)}</title>`)
-      .replace(/content="NSTI Calicut Updates"/, `content="${escapeHtml(title)}"`)
-      .replace(/content="Official photo updates.*?"/, `content="${escapeHtml(summary)}"`)
-      .replace(
-        "</head>",
-        `<meta property="og:image" content="${escapeHtml(imgUrl)}"><meta name="twitter:card" content="summary_large_image"></head>`
-      );
+    html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title} — NSTI Calicut</title>`);
+    html = html.replace("</head>", ogTags);
+
+    const newHeaders = new Headers(response.headers);
+    newHeaders.delete("content-length");
 
     return new Response(html, {
-      headers: { "content-type": "text/html;charset=UTF-8" }
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeaders
     });
-  } catch {
+  } catch (err) {
     return response;
   }
-}
-
-function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
 }
