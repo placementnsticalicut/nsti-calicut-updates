@@ -79,6 +79,7 @@
     }
     .btn-mini:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-mini.danger { background: #fde8e8; color: #a11; }
+    .btn-mini.primary { background: #dbeafe; color: #1d4ed8; }
     .btn-danger { background: #dc2626; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
     .btn-share { background: #16a34a; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
     .btn-edit { background: #d97706; padding: 0.35rem 0.65rem; font-size: 0.78rem; }
@@ -639,10 +640,13 @@
               <img id="existingMediaThumb" alt="Current Photo" />
               <div>
                 <strong id="existingMediaText">Current published photo(s) kept automatically.</strong>
-                <div style="font-size:0.76rem;">Edit individual photo labels below, or upload new photos to replace them.</div>
+                <div style="font-size:0.76rem;">Click "Regenerate Poster with New Logos" to refresh this post with the latest footer branding, or edit labels below.</div>
               </div>
             </div>
-            <button type="button" id="removeExistingMediaBtn" class="btn-mini danger">Remove Current Photo</button>
+            <div class="row">
+              <button type="button" id="regenerateFromSavedBtn" class="btn-mini primary">Regenerate Poster with New Logos</button>
+              <button type="button" id="removeExistingMediaBtn" class="btn-mini danger">Remove Current Photo</button>
+            </div>
           </div>
           <div id="existingLabelsGrid" class="existing-labels-grid"></div>
         </div>
@@ -948,7 +952,7 @@
       preservedPhotos = Array.isArray(item.photos) ? [...item.photos] : [];
       preservedPhotoLabels = Array.isArray(item.photoLabels) ? [...item.photoLabels] : [];
 
-      photos.forEach((p) => URL.revokeObjectURL(p.url));
+      photos.forEach((p) => { if (p.url && p.url.startsWith("blob:")) URL.revokeObjectURL(p.url); });
       photos = [];
       $("files").value = "";
       $("collageStudio").classList.add("hidden");
@@ -967,6 +971,7 @@
         $("existingMediaText").textContent = count > 1
           ? `Current published poster + ${count} photo(s) kept.`
           : "Current published photo kept.";
+        $("regenerateFromSavedBtn").classList.toggle("hidden", preservedPhotos.length === 0);
         renderExistingLabelsEditor();
         $("existingMediaBar").classList.remove("hidden");
       } else {
@@ -980,8 +985,49 @@
       $("cancelEditTopBtn").classList.remove("hidden");
 
       adminPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-      showToast("Editing mode active — update fields or photo labels and click Save Changes.");
+      showToast("Editing mode active — click 'Regenerate Poster with New Logos' or edit text and Save Changes.");
     }
+
+    // Loads the post's saved raw photos straight into the Collage Studio so the new logos & URL apply automatically
+    $("regenerateFromSavedBtn").addEventListener("click", async () => {
+      if (!preservedPhotos.length) return;
+      const btn = $("regenerateFromSavedBtn");
+      btn.disabled = true;
+      btn.textContent = "Loading photos...";
+      try {
+        photos.forEach((p) => { if (p.url && p.url.startsWith("blob:")) URL.revokeObjectURL(p.url); });
+        photos = [];
+        for (let i = 0; i < preservedPhotos.length && i < MAX; i++) {
+          const src = preservedPhotos[i];
+          const img = await loadImg(src);
+          const p = {
+            img,
+            url: src,
+            name: `Saved Photo ${i + 1}`,
+            label: preservedPhotoLabels[i] || "",
+            full: { sx: 0, sy: 0, sw: img.naturalWidth, sh: img.naturalHeight },
+            fx: 0.5,
+            fy: 0.5,
+            zoom: 1,
+            w: 1
+          };
+          p.tbox = trimBox(img);
+          applyBox(p);
+          if (widthMode !== "smart") p.w = widthMode === "equal" ? 1 : photoAspect(p);
+          photos.push(p);
+        }
+        $("existingMediaBar").classList.add("hidden");
+        $("collageStudio").classList.remove("hidden");
+        draw();
+        renderThumbs();
+        showToast("Poster regenerated with new DGT / Skill India / ITI logos! Adjust framing if needed and click Save Changes.", 6000);
+      } catch (err) {
+        alert("Could not load saved photos into studio: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Regenerate Poster with New Logos";
+      }
+    });
 
     function cancelEditingMode(clearForm = true) {
       editingDocId = null;
@@ -1002,7 +1048,7 @@
         eventDateInput.value = todayLocal;
         aiStatus.textContent = "";
         formStatus.textContent = "";
-        photos.forEach((p) => URL.revokeObjectURL(p.url));
+        photos.forEach((p) => { if (p.url && p.url.startsWith("blob:")) URL.revokeObjectURL(p.url); });
         photos = [];
         $("collageStudio").classList.add("hidden");
       }
@@ -1156,6 +1202,7 @@
     function loadImg(url) {
       return new Promise((res, rej) => {
         const im = new Image();
+        im.crossOrigin = "anonymous";
         im.onload = () => res(im);
         im.onerror = rej;
         im.src = url;
@@ -1438,7 +1485,6 @@
       ctx.translate(cx, cy);
       ctx.scale(s, s);
 
-      // Outer navy cogwheel
       const teeth = 16;
       const rOuter = 26, rInner = 21.5;
       ctx.beginPath();
@@ -1454,13 +1500,11 @@
       ctx.fillStyle = "#172554";
       ctx.fill();
 
-      // White inner dial
       ctx.beginPath();
       ctx.arc(0, 0, 18.2, 0, Math.PI * 2);
       ctx.fillStyle = "#ffffff";
       ctx.fill();
 
-      // Green hammer (top-left)
       ctx.save();
       ctx.translate(-8, -7);
       ctx.rotate(-0.65);
@@ -1469,7 +1513,6 @@
       ctx.fillRect(-1.5, 0, 3, 11);
       ctx.restore();
 
-      // Saffron spanner (top-right)
       ctx.save();
       ctx.translate(8, -7);
       ctx.rotate(0.65);
@@ -1482,7 +1525,6 @@
       ctx.fillRect(-1.5, -9, 3, 4);
       ctx.restore();
 
-      // Saffron wrench (bottom-left)
       ctx.save();
       ctx.translate(-8, 6);
       ctx.rotate(0.75);
@@ -1495,7 +1537,6 @@
       ctx.fillRect(-1.4, -9.5, 2.8, 3.8);
       ctx.restore();
 
-      // Green chisel/file (bottom-right)
       ctx.save();
       ctx.translate(8, 6);
       ctx.rotate(-0.7);
@@ -1503,7 +1544,6 @@
       ctx.fillRect(-2.2, -6, 4.4, 12);
       ctx.restore();
 
-      // Central navy lightning bolt
       ctx.beginPath();
       ctx.moveTo(2, -16);
       ctx.lineTo(-5, 1);
@@ -1515,7 +1555,6 @@
       ctx.fillStyle = "#172554";
       ctx.fill();
 
-      // Caption below emblem
       ctx.fillStyle = "#0f172a";
       ctx.font = "800 7.4px Arial, Helvetica, sans-serif";
       ctx.textAlign = "center";
@@ -1530,17 +1569,14 @@
       ctx.translate(cx, cy);
       ctx.scale(s, s);
 
-      // Monitor silhouette above text
       ctx.fillStyle = "#1e293b";
       ctx.fillRect(-18, -28, 36, 22);
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(-15, -25, 30, 16);
-      // Stand
       ctx.fillStyle = "#1e293b";
       ctx.fillRect(-4, -6, 8, 3);
       ctx.fillRect(-11, -3, 22, 2.5);
 
-      // Gear + orange/green wrench inside monitor
       ctx.beginPath();
       ctx.arc(-2, -17, 5.5, 0, Math.PI * 2);
       ctx.fillStyle = "#1e3a8a";
@@ -1554,14 +1590,12 @@
       ctx.fillRect(-5, -1.5, 10, 3);
       ctx.restore();
 
-      // "Skill India" typography with saffron & green arrow-i stems
       ctx.font = "900 17px Arial, Helvetica, sans-serif";
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = "#172554";
       ctx.fillText("Sk", -43, 16);
 
-      // Saffron arrow 'i'
       ctx.fillStyle = "#ea580c";
       ctx.fillRect(-20, 5, 3.2, 11);
       ctx.beginPath();
@@ -1571,7 +1605,6 @@
       ctx.closePath();
       ctx.fill();
 
-      // Green arrow 'i'
       ctx.fillStyle = "#16a34a";
       ctx.fillRect(-14, 5, 3.2, 11);
       ctx.beginPath();
@@ -1584,7 +1617,6 @@
       ctx.fillStyle = "#172554";
       ctx.fillText("ll India", -8, 16);
 
-      // Hindi tagline
       ctx.font = "700 7.6px Arial, sans-serif";
       ctx.textAlign = "center";
       ctx.fillStyle = "#334155";
@@ -1598,12 +1630,10 @@
       ctx.translate(cx, cy);
       ctx.scale(s, s);
 
-      // Left 'i' (Saffron)
       ctx.fillStyle = "#ea580c";
       ctx.fillRect(-30, -24, 11, 7);
       ctx.fillRect(-30, -14, 11, 26);
 
-      // Center 'T' with factory sawtooth roof (Green)
       ctx.fillStyle = "#15803d";
       ctx.beginPath();
       ctx.moveTo(-16, -15);
@@ -1619,12 +1649,10 @@
       ctx.closePath();
       ctx.fill();
 
-      // Right 'i' (Navy)
       ctx.fillStyle = "#1e3a8a";
       ctx.fillRect(19, -24, 11, 7);
       ctx.fillRect(19, -14, 11, 26);
 
-      // Caption below emblem
       ctx.fillStyle = "#0f172a";
       ctx.font = "800 7.6px Arial, Helvetica, sans-serif";
       ctx.textAlign = "center";
@@ -1643,7 +1671,6 @@
 
       const cy = footerY + footerH / 2;
 
-      // Left: NSTI Calicut title (round NSTI DGT circle removed)
       ctx.textAlign = "left";
       ctx.fillStyle = accentColor;
       ctx.font = "900 30px Arial, Helvetica, sans-serif";
@@ -1659,7 +1686,6 @@
         ctx.fillStyle = "#cbd5e1";
         ctx.fillRect(d1, footerY + 16, 2, footerH - 32);
 
-        // Center: High-Resolution DGT, Skill India & ITI Logos
         const logoZoneW = d2 - d1;
         const logoScale = Math.min(1.18, (footerH - 14) / 68);
         drawDgtLogo(d1 + logoZoneW * 0.20, cy - 2, logoScale);
@@ -1669,7 +1695,6 @@
         ctx.fillStyle = "#cbd5e1";
         ctx.fillRect(d2, footerY + 16, 2, footerH - 32);
 
-        // Right: Official Ministry Title & nsti.calicut.dgt.gov.in URL
         ctx.textAlign = "left";
         ctx.fillStyle = "#1e293b";
         ctx.font = "700 14px Arial, Helvetica, sans-serif";
@@ -1678,7 +1703,6 @@
         ctx.font = "800 14px Arial, Helvetica, sans-serif";
         ctx.fillText(OFFICIAL_SITE, d2 + 24, cy + 14);
       } else {
-        // Square & Portrait (1080 / 1200 px) layout
         const d1 = 290;
         const d2 = W - 295;
 
@@ -2129,7 +2153,7 @@
           else if (a === "right" && i < photos.length - 1) swap(i, i + 1);
           else if (a === "centre") { p.fx = 0.5; p.fy = 0.5; p.zoom = 1; }
           else if (a === "remove") {
-            URL.revokeObjectURL(p.url);
+            if (p.url && p.url.startsWith("blob:")) URL.revokeObjectURL(p.url);
             photos.splice(i, 1);
             $("collageStudio").classList.toggle("hidden", photos.length === 0);
           }
@@ -2263,7 +2287,7 @@
     });
 
     $("clearPhotosBtn").addEventListener("click", () => {
-      photos.forEach((p) => URL.revokeObjectURL(p.url));
+      photos.forEach((p) => { if (p.url && p.url.startsWith("blob:")) URL.revokeObjectURL(p.url); });
       photos = [];
       $("collageStudio").classList.add("hidden");
       draw();
@@ -2467,7 +2491,7 @@
           postForm.reset();
           eventDateInput.value = todayLocal;
           aiStatus.textContent = "";
-          photos.forEach((p) => URL.revokeObjectURL(p.url));
+          photos.forEach((p) => { if (p.url && p.url.startsWith("blob:")) URL.revokeObjectURL(p.url); });
           photos = [];
           $("collageStudio").classList.add("hidden");
           formStatus.textContent = "Published successfully!";
