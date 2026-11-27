@@ -915,7 +915,7 @@
 
     const SUPER_ADMINS = ["oneplusme25@gmail.com", "prasadum@gmail.com"];
     const INSTITUTE_BANNER = "National Skill Training Institute Calicut, Kozhikode, Keralam/DGT/MSDE";
-    const OFFICIAL_SITE = "nsti.calicut.dgt.gov.in";
+    const OFFICIAL_SITE = "https://nsticalicut.dgt.gov.in";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -924,6 +924,36 @@
     const $ = (id) => document.getElementById(id);
     const canvas = $("collageCanvas");
     const ctx = canvas.getContext("2d");
+
+    // Preload High-Resolution Official Logos from Repository Root
+    const FOOTER_LOGOS = { dgt: null, skill: null, iti: null };
+    [
+      ["dgt", "./nsti_logo_4000px_sharp (1).png"],
+      ["skill", "./Skill-India_Preview.png"],
+      ["iti", "./indrustial-training-institute-01-01.jpg"]
+    ].forEach(([key, src]) => {
+      const img = new Image();
+      img.onload = () => {
+        FOOTER_LOGOS[key] = img;
+        if (typeof photos !== "undefined" && photos.length) draw();
+      };
+      img.src = encodeURI(src);
+    });
+
+    function drawCrispLogo(img, fallbackFn, cx, cy, maxW, maxH, scale) {
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        const r = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+        const w = img.naturalWidth * r;
+        const h = img.naturalHeight * r;
+        ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h);
+        ctx.restore();
+      } else {
+        fallbackFn(cx, cy, scale);
+      }
+    }
 
     const loginBtn = $("loginBtn");
     const logoutBtn = $("logoutBtn");
@@ -1085,7 +1115,7 @@
         $("collageStudio").classList.remove("hidden");
         draw();
         renderThumbs();
-        showToast("Poster regenerated with new DGT / Skill India / ITI logos! Adjust framing if needed and click Save Changes.", 6000);
+        showToast("Poster regenerated with sharp DGT / Skill India / ITI logos! Adjust framing if needed and click Save Changes.", 6000);
       } catch (err) {
         alert("Could not load saved photos into studio: " + err.message);
       } finally {
@@ -1544,88 +1574,25 @@
       }
     }
 
-    /* ================= High-Resolution Official Emblems (DGT, Skill India, ITI) ================= */
+    /* ================= Fallback Vector Logos (Used only if image fails to load) ================= */
     function drawDgtLogo(cx, cy, s) {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.scale(s, s);
-
-      const teeth = 16;
-      const rOuter = 26, rInner = 21.5;
+      const teeth = 16, rOuter = 26, rInner = 21.5;
       ctx.beginPath();
       for (let i = 0; i < teeth * 2; i++) {
         const ang = (i * Math.PI) / teeth;
         const r = i % 2 === 0 ? rOuter : rInner;
-        const x = Math.cos(ang) * r;
-        const y = Math.sin(ang) * r;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        const x = Math.cos(ang) * r, y = Math.sin(ang) * r;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.closePath();
       ctx.fillStyle = "#172554";
       ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(0, 0, 18.2, 0, Math.PI * 2);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-
-      ctx.save();
-      ctx.translate(-8, -7);
-      ctx.rotate(-0.65);
-      ctx.fillStyle = "#15803d";
-      ctx.fillRect(-5, -4, 10, 4);
-      ctx.fillRect(-1.5, 0, 3, 11);
-      ctx.restore();
-
-      ctx.save();
-      ctx.translate(8, -7);
-      ctx.rotate(0.65);
-      ctx.fillStyle = "#ea580c";
-      ctx.fillRect(-1.8, -5, 3.6, 12);
-      ctx.beginPath();
-      ctx.arc(0, -6, 4.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(-1.5, -9, 3, 4);
-      ctx.restore();
-
-      ctx.save();
-      ctx.translate(-8, 6);
-      ctx.rotate(0.75);
-      ctx.fillStyle = "#ea580c";
-      ctx.fillRect(-1.8, -6, 3.6, 11);
-      ctx.beginPath();
-      ctx.arc(0, -6.5, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(-1.4, -9.5, 2.8, 3.8);
-      ctx.restore();
-
-      ctx.save();
-      ctx.translate(8, 6);
-      ctx.rotate(-0.7);
-      ctx.fillStyle = "#15803d";
-      ctx.fillRect(-2.2, -6, 4.4, 12);
-      ctx.restore();
-
-      ctx.beginPath();
-      ctx.moveTo(2, -16);
-      ctx.lineTo(-5, 1);
-      ctx.lineTo(0.5, 1);
-      ctx.lineTo(-2, 16);
-      ctx.lineTo(5, -1);
-      ctx.lineTo(-0.5, -1);
-      ctx.closePath();
-      ctx.fillStyle = "#172554";
-      ctx.fill();
-
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "800 7.4px Arial, Helvetica, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "top";
-      ctx.fillText("Directorate General of Training", 0, 28);
-
+      ctx.beginPath(); ctx.arc(0, 0, 18.2, 0, Math.PI * 2); ctx.fillStyle = "#ffffff"; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(2, -16); ctx.lineTo(-5, 1); ctx.lineTo(0.5, 1); ctx.lineTo(-2, 16); ctx.lineTo(5, -1); ctx.lineTo(-0.5, -1); ctx.closePath();
+      ctx.fillStyle = "#172554"; ctx.fill();
       ctx.restore();
     }
 
@@ -1633,60 +1600,10 @@
       ctx.save();
       ctx.translate(cx, cy);
       ctx.scale(s, s);
-
-      ctx.fillStyle = "#1e293b";
-      ctx.fillRect(-18, -28, 36, 22);
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(-15, -25, 30, 16);
-      ctx.fillStyle = "#1e293b";
-      ctx.fillRect(-4, -6, 8, 3);
-      ctx.fillRect(-11, -3, 22, 2.5);
-
-      ctx.beginPath();
-      ctx.arc(-2, -17, 5.5, 0, Math.PI * 2);
-      ctx.fillStyle = "#1e3a8a";
-      ctx.fill();
-      ctx.save();
-      ctx.translate(2, -17);
-      ctx.rotate(0.7);
-      ctx.fillStyle = "#ea580c";
-      ctx.fillRect(-1.5, -6, 3, 12);
-      ctx.fillStyle = "#16a34a";
-      ctx.fillRect(-5, -1.5, 10, 3);
-      ctx.restore();
-
       ctx.font = "900 17px Arial, Helvetica, sans-serif";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = "#172554";
-      ctx.fillText("Sk", -43, 16);
-
-      ctx.fillStyle = "#ea580c";
-      ctx.fillRect(-20, 5, 3.2, 11);
-      ctx.beginPath();
-      ctx.moveTo(-21.5, 5);
-      ctx.lineTo(-18.4, 1);
-      ctx.lineTo(-15.3, 5);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.fillStyle = "#16a34a";
-      ctx.fillRect(-14, 5, 3.2, 11);
-      ctx.beginPath();
-      ctx.moveTo(-15.5, 5);
-      ctx.lineTo(-12.4, 1);
-      ctx.lineTo(-9.3, 5);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.fillStyle = "#172554";
-      ctx.fillText("ll India", -8, 16);
-
-      ctx.font = "700 7.6px Arial, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillStyle = "#334155";
-      ctx.fillText("कौशल भारत - कुशल भारत", 0, 27);
-
+      ctx.fillStyle = "#172554";
+      ctx.fillText("Skill India", 0, 8);
       ctx.restore();
     }
 
@@ -1694,36 +1611,9 @@
       ctx.save();
       ctx.translate(cx, cy);
       ctx.scale(s, s);
-
-      ctx.fillStyle = "#ea580c";
-      ctx.fillRect(-30, -24, 11, 7);
-      ctx.fillRect(-30, -14, 11, 26);
-
-      ctx.fillStyle = "#15803d";
-      ctx.beginPath();
-      ctx.moveTo(-16, -15);
-      ctx.lineTo(0, -22);
-      ctx.lineTo(0, -15);
-      ctx.lineTo(16, -22);
-      ctx.lineTo(16, -4);
-      ctx.lineTo(6, -4);
-      ctx.lineTo(6, 12);
-      ctx.lineTo(-6, 12);
-      ctx.lineTo(-6, -4);
-      ctx.lineTo(-16, -4);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.fillStyle = "#1e3a8a";
-      ctx.fillRect(19, -24, 11, 7);
-      ctx.fillRect(19, -14, 11, 26);
-
-      ctx.fillStyle = "#0f172a";
-      ctx.font = "800 7.6px Arial, Helvetica, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "top";
-      ctx.fillText("Industrial Training Institute", 0, 17);
-
+      ctx.fillStyle = "#ea580c"; ctx.fillRect(-30, -24, 11, 7); ctx.fillRect(-30, -14, 11, 26);
+      ctx.fillStyle = "#15803d"; ctx.fillRect(-14, -15, 28, 12); ctx.fillRect(-6, -4, 12, 16);
+      ctx.fillStyle = "#1e3a8a"; ctx.fillRect(19, -24, 11, 7); ctx.fillRect(19, -14, 11, 26);
       ctx.restore();
     }
 
@@ -1746,16 +1636,18 @@
 
       if (W >= 1200) {
         const d1 = Math.round(W * 0.23);
-        const d2 = Math.round(W * 0.62);
+        const d2 = Math.round(W * 0.61);
 
         ctx.fillStyle = "#cbd5e1";
         ctx.fillRect(d1, footerY + 16, 2, footerH - 32);
 
         const logoZoneW = d2 - d1;
         const logoScale = Math.min(1.18, (footerH - 14) / 68);
-        drawDgtLogo(d1 + logoZoneW * 0.20, cy - 2, logoScale);
-        drawSkillIndiaLogo(d1 + logoZoneW * 0.52, cy + 1, logoScale);
-        drawItiLogo(d1 + logoZoneW * 0.82, cy + 2, logoScale);
+        const maxLogoH = footerH - 12;
+        const maxLogoW = logoZoneW * 0.29;
+        drawCrispLogo(FOOTER_LOGOS.dgt, drawDgtLogo, d1 + logoZoneW * 0.18, cy, maxLogoW, maxLogoH, logoScale);
+        drawCrispLogo(FOOTER_LOGOS.skill, drawSkillIndiaLogo, d1 + logoZoneW * 0.50, cy, maxLogoW, maxLogoH, logoScale);
+        drawCrispLogo(FOOTER_LOGOS.iti, drawItiLogo, d1 + logoZoneW * 0.82, cy, maxLogoW, maxLogoH, logoScale);
 
         ctx.fillStyle = "#cbd5e1";
         ctx.fillRect(d2, footerY + 16, 2, footerH - 32);
@@ -1776,9 +1668,11 @@
 
         const logoZoneW = d2 - d1;
         const logoScale = Math.min(1.16, (footerH - 18) / 68);
-        drawDgtLogo(d1 + logoZoneW * 0.20, cy - 2, logoScale);
-        drawSkillIndiaLogo(d1 + logoZoneW * 0.52, cy + 1, logoScale);
-        drawItiLogo(d1 + logoZoneW * 0.83, cy + 2, logoScale);
+        const maxLogoH = footerH - 14;
+        const maxLogoW = logoZoneW * 0.29;
+        drawCrispLogo(FOOTER_LOGOS.dgt, drawDgtLogo, d1 + logoZoneW * 0.18, cy, maxLogoW, maxLogoH, logoScale);
+        drawCrispLogo(FOOTER_LOGOS.skill, drawSkillIndiaLogo, d1 + logoZoneW * 0.50, cy, maxLogoW, maxLogoH, logoScale);
+        drawCrispLogo(FOOTER_LOGOS.iti, drawItiLogo, d1 + logoZoneW * 0.82, cy, maxLogoW, maxLogoH, logoScale);
 
         ctx.fillStyle = "#cbd5e1";
         ctx.fillRect(d2, footerY + 18, 2, footerH - 36);
@@ -2814,7 +2708,6 @@
       }
     }
 
-    // Keep UI synchronized if user presses the device hardware Back button while in Fullscreen
     document.addEventListener("fullscreenchange", () => {
       if (!document.fullscreenElement) {
         $("lightboxModal").classList.remove("photo-only");
@@ -2923,7 +2816,6 @@
       syncGalleryUI();
       $("lightboxModal").classList.remove("hidden");
 
-      // Open directly in True Full-Screen Photo View (hides Chrome URL bar, title bar, and long text)
       enterTrueFullPhoto(fromUserTap);
     }
 
